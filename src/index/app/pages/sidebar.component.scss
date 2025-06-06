@@ -1,0 +1,44 @@
+.sidenav-container {
+  height: 100vh;
+}
+
+.sidenav {
+  width: 250px;
+  background-color: #fff;
+}
+
+.brand-logo {
+  width: 100%;
+  padding: 1rem;
+  box-sizing: border-box;
+}
+
+.nested-links {
+  padding-left: 1.5rem;
+}
+
+.nested-link {
+  font-size: 0.95rem;
+  color: #333;
+}
+
+.parent-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  cursor: pointer;
+}
+
+.expand-icon {
+  margin-left: auto;
+}
+
+.top-toolbar {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+}
+
+.main-content {
+  padding: 1rem;
+}

@@ -1,0 +1,126 @@
+/* Layout */
+.login-wrapper {
+  display: flex;
+  justify-content: flex-start; /* Align content to the left */
+  align-items: center;
+  height: 100vh;
+  font-family: 'Poppins', sans-serif;
+
+  /* Background image */
+  background-image: url('https://belectriq.co/static/images/Main-Banner-2.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  width: 100%; /* Ensure the background takes up full width */
+ 
+}
+
+/* Login card with animation */
+.login-card {
+  background-color: rgba(255, 255, 255, 0.95); /* Slightly transparent white */
+  padding: 3rem;
+  border-radius: 12px;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+  width: 100%;
+  max-width: 400px;
+  text-align: center;
+margin-left: 2rem;
+  /* Fade-in animation */
+  animation: fadeIn 0.6s ease-in;
+}
+
+/* Fade-in effect */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Brand heading */
+.brand {
+  color: #28a745;  /* Green for brand */
+  font-size: 2rem;
+  margin-bottom: 0.5rem;
+}
+
+/* Form styling */
+form {
+  display: flex;
+  flex-direction: column;
+  margin-top: 1rem;
+}
+
+label {
+  text-align: left;
+  font-weight: 600;
+  margin: 0.5rem 0 0.25rem;
+  color: #1a1a1a;  /* Dark gray text */
+}
+
+input {
+  padding: 0.6rem;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  font-size: 1rem;
+  background-color: #fdfdfd;  /* Light gray background */
+  width: 100%;
+}
+
+/* Focus effect for inputs */
+input:focus {
+  outline: none;
+  border-color: #28a745;  /* Green on focus */
+  box-shadow: 0 0 5px #28a74555;  /* Green glow */
+}
+
+/* Button styling */
+button {
+  margin-top: 1.5rem;
+  padding: 0.75rem;
+  background-color: #28a745;  /* Green button */
+  border: none;
+  border-radius: 5px;
+  color: white;
+  font-weight: bold;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+/* Button hover effect */
+button:hover {
+  background-color: #218838;  /* Darker green on hover */
+}
+
+/* Footer text styling */
+.footer-text {
+  margin-top: 2rem;
+  font-size: 0.85rem;
+  color: #777;  /* Lighter gray */
+}
+
+/* Mobile responsiveness: Stack layout */
+@media (max-width: 768px) {
+  .login-wrapper {
+    flex-direction: column; /* Stack the layout vertically on small screens */
+    justify-content: center; /* Center the login card on mobile */
+  }
+
+  .login-card {
+    width: 90%;
+    max-width: 350px;
+  }
+
+  .image-side {
+    height: 40vh; /* Adjust height of the image section for mobile */
+  }
+
+  .form-side {
+    height: 60vh;
+  }
+}

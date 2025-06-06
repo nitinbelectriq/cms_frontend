@@ -1,0 +1,91 @@
+:host {
+  display: block;
+  height: 100vh;
+}
+
+/* Container */
+.sidenav-container {
+  height: 100vh;
+}
+
+/* Fixed Sidebar */
+.sidenav {
+  width: 260px;
+  background-color: #f0f4f2;
+  border-right: 1px solid #ccc;
+  padding-top: 10px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  overflow-y: auto;
+  box-sizing: border-box;
+  z-index: 1000;
+}
+
+/* Push content to the right of the fixed sidebar */
+mat-sidenav-content {
+  margin-left: 260px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+/* Toolbar */
+.top-toolbar {
+  background-color: #2e7d32;
+  color: white;
+  font-weight: 500;
+  font-size: 18px;
+  padding: 0 20px;
+  height: 64px;
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+/* Scrollable content area */
+.main-content {
+  flex-grow: 1;
+  overflow-y: auto;
+  padding: 24px;
+  background-color: #f9f9f9;
+  height: calc(100vh - 64px); /* Full height minus toolbar */
+}
+
+/* Parent Items */
+.parent-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding: 12px 20px;
+  font-size: 14px;
+  font-weight: 500;
+  color: #2e7d32;
+}
+
+/* Expand Icon */
+.expand-icon {
+  margin-left: auto;
+  color: #777;
+}
+
+/* Nested Links */
+.nested-links {
+  padding-left: 36px;
+  background-color: #e8f5e9;
+  border-left: 2px solid #66bb6a;
+}
+
+.nested-link {
+  font-size: 13px;
+  padding: 6px 12px;
+  color: #2e7d32;
+  display: block;
+  text-decoration: none;
+}
+
+.nested-link:hover {
+  background-color: #dcedc8;
+}

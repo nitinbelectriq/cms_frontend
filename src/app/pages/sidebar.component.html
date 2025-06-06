@@ -1,0 +1,112 @@
+<mat-sidenav-container class="sidenav-container">
+  <mat-sidenav mode="side" opened class="sidenav" fixedInViewport>
+    <!-- Logo Section -->
+    <div class="logo-section">
+      <img src="https://belectriq.co/static/images/Logo.svg" alt="Belectriq Logo" class="brand-logo" />
+    </div>
+
+    <mat-nav-list>
+      <!-- Home -->
+      <a mat-list-item routerLink="/home" routerLinkActive="active-link">
+        <mat-icon>home</mat-icon>
+        <span>Home</span>
+      </a>
+
+      <!-- Charger Management -->
+      <div mat-list-item (click)="toggleSection('charger')" class="parent-item">
+        <mat-icon>ev_station</mat-icon>
+        <span>Charger Management</span>
+        <mat-icon class="expand-icon">
+          {{ isSectionOpen['charger'] ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
+      </div>
+      <div *ngIf="isSectionOpen['charger']" class="nested-links">
+        <a mat-list-item routerLink="/home/charger-model" class="nested-link">Charger Model</a>
+        <a mat-list-item routerLink="/home/charger-variant" class="nested-link">Charger Variant</a>
+        <a mat-list-item routerLink="/home/manage-chargers" class="nested-link">Manage Chargers</a>
+        <a mat-list-item routerLink="/home/connectors" class="nested-link">Chargers Connector</a>
+        <a mat-list-item routerLink="/home/rfid" class="nested-link">RFID</a>
+      </div>
+
+      <!-- CPO Management -->
+      <div mat-list-item (click)="toggleSection('cpo')" class="parent-item">
+        <mat-icon>engineering</mat-icon>
+        <span>CPO Management</span>
+        <mat-icon class="expand-icon">
+          {{ isSectionOpen['cpo'] ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
+      </div>
+      <div *ngIf="isSectionOpen['cpo']" class="nested-links">
+        <a mat-list-item routerLink="/home/manage-cpo" class="nested-link">Manage CPO</a>
+      </div>
+
+      <!-- Dispatch Management -->
+      <div mat-list-item (click)="toggleSection('dispatch')" class="parent-item">
+        <mat-icon>local_shipping</mat-icon>
+        <span>Dispatch Management</span>
+        <mat-icon class="expand-icon">
+          {{ isSectionOpen['dispatch'] ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
+      </div>
+      <div *ngIf="isSectionOpen['dispatch']" class="nested-links">
+        <a mat-list-item routerLink="/home/charger-dispatch" class="nested-link">Charger Dispatch</a>
+      </div>
+
+      <!-- Client Management -->
+      <div mat-list-item (click)="toggleSection('client')" class="parent-item">
+        <mat-icon>business</mat-icon>
+        <span>Client Management</span>
+        <mat-icon class="expand-icon">
+          {{ isSectionOpen['client'] ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
+      </div>
+      <div *ngIf="isSectionOpen['client']" class="nested-links">
+        <a mat-list-item routerLink="/home/manage-client" class="nested-link">Manage Client</a>
+      </div>
+
+      <!-- Charging Station -->
+      <div mat-list-item (click)="toggleSection('station')" class="parent-item">
+        <mat-icon>power</mat-icon>
+        <span>Charging Station</span>
+        <mat-icon class="expand-icon">
+          {{ isSectionOpen['station'] ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
+      </div>
+      <div *ngIf="isSectionOpen['station']" class="nested-links">
+        <a mat-list-item routerLink="/home/manage-station" class="nested-link">Manage Station</a>
+      </div>
+
+      <!-- OCPP Operations -->
+      <div mat-list-item (click)="toggleSection('ocpp')" class="parent-item">
+        <mat-icon>settings_input_component</mat-icon>
+        <span>OCPP Operations</span>
+        <mat-icon class="expand-icon">
+          {{ isSectionOpen['ocpp'] ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
+      </div>
+      <div *ngIf="isSectionOpen['ocpp']" class="nested-links">
+        <a mat-list-item routerLink="/home/ocpp-diagnostic" class="nested-link">OCPP Diagnostic</a>
+      </div>
+
+      <mat-divider></mat-divider>
+
+      <!-- Logout -->
+      <a mat-list-item routerLink="/login">
+        <mat-icon>logout</mat-icon>
+        <span>Logout</span>
+      </a>
+    </mat-nav-list>
+  </mat-sidenav>
+
+  <mat-sidenav-content>
+    <!-- Top toolbar -->
+    <mat-toolbar color="primary" class="top-toolbar">
+      <span>Dashboard</span>
+    </mat-toolbar>
+
+    <!-- Main content -->
+    <div class="main-content">
+      <router-outlet></router-outlet>
+    </div>
+  </mat-sidenav-content>
+</mat-sidenav-container>
