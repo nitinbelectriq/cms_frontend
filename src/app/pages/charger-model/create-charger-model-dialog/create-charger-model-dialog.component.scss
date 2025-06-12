@@ -1,23 +1,20 @@
 .form-container {
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 24px;
   width: 100%;
-  max-width: 400px;
+  max-width: 100%; // Ensure it doesn't overflow
   padding: 24px;
+  box-sizing: border-box;
+  overflow-y: auto;
 }
 
-.description-field {
-  textarea {
-    color: #119347;
-  }
+.description-field textarea {
+  color: #119347;
 }
 
 .toggle-custom {
-  .mat-slide-toggle-bar {
-    background-color: #119347 !important;
-  }
-
+  .mat-slide-toggle-bar,
   .mat-slide-toggle-thumb {
     background-color: #119347 !important;
   }
@@ -26,5 +23,6 @@
 .button-row {
   display: flex;
   justify-content: flex-end;
-  gap: 10px;
+  gap: 12px;
+  margin-top: 16px;
 }
