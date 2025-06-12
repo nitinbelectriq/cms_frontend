@@ -1,0 +1,11 @@
+<h2 mat-dialog-title>View Charger Model</h2>
+
+<div mat-dialog-content>
+  <p><strong>Name:</strong> {{ data.name }}</p>
+  <p><strong>Description:</strong> {{ data.description }}</p>
+  <p><strong>Status:</strong> {{ data.status }}</p>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="close()">Close</button>
+</div>

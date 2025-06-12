@@ -5,11 +5,25 @@
   margin-bottom: 16px;
 
   button {
-    background-color: #119347; /* example blue color */
+    background-color: #119347;
     color: white;
 
     &:hover {
-      background-color: #119347; /* darker blue on hover */
+      background-color: #0e7d3a; // slightly darker on hover
     }
   }
+}
+
+/* Action Buttons */
+.btn-view {
+  color: #119347 !important;
+}
+
+.btn-edit {
+  color: #119347 !important;
+}
+
+.status.active {
+  color: #119347;
+  font-weight: 600;
 }

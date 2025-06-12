@@ -7,6 +7,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialog } from '@angular/material/dialog';
 import { RouterModule, Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { ViewChargerModelDialogComponent } from './view-charger-model-dialog/view-charger-model-dialog.component';
 
 import { ChargerModelService } from '../../services/charger-model.service';
 import { CreateChargerModelDialogComponent } from './create-charger-model-dialog/create-charger-model-dialog.component';
@@ -22,7 +23,7 @@ import { CreateChargerModelDialogComponent } from './create-charger-model-dialog
     MatButtonModule,
     MatDialogModule,
     RouterModule,
-    HttpClientModule,
+    HttpClientModule
     // DO NOT import CreateChargerModelDialogComponent here
   ],
   templateUrl: './charger-model.component.html',
@@ -54,10 +55,6 @@ export class ChargerModelComponent implements OnInit, AfterViewInit {
     });
   }
 
-  onView(id: string) {
-    this.router.navigate(['/home/charger-model/view', id]);
-  }
-
   onEdit(id: string) {
     this.router.navigate(['/home/charger-model/edit', id]);
   }
@@ -79,4 +76,14 @@ export class ChargerModelComponent implements OnInit, AfterViewInit {
       }
     });
   }
+  onView(id: string) {
+  const selectedItem = this.dataSource.data.find(item => item.id === id);
+  if (selectedItem) {
+    this.dialog.open(ViewChargerModelDialogComponent, {
+      data: selectedItem,
+      width: '400px',
+    });
+  }
+}
+
 }
