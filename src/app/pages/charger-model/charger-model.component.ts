@@ -1,11 +1,15 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, AfterViewInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
+import { MatPaginatorModule, MatPaginator } from '@angular/material/paginator';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { Router, RouterModule } from '@angular/router';
+import { MatDialogModule, MatDialog } from '@angular/material/dialog';
+import { RouterModule, Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+
 import { ChargerModelService } from '../../services/charger-model.service';
+import { CreateChargerModelDialogComponent } from './create-charger-model-dialog/create-charger-model-dialog.component';
 
 @Component({
   selector: 'app-charger-model',
@@ -13,30 +17,40 @@ import { ChargerModelService } from '../../services/charger-model.service';
   imports: [
     CommonModule,
     MatTableModule,
+    MatPaginatorModule,
     MatIconModule,
     MatButtonModule,
+    MatDialogModule,
     RouterModule,
-    HttpClientModule
+    HttpClientModule,
+    // DO NOT import CreateChargerModelDialogComponent here
   ],
   templateUrl: './charger-model.component.html',
-  styleUrls: ['./charger-model.component.scss']
+  styleUrls: ['./charger-model.component.scss'],
 })
-export class ChargerModelComponent implements OnInit {
+export class ChargerModelComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['model', 'description', 'status', 'action'];
-  dataSource: any[] = [];
+  dataSource = new MatTableDataSource<any>([]);
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private chargerModelService: ChargerModelService,
-    private router: Router
+    private router: Router,
+    private dialog: MatDialog
   ) {}
 
-  ngOnInit(): void {
+  ngOnInit() {
     this.loadData();
   }
 
-  loadData(): void {
-    this.chargerModelService.getAll().subscribe((data: any[]) => {
-      this.dataSource = data;
+  ngAfterViewInit() {
+    this.dataSource.paginator = this.paginator;
+  }
+
+  loadData() {
+    this.chargerModelService.getAll().subscribe((data) => {
+      this.dataSource.data = data;
     });
   }
 
@@ -50,9 +64,19 @@ export class ChargerModelComponent implements OnInit {
 
   onDelete(id: string) {
     if (confirm('Are you sure you want to delete this model?')) {
-      this.chargerModelService.delete(id).subscribe(() => {
-        this.loadData(); // Reload list after delete
-      });
+      this.chargerModelService.delete(id).subscribe(() => this.loadData());
     }
+  }
+
+  onCreate() {
+    const dialogRef = this.dialog.open(CreateChargerModelDialogComponent);
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.chargerModelService.create(result).subscribe(() => {
+          this.loadData();
+        });
+      }
+    });
   }
 }

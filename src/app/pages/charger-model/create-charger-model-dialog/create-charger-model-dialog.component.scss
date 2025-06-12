@@ -1,0 +1,30 @@
+.form-container {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  width: 100%;
+  max-width: 400px;
+  padding: 24px;
+}
+
+.description-field {
+  textarea {
+    color: #119347;
+  }
+}
+
+.toggle-custom {
+  .mat-slide-toggle-bar {
+    background-color: #119347 !important;
+  }
+
+  .mat-slide-toggle-thumb {
+    background-color: #119347 !important;
+  }
+}
+
+.button-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+}

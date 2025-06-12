@@ -1,0 +1,15 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 16px;
+
+  button {
+    background-color: #119347; /* example blue color */
+    color: white;
+
+    &:hover {
+      background-color: #119347; /* darker blue on hover */
+    }
+  }
+}

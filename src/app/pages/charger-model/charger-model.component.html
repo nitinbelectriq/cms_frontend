@@ -1,5 +1,8 @@
 <div class="header">
   <h2>Charger Models</h2>
+  <button mat-raised-button color="primary" (click)="onCreate()">
+    <mat-icon>add</mat-icon> Create
+  </button>
 </div>
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
@@ -7,20 +10,20 @@
   <!-- Model Column -->
   <ng-container matColumnDef="model">
     <th mat-header-cell *matHeaderCellDef> Model Name </th>
-    <td mat-cell *matCellDef="let element"> {{element.model}} </td>
+    <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
   </ng-container>
 
   <!-- Description Column -->
   <ng-container matColumnDef="description">
     <th mat-header-cell *matHeaderCellDef> Description </th>
-    <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+    <td mat-cell *matCellDef="let element"> {{ element.description }} </td>
   </ng-container>
 
   <!-- Status Column -->
   <ng-container matColumnDef="status">
     <th mat-header-cell *matHeaderCellDef> Status </th>
     <td mat-cell *matCellDef="let element">
-      <span class="status active">{{element.status}}</span>
+      <span class="status active">{{ element.status }}</span>
     </td>
   </ng-container>
 
@@ -41,5 +44,7 @@
   </ng-container>
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 </table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
