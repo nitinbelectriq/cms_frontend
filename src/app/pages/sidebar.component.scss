@@ -11,7 +11,7 @@
 /* Fixed Sidebar */
 .sidenav {
   width: 260px;
-  background-color: #f0f4f2;
+  background-color: #ecf3e5;
   border-right: 1px solid #ccc;
   padding-top: 10px;
   position: fixed;
@@ -34,8 +34,8 @@ mat-sidenav-content {
 
 /* Toolbar */
 .top-toolbar {
-  background-color: #2e7d32;
-  color: white;
+  background-color: #ffffff;
+  color: rgb(0, 0, 0);
   font-weight: 500;
   font-size: 18px;
   padding: 0 20px;
@@ -50,7 +50,7 @@ mat-sidenav-content {
   flex-grow: 1;
   overflow-y: auto;
   padding: 24px;
-  background-color: #f9f9f9;
+  background-color: #ecf3e5;
   height: calc(100vh - 64px); /* Full height minus toolbar */
 }
 
@@ -62,7 +62,7 @@ mat-sidenav-content {
   padding: 12px 20px;
   font-size: 14px;
   font-weight: 500;
-  color: #2e7d32;
+  color: #44d62d;
 }
 
 /* Expand Icon */
@@ -88,4 +88,16 @@ mat-sidenav-content {
 
 .nested-link:hover {
   background-color: #dcedc8;
+}
+
+.logo-section {
+  display: flex;
+  justify-content: flex-end;
+
+  
+}
+.brand-logo {
+  height: 50px;
+  width: 110px;
+  margin: 0px auto;
 }

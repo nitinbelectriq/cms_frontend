@@ -9,21 +9,10 @@
     color: white;
 
     &:hover {
-      background-color: #0e7d3a; // slightly darker on hover
+      background-color: #209311; /* darker blue on hover */
     }
   }
 }
-
-/* Action Buttons */
-.btn-view {
-  color: #119347 !important;
-}
-
-.btn-edit {
-  color: #119347 !important;
-}
-
-.status.active {
-  color: #119347;
-  font-weight: 600;
+.create{
+  background-color: #44d62d !important;
 }
