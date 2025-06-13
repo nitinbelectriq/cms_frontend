@@ -31,9 +31,7 @@ import { CreateChargerModelDialogComponent } from './create-charger-model-dialog
 })
 export class ChargerModelComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['model', 'description', 'status', 'action'];
-  dataSource = new MatTableDataSource<any>([
-    {name:'abc', description:"xyz", status:'active'}
-  ]);
+  dataSource = new MatTableDataSource<any>([]);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
