@@ -1,22 +1,36 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { CreateRfidComponent } from './create-rfid/create-rfid.component';
+import { Router } from '@angular/router';
+import { MatDialog } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
+import { RouterModule } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+
+import { MatDialogRef} from '@angular/material/dialog';
+import { ViewRfidComponent } from './view-rfid/view-rfid.component';
+
 
 @Component({
   selector: 'app-rfid',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatIcon, MatButtonModule],
+  imports: [CommonModule, MatTableModule,MatIcon,MatButtonModule,
+      MatDialogModule, RouterModule,HttpClientModule, MatSlideToggleModule],
   templateUrl: './rfid.component.html',
   styleUrls: ['./rfid.component.scss']
 })
 export class RfidComponent {
   displayedColumns: string[] = ['rfidId', 'assignedTo', 'status', 'action'];
-  dataSource = [
+  dataSource = new MatTableDataSource<any>([
     { rfidId: 'RF001', assignedTo: 'Driver A', status: 'Active' },
     { rfidId: 'RF002', assignedTo: 'Driver B', status: 'Inactive' }
-  ];
+  ]);
+
+  constructor(private router: Router, private dialog: MatDialog){}
 
   ngOnInit() {
     this.loadData();
@@ -43,23 +57,23 @@ export class RfidComponent {
   }
 
   onCreate() {
-    // const dialogRef = this.dialog.open(CreateChargerModelDialogComponent);
+    const dialogRef = this.dialog.open(CreateRfidComponent);
 
-    // dialogRef.afterClosed().subscribe((result) => {
-    //   if (result) {
-    //     this.chargerModelService.create(result).subscribe(() => {
-    //       this.loadData();
-    //     });
-    //   }
-    // });
+    dialogRef.afterClosed().subscribe((result) => {
+      // if (result) {
+      //   this.chargerModelService.create(result).subscribe(() => {
+      //     this.loadData();
+      //   });
+      // }
+    });
   }
   onView(id: string) {
-  // const selectedItem = this.dataSource.data.find(item => item.id === id);
-  // if (selectedItem) {
-  //   this.dialog.open(, {
-  //     data: selectedItem,
-  //     width: '400px',
-  //   });
-  // }
+  const selectedItem = this.dataSource.data.find(item => item.id === id);
+  if (selectedItem) {
+    this.dialog.open(ViewRfidComponent, {
+      data: selectedItem,
+      width: '400px',
+    });
+  }
 }
 }

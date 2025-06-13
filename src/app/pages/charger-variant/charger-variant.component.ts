@@ -1,22 +1,38 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
+import { CreateChargerVariantComponent } from './create-charger-variant/create-charger-variant.component';
+
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogRef,MatDialog } from '@angular/material/dialog';
+import { RouterModule, Router } from '@angular/router';
+import { HttpClientModule } from '@angular/common/http';
+import { ViewChargerVariantComponent } from './view-charger-variant/view-charger-variant.component';
 
 @Component({
   selector: 'app-charger-variant',
   standalone: true,
-  imports: [CommonModule, MatTableModule, MatIcon, MatButtonModule],
+  imports: [CommonModule, MatTableModule, MatIcon,
+    MatDialogModule,RouterModule,HttpClientModule, MatButtonModule],
  templateUrl: './charger-variant.component.html',
   styleUrls: ['./charger-variant.component.scss']
 })
 export class ChargerVariantComponent {
   displayedColumns: string[] = ['variant', 'description', 'status','action'];
-  dataSource = [
+  dataSource = new MatTableDataSource<any>([
     { variant: '8 Channel', description: 'Bulk variant', status: 'Active' },
     { variant: '16 Channel', description: 'Advanced variant', status: 'Inactive' }
-  ];
+  ]);
+
+
+  constructor(
+    // private chargerModelService: ChargerModelService,
+    private router: Router,
+    private dialog: MatDialog
+  ) {}
+
 
 
 
@@ -45,23 +61,23 @@ export class ChargerVariantComponent {
     }
   
     onCreate() {
-      // const dialogRef = this.dialog.open(CreateChargerModelDialogComponent);
+      const dialogRef = this.dialog.open(CreateChargerVariantComponent);
   
-      // dialogRef.afterClosed().subscribe((result) => {
-      //   if (result) {
-      //     this.chargerModelService.create(result).subscribe(() => {
-      //       this.loadData();
-      //     });
-      //   }
-      // });
+      dialogRef.afterClosed().subscribe((result) => {
+        // if (result) {
+        //   this.chargerModelService.create(result).subscribe(() => {
+        //     this.loadData();
+        //   });
+        // }
+      });
     }
     onView(id: string) {
-    // const selectedItem = this.dataSource.data.find(item => item.id === id);
-    // if (selectedItem) {
-    //   this.dialog.open(, {
-    //     data: selectedItem,
-    //     width: '400px',
-    //   });
-    // }
+    const selectedItem = this.dataSource.data.find(item => item.id === id);
+    if (selectedItem) {
+      this.dialog.open(ViewChargerVariantComponent, {
+        data: selectedItem,
+        width: '400px',
+      });
+    }
   }
 }
