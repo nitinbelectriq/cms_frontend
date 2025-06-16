@@ -61,7 +61,12 @@ export class ChargerVariantComponent {
     }
   
     onCreate() {
-      const dialogRef = this.dialog.open(CreateChargerVariantComponent);
+      const dialogRef = this.dialog.open(CreateChargerVariantComponent,{
+        width: '80%', // adjust as needed
+  height: '100%',
+  position: { top: '0', right: '0' }, // ✅ aligns to right
+  //panelClass: 'custom-dialog-right'
+      });
   
       dialogRef.afterClosed().subscribe((result) => {
         // if (result) {
