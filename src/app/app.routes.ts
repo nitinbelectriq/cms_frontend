@@ -40,7 +40,11 @@ export const routes: Routes = [
         path: 'rfid',
         loadComponent: () =>
           import('./pages/rfid/rfid.component').then(m => m.RfidComponent)
-      }
+      },
+      {
+        path: 'manage-cpo',
+        loadComponent: () => import('./pages/manage-cpo/manage-cpo.component').then(m => m.ManageCpoComponent)
+      },
     ]
   },
   {

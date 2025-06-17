@@ -2,14 +2,22 @@
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
   <mat-form-field appearance="fill" class="custom-label">
-    <mat-label>Model Name</mat-label>
-    <input matInput formControlName="name" required />
+    <mat-label>RFID ID</mat-label>
+    <input matInput formControlName="rfidId" required />
   </mat-form-field>
 
-  <mat-form-field appearance="fill" class="custom-label description-field">
-    <mat-label class="label">Description</mat-label>
-    <textarea matInput formControlName="description" rows="4" required></textarea>
-  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="custom-label">
+    <mat-label class="label">Expiry date</mat-label>
+    <!-- <input inputmode="calendar" matInput formControlName="expirydate" required /> -->
+
+    <input matInput [matDatepicker]="picker" formControlName="expirydate" required>
+    <mat-hint>MM/DD/YYYY</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+  
 
   <mat-slide-toggle formControlName="status" class="toggle-green">
     <span>

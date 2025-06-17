@@ -1,1 +1,13 @@
-<p>view-manage-charger works!</p>
+<h2 mat-dialog-title>View Charger Model</h2>
+
+<div mat-dialog-content>
+  <p><strong>ChargerId:</strong> {{ data.chargerId }}</p>
+  <p><strong>Model:</strong> {{ data.model }}</p>
+  <p><strong>Location:</strong> {{ data.location }}</p>
+  <p><strong>Status:</strong> {{ data.status }}</p>
+</div>
+
+<div mat-dialog-actions align="end">
+  <button mat-stroked-button (click)="close()">Close</button>
+</div>
+

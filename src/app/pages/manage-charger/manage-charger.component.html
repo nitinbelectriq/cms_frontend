@@ -25,7 +25,7 @@
 
   <ng-container matColumnDef="status">
     <th mat-header-cell *matHeaderCellDef> Status </th>
-    <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+    <td mat-cell *matCellDef="let element" [ngClass]="{'status-green': element.status === 'Active', 'status-red': element.status === 'Inactive'}"> {{element.status}} </td>
   </ng-container>
 
   <ng-container matColumnDef="action">

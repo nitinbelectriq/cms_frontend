@@ -27,11 +27,11 @@ input::placeholder{
   --mdc-filled-text-field-error-label-text-color: #119347;
 }
 
-.description-field {
-  textarea {
-    color: #119347;
-  }
-}
+// .description-field {
+//   textarea {
+//     color: #119347;
+//   }
+// }
 
 .custom-label .mdc-floating-label mat-lable{
   color: #05911d !important;
@@ -86,3 +86,7 @@ html{
 .create{
   background-color: #119347;
 }
+
+
+
+
