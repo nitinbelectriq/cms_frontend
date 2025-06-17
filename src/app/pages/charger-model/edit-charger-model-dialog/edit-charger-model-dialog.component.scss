@@ -1,0 +1,17 @@
+.edit-form {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  width: 400px;
+  padding: 16px;
+
+  mat-form-field {
+    width: 100%;
+  }
+
+  .button-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+}
