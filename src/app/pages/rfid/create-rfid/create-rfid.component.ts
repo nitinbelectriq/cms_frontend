@@ -9,6 +9,11 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import {ChangeDetectionStrategy} from '@angular/core';
+import {MatDatepickerModule} from '@angular/material/datepicker';
+
+import {provideNativeDateAdapter} from '@angular/material/core';
+
 
 @Component({
   selector: 'app-create-rfid',
@@ -19,16 +24,21 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
         MatFormFieldModule,
         MatInputModule,
         MatButtonModule,
-        MatSlideToggleModule],
+        MatSlideToggleModule,
+        MatDatepickerModule,
+       
+      ],
   templateUrl: './create-rfid.component.html',
-  styleUrl: './create-rfid.component.scss'
+  styleUrl: './create-rfid.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+  providers: [provideNativeDateAdapter()],
 })
 export class CreateRfidComponent {
   dialogRef= inject(MatDialogRef<CreateRfidComponent>);
   fb = inject(FormBuilder);
   form : FormGroup = this.fb.group({
     rfidId: ['', Validators.required],
-    assignedTo: ['', Validators.required],
+    expirydate: [''],
     status: [true],
   });
 

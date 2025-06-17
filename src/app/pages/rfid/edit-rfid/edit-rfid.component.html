@@ -1,4 +1,5 @@
-<h2 mat-dialog-title>Create RFID</h2>
+<h2 mat-dialog-title>Edit RFID</h2>
+
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
   <mat-form-field appearance="fill" class="custom-label">
@@ -6,10 +7,18 @@
     <input matInput formControlName="rfidId" required />
   </mat-form-field>
 
-  <mat-form-field appearance="fill" class="custom-label description-field">
-    <mat-label class="label">AssignedTo</mat-label>
-    <textarea matInput formControlName="assignedTo" rows="4" required></textarea>
-  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="custom-label">
+    <mat-label class="label">Expiry date</mat-label>
+    <!-- <input inputmode="calendar" matInput formControlName="expirydate" required /> -->
+
+    <input matInput [matDatepicker]="picker" formControlName="expirydate" required>
+    <mat-hint>MM/DD/YYYY</mat-hint>
+    <mat-datepicker-toggle matIconSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+  
 
   <mat-slide-toggle formControlName="status" class="toggle-green">
     <span>
@@ -23,4 +32,5 @@
     <button mat-flat-button color="primary" type="submit" class="create" [disabled]="form.invalid">Create</button>
   </div>
 </form>
+
 

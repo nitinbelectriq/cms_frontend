@@ -13,6 +13,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 import { MatDialogRef} from '@angular/material/dialog';
 import { ViewRfidComponent } from './view-rfid/view-rfid.component';
+import { EditRfidComponent } from './edit-rfid/edit-rfid.component';
 
 
 @Component({
@@ -24,10 +25,10 @@ import { ViewRfidComponent } from './view-rfid/view-rfid.component';
   styleUrls: ['./rfid.component.scss']
 })
 export class RfidComponent {
-  displayedColumns: string[] = ['rfidId', 'assignedTo', 'status', 'action'];
+  displayedColumns: string[] = ['rfidId', 'expirydate', 'status', 'action'];
   dataSource = new MatTableDataSource<any>([
-    { rfidId: 'RF001', assignedTo: 'Driver A', status: 'Active' },
-    { rfidId: 'RF002', assignedTo: 'Driver B', status: 'Inactive' }
+    { rfidId: 'RF001', expirydate: '01/01/2026', status: 'Active' },
+    { rfidId: 'RF002', expirydate: '09/04/2025', status: 'Inactive' }
   ]);
 
   constructor(private router: Router, private dialog: MatDialog){}
@@ -48,6 +49,8 @@ export class RfidComponent {
 
   onEdit(id: string) {
     // this.router.navigate(['/home/charger-model/edit', id]);
+
+    const dialogRef = this.dialog.open(EditRfidComponent);
   }
 
   onDelete(id: string) {

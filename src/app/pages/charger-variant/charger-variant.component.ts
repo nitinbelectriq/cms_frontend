@@ -10,6 +10,7 @@ import { MatDialogRef,MatDialog } from '@angular/material/dialog';
 import { RouterModule, Router } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { ViewChargerVariantComponent } from './view-charger-variant/view-charger-variant.component';
+import { EditChargerVariantComponent } from './edit-charger-variant/edit-charger-variant.component';
 
 @Component({
   selector: 'app-charger-variant',
@@ -52,6 +53,7 @@ export class ChargerVariantComponent {
   
     onEdit(id: string) {
       // this.router.navigate(['/home/charger-model/edit', id]);
+      const  dialogRef = this.dialog.open(EditChargerVariantComponent);
     }
   
     onDelete(id: string) {

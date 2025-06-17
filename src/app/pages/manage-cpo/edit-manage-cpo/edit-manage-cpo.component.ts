@@ -33,6 +33,21 @@ export class EditManageCpoComponent {
     GSTIN: [this.data?.GSTIN || '', Validators.required],
     contactPerson: [this.data?.contactPerson || '', Validators.required],
     status: [this.data?.status || true],
+
+
+    
+    
+    tinnumber: ['', Validators.required],
+   
+    email: ['', Validators.required],
+    phone: ['', Validators.required],
+    addressline1: ['', Validators.required], 
+    addressline2: [''],
+    city: ['', Validators.required],
+    state: ['', Validators.required],
+    country: ['', Validators.required],
+    pincode: ['', Validators.required],
+    landmark: [''],
   });
 
   constructor(private fb: FormBuilder,

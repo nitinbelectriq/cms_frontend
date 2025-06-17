@@ -28,9 +28,28 @@ export class EditChargerVariantComponent {
     fb = inject(FormBuilder);
   
     form: FormGroup = this.fb.group({
-      variant: ['', Validators.required],
-      decription: ['', Validators.required],
-      status: [true]
+      chargermodel: ['', Validators.required],
+    manufacturer: ['', Validators.required],
+    name: ['', Validators.required],
+     code: ['', Validators.required],
+    chargermodeltype: ['', Validators.required],
+    description: ['', Validators.required],
+    variant: ['', Validators.required],
+   
+    maxampere: ['', Validators.required],
+    frequency: ['', Validators.required],
+    iotype: ['', Validators.required],
+    connector1: ['', Validators.required],
+    cardreadertype: ['', Validators.required],
+    mode: ['', Validators.required],
+    protocol: ['', Validators.required],
+    chargertype: ['', Validators.required],
+    numberOfConnectors: ['', Validators.required],
+    power: ['', Validators.required],
+    currenttype: ['', Validators.required],
+    voltage: ['', Validators.required],
+    phase: ['', Validators.required],
+    status: [true]
     });
   
   
