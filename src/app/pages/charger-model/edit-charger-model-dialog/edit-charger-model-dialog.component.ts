@@ -1,5 +1,5 @@
-import { Component, inject } from '@angular/core';
-import { MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { Component, inject, Inject } from '@angular/core';
+import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -8,10 +8,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
-import { ChargerModelService } from '../../../services/charger-model.service';
+import { ChargerModelService, ChargerModel } from '../../../services/charger-model.service';
 
 @Component({
-  selector: 'app-create-charger-model-dialog',
+  selector: 'app-edit-charger-model-dialog',
   standalone: true,
   imports: [
     CommonModule,
@@ -21,24 +21,35 @@ import { ChargerModelService } from '../../../services/charger-model.service';
     MatInputModule,
     MatButtonModule,
     MatSlideToggleModule,
-    MatSnackBarModule  // Added MatSnackBarModule here
+    MatSnackBarModule,  // Added MatSnackBarModule here
   ],
-  templateUrl: './create-charger-model-dialog.component.html',
-  styleUrls: ['./create-charger-model-dialog.component.scss']
+  templateUrl: './edit-charger-model-dialog.component.html',
+  styleUrls: ['./edit-charger-model-dialog.component.scss']
 })
-export class CreateChargerModelDialogComponent {
-  dialogRef = inject(MatDialogRef<CreateChargerModelDialogComponent>);
+export class EditChargerModelDialogComponent {
+  dialogRef = inject(MatDialogRef<EditChargerModelDialogComponent>);
   fb = inject(FormBuilder);
   chargerModelService = inject(ChargerModelService);
   snackBar = inject(MatSnackBar);  // Inject MatSnackBar
 
+  constructor(
+    @Inject(MAT_DIALOG_DATA) public data: ChargerModel
+  ) {}
+
   form: FormGroup = this.fb.group({
+    id: [null],
     name: ['', Validators.required],
-    description: [''],
-    status: [true]  // boolean toggle
+    description: ['', Validators.required],
+    status: [true]
   });
 
   isLoading = false;
+
+  ngOnInit() {
+    if (this.data) {
+      this.form.patchValue(this.data);
+    }
+  }
 
   onCancel(): void {
     this.dialogRef.close();
@@ -48,26 +59,27 @@ export class CreateChargerModelDialogComponent {
     if (this.form.invalid) {
       return;
     }
-
     this.isLoading = true;
 
-    // Convert boolean status to 'Y' or 'N' before sending
+    // Convert boolean to 'Y' or 'N'
     const formValue = this.form.value;
     const payload = {
       ...formValue,
       status: formValue.status ? 'Y' : 'N'
     };
 
-    this.chargerModelService.create(payload).subscribe({
+    this.chargerModelService.update(payload).subscribe({ 
       next: (res) => {
         this.isLoading = false;
-        this.snackBar.open('Charger Model successfully created', 'Close', { duration: 3000 });
+        // Show snackbar success message for 3 seconds
+        this.snackBar.open('Charger Model successfully updated', 'Close', { duration: 3000 });
         this.dialogRef.close(res);
       },
       error: (err) => {
         this.isLoading = false;
-        console.error('Create Charger Model failed', err);
-        this.snackBar.open('Failed to create charger. Please try again!', 'Close', { duration: 3000 });
+        console.error('Update Charger Model failed', err);
+        // Show snackbar error message for 3 seconds
+        this.snackBar.open('Failed to update charger. Please try again!', 'Close', { duration: 3000 });
       }
     });
   }

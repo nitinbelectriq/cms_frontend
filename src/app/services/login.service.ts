@@ -14,11 +14,14 @@ export class AuthService {
     return this.http.post(`${this.apiUrl}/login`, credentials).pipe(
       tap((response: any) => {
         const id = response?.id;
+        const token = response?.token;
         console.log(response);
         if (id) {
           this.userId = id;
           localStorage.setItem('user_id', id.toString()); // Store it for later use
-        }
+        }if (token) {
+        localStorage.setItem('auth_token', token); // Store Auth Token
+      }
       })
     );
   }
@@ -26,5 +29,8 @@ export class AuthService {
   getUserId(): number | null {
     return this.userId || Number(localStorage.getItem('user_id'));
   }
+  getAuthToken(): string | null {
+  return localStorage.getItem('auth_token'); // Retrieve Auth Token
+}
 }
 

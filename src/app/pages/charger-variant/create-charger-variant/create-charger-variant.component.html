@@ -1,155 +1,117 @@
 <h2 mat-dialog-title>Create Charger Variant</h2>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
+
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Charger Model</mat-label>
-    <input matInput formControlName="chargermodel" required />
+    <input matInput formControlName="chargermodel" placeholder="Enter charger model" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Manufacturer</mat-label>
-    <input matInput formControlName="manufacturer" required />
+    <input matInput formControlName="manufacturer" placeholder="Enter manufacturer" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Charger Model Type</mat-label>
-    <input matInput formControlName="chargermodeltype" required />
+    <input matInput formControlName="chargermodeltype" placeholder="Enter charger model type" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Code</mat-label>
-    <input matInput formControlName="code" required />
+    <input matInput formControlName="code" placeholder="Enter code" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Name</mat-label>
-    <input matInput formControlName="name" required />
+    <input matInput formControlName="name" placeholder="Enter name" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Description</mat-label>
-    <input matInput formControlName="description" required />
+    <input matInput formControlName="description" placeholder="Enter description" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Communication Protocol</mat-label>
-    <input matInput formControlName="protocol" required />
+    <input matInput formControlName="protocol" placeholder="Enter communication protocol" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Communication Mode</mat-label>
-    <input matInput formControlName="mode" required />
+    <input matInput formControlName="mode" placeholder="Enter communication mode" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Card Reader Type</mat-label>
-    <input matInput formControlName="cardreadertype" required />
+    <input matInput formControlName="cardreadertype" placeholder="Enter card reader type" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Number of Connectors</mat-label>
-    <input matInput formControlName="numberOfConnectors" required />
+    <input matInput formControlName="numberOfConnectors" placeholder="Enter number of connectors" required />
   </mat-form-field>
 
-
-
-  <div class="btn-togle">
-    <mat-label class="cuslabel">Battery Backup</mat-label>
-
-    <mat-slide-toggle  formControlName="batteryBackup" class="toggle-green">
-      <span>
-        Smart Charger
-      </span>
-    </mat-slide-toggle>
+  <div class="btn-toggle">
+    <mat-label class="cuslabel">Battery Backup 1</mat-label>
+    <mat-slide-toggle formControlName="batteryBackup1" class="toggle-green"></mat-slide-toggle>
+    <span>{{ form.get('batteryBackup1')?.value ? 'Yes' : 'No' }}</span>
   </div>
 
-  <div class="btn-togle">
-    <mat-label class="cuslabel">Battery Backup</mat-label>
-
-    <mat-slide-toggle  formControlName="batteryBackup" class="toggle-green">
-      <span>
-        Smart Charger
-      </span>
-    </mat-slide-toggle>
+  <div class="btn-toggle">
+    <mat-label class="cuslabel">RFID Card Reader</mat-label>
+    <mat-slide-toggle formControlName="RFIDCardReader" class="toggle-green"></mat-slide-toggle>
+    <span>{{ form.get('RFIDCardReader')?.value ? 'Yes' : 'No' }}</span>
   </div>
 
-  <div class="btn-togle">
-    <mat-label class="cuslabel">Battery Backup</mat-label>
-
-    <mat-slide-toggle  formControlName="batteryBackup" class="toggle-green">
-      <span>
-        Smart Charger
-      </span>
-    </mat-slide-toggle>
+  <div class="btn-toggle">
+    <mat-label class="cuslabel">Status</mat-label>
+    <mat-slide-toggle formControlName="status" class="toggle-green"></mat-slide-toggle>
+    <span>{{ form.get('status')?.value ? 'Active' : 'Inactive' }}</span>
   </div>
-
-  
-
-  <!-- <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Charger Type</mat-label>
-    
-  <mat-slide-toggle  class="toggle-green">
-    <span>
-      Smart Charger
-    </span>
-  </mat-slide-toggle>
-  </mat-form-field> -->
 
   <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Connector1</mat-label>
-    <input matInput formControlName="connector1" required />
+    <mat-label>Connector</mat-label>
+    <input matInput formControlName="connector1" placeholder="Enter connector" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>I/O Type</mat-label>
-    <input matInput formControlName="iotype" required />
+    <input matInput formControlName="iotype" placeholder="Enter I/O type" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Current Type</mat-label>
-    <input matInput formControlName="current type" required />
+    <input matInput formControlName="currentType" placeholder="Enter current type" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Voltage</mat-label>
-    <input matInput formControlName="voltage" required />
+    <input matInput formControlName="voltage" placeholder="Enter voltage" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Phase</mat-label>
-    <input matInput formControlName="phase" required />
+    <input matInput formControlName="phase" placeholder="Enter phase" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Max Ampere</mat-label>
-    <input matInput formControlName="maxampere" required />
+    <input matInput formControlName="maxampere" placeholder="Enter max ampere" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Power(KW)</mat-label>
-    <input matInput formControlName="power" required />
+    <mat-label>Power (KW)</mat-label>
+    <input matInput formControlName="power" placeholder="Enter power" required />
   </mat-form-field>
 
   <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Frequency(Hz)</mat-label>
-    <input matInput formControlName="frequency" required />
+    <mat-label>Frequency (Hz)</mat-label>
+    <input matInput formControlName="frequency" placeholder="Enter frequency" required />
   </mat-form-field>
-
-  
-  <div>
-
-    <mat-slide-toggle formControlName="status" class="toggle-green">
-    <span>
-      Active
-    </span>
-    
-  </mat-slide-toggle>
 
   <div class="button-row">
-    <button mat-stroked-button type="button" class="cancel"  (click)="onCancel()">Cancel</button>
-    <button mat-flat-button color="primary" type="submit" class="create" [disabled]="form.invalid">Create</button>
+    <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>
+    <button mat-flat-button color="primary" [disabled]="form.invalid" type="submit">Create</button>
   </div>
-  </div>
-  
 </form>
-
