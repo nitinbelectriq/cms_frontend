@@ -1,117 +1,159 @@
-<h2 mat-dialog-title>Create Charger Variant</h2>
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Create' }} Charger Variant</h2>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
 
-  <mat-form-field appearance="outline" class="custom-label">
+  <!-- Charger Model -->
+  <mat-form-field appearance="fill" class="full-width">
     <mat-label>Charger Model</mat-label>
-    <input matInput formControlName="chargermodel" placeholder="Enter charger model" required />
+    <mat-select formControlName="charger_type_id" required>
+      <mat-option *ngFor="let model of chargerModels" [value]="model.id">{{ model.name }}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="form.get('charger_type_id')?.hasError('required')">Required</mat-error>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="custom-label">
+  <!-- Manufacturer -->
+  <mat-form-field appearance="fill" class="full-width">
     <mat-label>Manufacturer</mat-label>
-    <input matInput formControlName="manufacturer" placeholder="Enter manufacturer" required />
+    <mat-select formControlName="manufacturer_id" required>
+      <mat-option *ngFor="let manu of manufacturers" [value]="manu.id">{{ manu.name }}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="form.get('manufacturer_id')?.hasError('required')">Required</mat-error>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Charger Model Type</mat-label>
-    <input matInput formControlName="chargermodeltype" placeholder="Enter charger model type" required />
+  <!-- Model Type -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Model Type</mat-label>
+    <mat-select formControlName="charger_model_type_id" required>
+      <mat-option *ngFor="let type of modelTypes" [value]="type.id">{{ type.name }}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="form.get('charger_model_type_id')?.hasError('required')">Required</mat-error>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Code</mat-label>
-    <input matInput formControlName="code" placeholder="Enter code" required />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Name</mat-label>
-    <input matInput formControlName="name" placeholder="Enter name" required />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Description</mat-label>
-    <input matInput formControlName="description" placeholder="Enter description" required />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
+  <!-- Communication Protocol -->
+  <mat-form-field appearance="fill" class="full-width">
     <mat-label>Communication Protocol</mat-label>
-    <input matInput formControlName="protocol" placeholder="Enter communication protocol" required />
+    <mat-select formControlName="communication_protocol_id" required>
+      <mat-option *ngFor="let protocol of protocols" [value]="protocol.id">{{ protocol.name }}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="form.get('communication_protocol_id')?.hasError('required')">Required</mat-error>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="custom-label">
+  <!-- Communication Mode -->
+  <mat-form-field appearance="fill" class="full-width">
     <mat-label>Communication Mode</mat-label>
-    <input matInput formControlName="mode" placeholder="Enter communication mode" required />
+    <mat-select formControlName="communication_mode" multiple required>
+      <mat-option *ngFor="let mode of communicationModes" [value]="mode">{{ mode }}</mat-option>
+    </mat-select>
+    <mat-error *ngIf="form.get('communication_mode')?.hasError('required')">Required</mat-error>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Card Reader Type</mat-label>
-    <input matInput formControlName="cardreadertype" placeholder="Enter card reader type" required />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Number of Connectors</mat-label>
-    <input matInput formControlName="numberOfConnectors" placeholder="Enter number of connectors" required />
-  </mat-form-field>
-
-  <div class="btn-toggle">
-    <mat-label class="cuslabel">Battery Backup 1</mat-label>
-    <mat-slide-toggle formControlName="batteryBackup1" class="toggle-green"></mat-slide-toggle>
-    <span>{{ form.get('batteryBackup1')?.value ? 'Yes' : 'No' }}</span>
+  <div class="toggle-group">
+    <mat-slide-toggle formControlName="battery_backup">Battery Backup</mat-slide-toggle>
+    <mat-slide-toggle formControlName="card_reader_type">Card Reader</mat-slide-toggle>
+    <mat-slide-toggle formControlName="status">Status</mat-slide-toggle>
   </div>
 
-  <div class="btn-toggle">
-    <mat-label class="cuslabel">RFID Card Reader</mat-label>
-    <mat-slide-toggle formControlName="RFIDCardReader" class="toggle-green"></mat-slide-toggle>
-    <span>{{ form.get('RFIDCardReader')?.value ? 'Yes' : 'No' }}</span>
+  <!-- Code -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Code</mat-label>
+    <input matInput formControlName="code" required />
+    <mat-error *ngIf="form.get('code')?.hasError('required')">Required</mat-error>
+  </mat-form-field>
+
+  <!-- Name -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Name</mat-label>
+    <input matInput formControlName="name" required />
+    <mat-error *ngIf="form.get('name')?.hasError('required')">Required</mat-error>
+  </mat-form-field>
+
+  <!-- Description -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Description</mat-label>
+    <textarea matInput formControlName="description"></textarea>
+  </mat-form-field>
+
+  <!-- Connectors -->
+  <div formArrayName="connector_data">
+    <h3>Connectors</h3>
+
+    <div *ngFor="let connector of connector_data.controls; let i = index" [formGroupName]="i" class="connector-group">
+
+      <!-- Connector Type -->
+      <mat-form-field appearance="fill" class="connector-field">
+        <mat-label>Connector Type</mat-label>
+        <mat-select formControlName="connector" required>
+          <mat-option *ngFor="let option of connectorOptions" [value]="option.id">{{ option.name }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="connector.get('connector')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+
+      <!-- IO Type -->
+      <mat-form-field appearance="fill" class="connector-field">
+        <mat-label>IO Type</mat-label>
+        <mat-select formControlName="iotype" required>
+          <mat-option *ngFor="let option of ioTypeOptions" [value]="option.id">{{ option.name }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="connector.get('iotype')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+
+      <!-- Current Type -->
+      <mat-form-field appearance="fill" class="connector-field">
+        <mat-label>Current Type</mat-label>
+        <mat-select formControlName="currentType" required>
+          <mat-option *ngFor="let option of currentTypeOptions" [value]="option.id">{{ option.name }}</mat-option>
+        </mat-select>
+        <mat-error *ngIf="connector.get('currentType')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+
+      <!-- Voltage -->
+      <mat-form-field appearance="fill" class="connector-field">
+        <mat-label>Voltage</mat-label>
+        <input matInput type="number" formControlName="voltage" required />
+        <mat-error *ngIf="connector.get('voltage')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+
+      <!-- Phase -->
+      <mat-form-field appearance="fill" class="connector-field">
+        <mat-label>Phase</mat-label>
+        <input matInput type="number" formControlName="phase" required />
+        <mat-error *ngIf="connector.get('phase')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+
+      <!-- Max Ampere -->
+      <mat-form-field appearance="fill" class="connector-field">
+        <mat-label>Max Ampere</mat-label>
+        <input matInput type="number" formControlName="maxampere" required />
+        <mat-error *ngIf="connector.get('maxampere')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+
+      <!-- Power -->
+      <mat-form-field appearance="fill" class="connector-field">
+        <mat-label>Power</mat-label>
+        <input matInput type="number" formControlName="power" required />
+        <mat-error *ngIf="connector.get('power')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+
+      <!-- Frequency -->
+      <mat-form-field appearance="fill" class="connector-field">
+        <mat-label>Frequency</mat-label>
+        <input matInput type="number" formControlName="frequency" required />
+        <mat-error *ngIf="connector.get('frequency')?.hasError('required')">Required</mat-error>
+      </mat-form-field>
+
+      <button mat-icon-button color="warn" type="button" (click)="removeConnector(i)" [disabled]="connector_data.length === 1">
+        <mat-icon>remove_circle</mat-icon>
+      </button>
+
+    </div>
+
+    <button mat-stroked-button type="button" (click)="addConnector()">Add Connector</button>
   </div>
 
-  <div class="btn-toggle">
-    <mat-label class="cuslabel">Status</mat-label>
-    <mat-slide-toggle formControlName="status" class="toggle-green"></mat-slide-toggle>
-    <span>{{ form.get('status')?.value ? 'Active' : 'Inactive' }}</span>
+  <!-- Submit buttons -->
+  <div class="form-actions">
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">Save</button>
+    <button mat-button type="button" (click)="onCancel()">Cancel</button>
   </div>
 
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Connector</mat-label>
-    <input matInput formControlName="connector1" placeholder="Enter connector" required />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>I/O Type</mat-label>
-    <input matInput formControlName="iotype" placeholder="Enter I/O type" required />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Current Type</mat-label>
-    <input matInput formControlName="currentType" placeholder="Enter current type" required />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Voltage</mat-label>
-    <input matInput formControlName="voltage" placeholder="Enter voltage" required />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Phase</mat-label>
-    <input matInput formControlName="phase" placeholder="Enter phase" required />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Max Ampere</mat-label>
-    <input matInput formControlName="maxampere" placeholder="Enter max ampere" required />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Power (KW)</mat-label>
-    <input matInput formControlName="power" placeholder="Enter power" required />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Frequency (Hz)</mat-label>
-    <input matInput formControlName="frequency" placeholder="Enter frequency" required />
-  </mat-form-field>
-
-  <div class="button-row">
-    <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>
-    <button mat-flat-button color="primary" [disabled]="form.invalid" type="submit">Create</button>
-  </div>
 </form>
