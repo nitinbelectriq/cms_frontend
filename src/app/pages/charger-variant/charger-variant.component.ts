@@ -5,10 +5,13 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { ViewChargerVariantComponent } from './view-charger-variant/view-charger-variant.component';
-import { ChargerVariantService, ChargerVariant } from'../../services/charger-variant.service';
+import { ChargerVariantService, ChargerVariant } from '../../services/charger-variant.service';
 import { CreateChargerVariantComponent } from './create-charger-variant/create-charger-variant.component';
+import { DeleteChargerVariantComponent } from '../charger-variant/delete-charger-variant/delete-charger-variant.component';
 
 @Component({
   selector: 'app-charger-variant',
@@ -19,7 +22,10 @@ import { CreateChargerVariantComponent } from './create-charger-variant/create-c
     MatIconModule,
     MatButtonModule,
     MatDialogModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    MatDividerModule,
+    MatSnackBarModule
+    // DO NOT add DeleteChargerVariantComponent here
   ],
   templateUrl: './charger-variant.component.html',
   styleUrls: ['./charger-variant.component.scss']
@@ -33,7 +39,8 @@ export class ChargerVariantComponent implements OnInit, AfterViewInit {
 
   constructor(
     private dialog: MatDialog,
-    private chargerVariantService: ChargerVariantService
+    private chargerVariantService: ChargerVariantService,
+    private snackBar: MatSnackBar
   ) { }
 
   ngOnInit() {
@@ -53,31 +60,64 @@ export class ChargerVariantComponent implements OnInit, AfterViewInit {
   }
 
   onEdit(id: string) {
-    console.log('Edit clicked', id);
+    const selectedItem = this.dataSource.data.find(item => item.id == +id);
+    if (selectedItem) {
+      const dialogRef = this.dialog.open(CreateChargerVariantComponent, {
+        data: selectedItem,
+        width: '650px',
+        disableClose: true,
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.loadData();
+        }
+      });
+    }
   }
 
   onDelete(id: string) {
-    if (confirm('Are you sure you want to delete this model?')) {
-      this.chargerVariantService.delete(Number(id)).subscribe(() => this.loadData(), error => console.error('Error during deletion', error)); 
-    }
+    const dialogRef = this.dialog.open(DeleteChargerVariantComponent, {
+      width: '400px',
+      data: { id: Number(id) }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        this.chargerVariantService.delete(Number(id)).subscribe({
+          next: (res: any) => {
+            this.loadData();
+            this.snackBar.open(res.message || 'Charger variant deleted successfully.', 'Close', {
+              duration: 3000,
+            });
+          },
+          error: (err) => {
+            console.error('Error deleting charger variant:', err);
+            const errorMessage = err?.error?.message || 'Failed to delete charger variant.';
+            this.snackBar.open(errorMessage, 'Close', {
+              duration: 3000,
+            });
+          }
+        });
+      }
+    });
   }
 
   onCreate(): void {
     const dialogRef = this.dialog.open(CreateChargerVariantComponent, {
       width: '650px',
-      disableClose: true // optional, prevents closing by clicking outside
+      disableClose: true
     });
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
-        console.log('Dialog closed with form data!', result);
         this.loadData();
       }
     });
   }
 
   onView(id: string) {
-    const selectedItem = this.dataSource.data.find((item: ChargerVariant) => item.id == +id);
+    const selectedItem = this.dataSource.data.find(item => item.id == +id);
     if (selectedItem) {
       this.dialog.open(ViewChargerVariantComponent, {
         data: selectedItem,

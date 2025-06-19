@@ -10,7 +10,7 @@
   overflow-y: auto;    // enable vertical scroll when overflow
   background: #fff;    // optional, good for clarity
   border: 1px solid #ccc; // optional border for clarity
-  border-radius: 6px;  // optional rounded corners
+  border-radius: 4px;  // optional rounded corners
 }
 
 .custom-label {
@@ -106,4 +106,22 @@ html {
 ::ng-deep .custom-label .mdc-floating-label {
   font-size: 14px !important;
   top: 18px !important;
+}
+.toggle-row {
+  display: flex;
+  gap: 2rem;
+  margin: 1rem 0;
+  flex-wrap: wrap;
+}
+
+.toggle-group {
+  display: flex;
+  gap: 1.5rem; /* space between toggles */
+  align-items: center;
+  margin-bottom: 1rem; /* spacing below toggles */
+
+  mat-slide-toggle {
+    /* optionally control width or flex behavior */
+    flex: none;
+  }
 }
