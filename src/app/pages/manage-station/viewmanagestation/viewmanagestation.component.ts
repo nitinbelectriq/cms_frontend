@@ -1,0 +1,39 @@
+import { Component, Inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { CommonModule } from '@angular/common';
+import { MatCardModule } from '@angular/material/card';
+import { MatButtonModule } from '@angular/material/button';
+
+@Component({
+  selector: 'app-view-cpo-rfid',
+  standalone: true,
+  imports: [
+    CommonModule,
+    MatDialogModule,
+    MatCardModule,
+    MatButtonModule
+  ],
+  template: `
+    <mat-card>
+      <mat-card-title>RFID Details</mat-card-title>
+      <mat-card-content>
+        <p><strong>Client Name:</strong> {{ data.clientName }}</p>
+        <p><strong>CPO Name:</strong> {{ data.cpoName }}</p>
+        <p><strong>RFID Number:</strong> {{ data.rfidNo }}</p>
+        <p><strong>Status:</strong> {{ data.status === 'Y' ? 'Active' : 'Inactive' }}</p>
+        <p><strong>Expiry Date:</strong> {{ data.expiry_date | date: 'mediumDate' }}</p>
+        <p><strong>Created Date:</strong> {{ data.created_date | date: 'medium' }}</p>
+        <p *ngIf="data.modify_date"><strong>Modified Date:</strong> {{ data.modify_date | date: 'medium' }}</p>
+      </mat-card-content>
+      <mat-card-actions align="end">
+        <button mat-button color="primary" (click)="dialogRef.close()">Close</button>
+      </mat-card-actions>
+    </mat-card>
+  `,
+})
+export class ViewCpoRfidComponent {
+  constructor(
+    public dialogRef: MatDialogRef<ViewCpoRfidComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
+}

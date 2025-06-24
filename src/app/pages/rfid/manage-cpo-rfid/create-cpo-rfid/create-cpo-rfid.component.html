@@ -1,0 +1,58 @@
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label id="client-label">Client Name</mat-label>
+    <mat-select
+      id="clientId"
+      formControlName="clientId"
+      aria-labelledby="client-label"
+      placeholder="Select Client"
+      [disabled]="loadingClients"
+    >
+      <mat-option *ngFor="let client of clients" [value]="client.client_id">
+        {{ client.client_name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <mat-form-field appearance="fill" style="width: 100%;">
+    <mat-label id="cpo-label">CPO Name</mat-label>
+    <mat-select
+      id="cpoId"
+      formControlName="cpoId"
+      aria-labelledby="cpo-label"
+      placeholder="Select CPO"
+      [disabled]="loadingCpos || !cpos.length"
+    >
+      <mat-option *ngFor="let cpo of cpos" [value]="cpo.id">
+        {{ cpo.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+<mat-form-field appearance="fill" style="width: 100%;">
+  <mat-label id="rfid-label">RFID List</mat-label>
+  <mat-select
+    id="rfidId"
+    formControlName="rfidId"
+    aria-labelledby="rfid-label"
+    multiple
+    placeholder="Select RFID"
+    [disabled]="loadingRfids || !rfids.length"
+  >
+    <mat-option *ngFor="let rfid of rfids" [value]="rfid.rfid_id">
+      {{ rfid.rfid_no }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
+
+
+
+
+  <mat-slide-toggle id="statusToggle" formControlName="status" aria-labelledby="statusToggleLabel">
+    <span id="statusToggleLabel">Active</span>
+  </mat-slide-toggle>
+
+  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
+    {{ isEditMode ? 'Update' : 'Create' }}
+  </button>
+</form>

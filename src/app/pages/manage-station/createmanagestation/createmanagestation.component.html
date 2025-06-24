@@ -1,0 +1,193 @@
+<h2 mat-dialog-title>Add Charging Station</h2>
+
+
+<form [formGroup]="form" (ngSubmit)="onSubmit" class="form-container">
+
+    <div class="form-row">
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>CPO</mat-label>
+        <input matInput formControlName="cpo">
+        <mat-icon matSuffix>account_circle</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Name</mat-label>
+        <input matInput formControlName="name">
+        <mat-icon matSuffix>account_circle</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Code</mat-label>
+        <input matInput formControlName="code">
+        <mat-icon matSuffix>scan</mat-icon>
+    </mat-form-field>
+
+    </div>
+
+
+    <div class="form-row">
+
+
+     <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Description</mat-label>
+        <input matInput formControlName="description">
+        <mat-icon matSuffix>description</mat-icon>
+    </mat-form-field>
+
+    <div class="form-row-between">
+    <mat-form-field appearance="outline" class="custom-l">
+        <mat-label>Latitude</mat-label>
+        <input matInput formControlName="latitude">
+        <mat-icon matSuffix>place</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-l">
+        <mat-label>Longitude</mat-label>
+        <input matInput formControlName="longitude">
+        <mat-icon matSuffix>place</mat-icon>
+    </mat-form-field>
+    </div>
+
+
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Location Type</mat-label>
+        <input matInput formControlName="locationtype">
+        <mat-icon matSuffix>pin_drop</mat-icon>
+    </mat-form-field>
+
+    </div>
+
+
+    <div class="form-row">
+
+         <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Contact Person Name</mat-label>
+        <input matInput formControlName="contactpersonname">
+        <mat-icon matSuffix>person</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Mobile</mat-label>
+        <input type="tel" matInput formControlName="mobile">
+        <mat-icon matSuffix>phone_android</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Email</mat-label>
+        <input type="email" matInput formControlName="email">
+        <mat-icon matSuffix>mail_outline</mat-icon>
+    </mat-form-field>
+    </div>
+
+
+
+    <div class="form-row">
+
+            <mat-form-field appearance="outline"  class="custom-label">
+        <mat-label >Address 1</mat-label>
+        <input type="text" matInput formControlName="address1">
+        <mat-icon matSuffix>home</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline"  class="custom-label">
+        <mat-label >Address 2</mat-label>
+        <input type="text" matInput formControlName="address2">
+        <mat-icon matSuffix>house</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Pin Code</mat-label>
+        <input matInput formControlName="pincode">
+        <mat-icon matSuffix>pin</mat-icon>
+    </mat-form-field>
+    </div>
+
+
+
+    <div class="form-row">
+            <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>City</mat-label>
+        <input type="text" matInput formControlName="city">
+        <mat-icon matSuffix>location_city</mat-icon>
+    </mat-form-field>
+
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>State</mat-label>
+        <input type="text" matInput formControlName="state">
+        <mat-icon matSuffix>business</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Country</mat-label>
+        <input type="text" matInput formControlName="country">
+        <mat-icon matSuffix>country</mat-icon>
+
+    </mat-form-field>
+    </div>
+
+
+    <div class="form-row">
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Landmark</mat-label>
+        <input matInput formControlName="landmark">
+        <mat-icon matSuffix>flag</mat-icon>
+    </mat-form-field>
+
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Commission Date</mat-label>
+        <input type="date" matInput formControlName="commissionDate">
+        <mat-icon matSuffix>event_note</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Register As</mat-label>
+        <input matInput formControlName="registerAs">
+        <mat-icon matSuffix>help</mat-icon>
+    </mat-form-field>
+    </div>
+
+
+    <div class="form-row">
+            <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Electricity Line</mat-label>
+        <input matInput formControlName="electricityline">
+        <mat-icon matSuffix>help</mat-icon>
+
+    </mat-form-field>
+
+
+    <div class="form-row-between">
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Open time</mat-label>
+        <input type="time" matInput formControlName="opentime">
+        <mat-icon matSuffix>access_time</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Close time</mat-label>
+        <input type="time" matInput formControlName="closetime">
+        <mat-icon matSuffix>access_time</mat-icon>
+    </mat-form-field>
+    </div>
+
+   
+
+    
+    <mat-slide-toggle formControlName="status" class="custom-label">
+        <span class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'">
+            {{form.get('status')?.value ? 'active' : 'inactive'}}
+        </span>
+    </mat-slide-toggle>
+    </div>
+
+
+    <div class="button-row custom-label">
+        <button mat-stroked-button type="button" class="cancel"  (click)="onCancel()">Cancel</button>
+        <button mat-flat-button color="primary" type="submit" class="create" [disabled]="form.invalid">Create</button>
+    </div>
+</form>

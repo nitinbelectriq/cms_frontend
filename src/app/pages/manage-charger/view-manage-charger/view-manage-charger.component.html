@@ -1,13 +1,13 @@
-<h2 mat-dialog-title>View Charger Model</h2>
+<h2 mat-dialog-title>View Charger Details</h2>
 
 <div mat-dialog-content>
-  <p><strong>ChargerId:</strong> {{ data.chargerId }}</p>
-  <p><strong>Model:</strong> {{ data.model }}</p>
-  <p><strong>Location:</strong> {{ data.location }}</p>
-  <p><strong>Status:</strong> {{ data.status }}</p>
+  <p><strong>Client Name:</strong> {{ data.client_name || 'Belectriq' }}</p>
+  <p><strong>Name:</strong> {{ data.name }}</p>
+  <p><strong>Serial No:</strong> {{ data.serial_no }}</p>
+  <p><strong>Model Name:</strong> {{ data.model_name }}</p>
+  <p><strong>Status:</strong> {{ data.status === 'Y' ? 'Active' : 'Inactive' }}</p>
 </div>
 
 <div mat-dialog-actions align="end">
   <button mat-stroked-button (click)="close()">Close</button>
 </div>
-
