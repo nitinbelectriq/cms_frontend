@@ -1,83 +1,154 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule , MatTableDataSource} from '@angular/material/table';
-import { MatIcon } from '@angular/material/icon';
+import { MatTableModule } from '@angular/material/table';
+import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatDialogRef,MatDialog } from '@angular/material/dialog';
-import { RouterModule, Router } from '@angular/router';
-import { HttpClientModule } from '@angular/common/http';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatTableDataSource } from '@angular/material/table';
+import { ConnectorService } from '../../services/charger-connector.service';
+import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { ConnectorViewDialogComponent } from './view-charger-connector/view-charger-connector.component';
 import { CreateChargerConnectorComponent } from './create-charger-connector/create-charger-connector.component';
-import { ViewChargerConnectorComponent } from './view-charger-connector/view-charger-connector.component';
+import { AuthService } from '../../services/login.service';
+interface ConnectorModel {
+  id: number;
+  vehicleModel: string;
+  connectorType: string;
+  vehicleType: string;
+  status: string;
+  modelImageUrl: string;
+}
 
 @Component({
-  selector: 'app-connectors',
+  selector: 'app-charger-connector',
   standalone: true,
-  imports: [CommonModule, MatTableModule,MatIcon,MatButtonModule,
-    MatDialogModule, RouterModule,HttpClientModule
+  imports: [
+    CommonModule,
+    MatTableModule,
+    MatIconModule,
+    MatButtonModule,
+    MatSnackBarModule,
+    MatPaginatorModule,
+    MatDialogModule
   ],
   templateUrl: './charger-connector.component.html',
   styleUrls: ['./charger-connector.component.scss']
 })
-export class ConnectorsComponent {
-  displayedColumns: string[] = ['connectorId', 'type', 'status', "action"];
-  dataSource = new MatTableDataSource<any>([
-    { connectorId: 'C001', type: 'Type2', status: 'Active' },
-    { connectorId: 'C002', type: 'CCS', status: 'Inactive' }
-  ]) 
+export class ChargerConnectorComponent implements OnInit {
 
-  //constructor
-  
-    // @ViewChild(MatPaginator) paginator!: MatPaginator;
-  
-    constructor(
-      // private chargerModelService: ChargerModelService,
-      private router: Router,
-      private dialog: MatDialog
-    ) {}
+  displayedColumns: string[] = ['vehicleModel', 'connectorType', 'vehicleType', 'status', 'action'];
+  dataSource = new MatTableDataSource<ConnectorModel>([]);
 
-  ngOnInit() {
-    this.loadData();
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
+
+  constructor(
+    private connectorService: ConnectorService,
+    private snackBar: MatSnackBar,
+    private dialog: MatDialog,
+     private authService: AuthService
+  ) {}
+
+  ngOnInit(): void {
+    this.loadConnectorData();
   }
 
-  ngAfterViewInit() {
-    // this.dataSource.paginator = this.paginator;
-  }
+  loadConnectorData(): void {
+    this.connectorService.getAllConnectors().subscribe({
+      next: (res) => {
+        if (Array.isArray(res)) {
+          const mappedData: ConnectorModel[] = res.map(item => ({
+            id: item.id,
+            vehicleModel: item.vm_name,
+            connectorType: item.ct_name,
+            vehicleType: item.vType_name,
+            status: this.mapStatus(item.status),
+            modelImageUrl: item.model_image_url
+          }));
 
-  loadData() {
-    // this.chargerModelService.getAll().subscribe((data) => {
-    //   this.dataSource.data = data;
-    // });
-  }
-
-  onEdit(id: string) {
-    // this.router.navigate(['/home/charger-model/edit', id]);
-  }
-
-  onDelete(id: string) {
-    // if (confirm('Are you sure you want to delete this model?')) {
-    //   this.chargerModelService.delete(id).subscribe(() => this.loadData());
-    // }
-  }
-
-  onCreate() {
-    const dialogRef = this.dialog.open(CreateChargerConnectorComponent);
-
-    dialogRef.afterClosed().subscribe((result) => {
-      // if (result) {
-      //   this.chargerModelService.create(result).subscribe(() => {
-      //     this.loadData();
-      //   });
-      // }
+          this.dataSource.data = mappedData;
+          this.dataSource.paginator = this.paginator;
+        } else {
+          this.snackBar.open('Unexpected response format.', 'Close', { duration: 3000 });
+        }
+      },
+      error: (err) => {
+        console.error(err);
+        this.snackBar.open('Error fetching connector data.', 'Close', { duration: 3000 });
+      }
     });
   }
-  onView(id: string) {
-  const selectedItem = this.dataSource.data.find(item => item.id === id);
-  if (selectedItem) {
-    this.dialog.open(ViewChargerConnectorComponent, {
-      data: selectedItem,
-      width: '400px',
+
+  private mapStatus(statusCode: string): string {
+    switch (statusCode) {
+      case 'Y': return 'Active';
+      case 'N': return 'Inactive';
+      default: return 'Unknown';
+    }
+  }
+
+  onCreate(): void {
+    const dialogRef = this.dialog.open(CreateChargerConnectorComponent, {
+      width: '600px'
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.snackBar.open('Connector created successfully.', 'Close', { duration: 2000 });
+        this.loadConnectorData(); // refresh table
+      }
     });
   }
+
+  onView(id: number): void {
+    const selected = this.dataSource.data.find(item => item.id === id);
+    if (selected) {
+      this.dialog.open(ConnectorViewDialogComponent, {
+        width: '400px',
+        data: selected
+      });
+    }
+  }
+
+  onEdit(id: number): void {
+    const selected = this.dataSource.data.find(item => item.id === id);
+    if (selected) {
+      const dialogRef = this.dialog.open(CreateChargerConnectorComponent, {
+        width: '600px',
+        data: selected
+      });
+
+      dialogRef.afterClosed().subscribe(result => {
+        if (result) {
+          this.snackBar.open('Connector updated successfully.', 'Close', { duration: 2000 });
+          this.loadConnectorData(); // refresh table
+        }
+      });
+    }
+  }
+
+onDelete(id: number): void {
+  if (!confirm('Are you sure you want to delete this connector mapping?')) return;
+
+  const userId = this.authService.getUserId();
+
+  if (userId === null || userId === undefined) {
+    this.snackBar.open('User not logged in.', 'Close', { duration: 3000 });
+    return;
+  }
+
+  this.connectorService.deleteMapping(id, userId).subscribe({
+    next: () => {
+      this.snackBar.open('Connector mapping deleted successfully.', 'Close', { duration: 3000 });
+      this.loadConnectorData();
+    },
+    error: (err) => {
+      console.error('Delete error:', err);
+      this.snackBar.open('Failed to delete connector mapping.', 'Close', { duration: 3000 });
+    }
+  });
 }
+
+
+
 }

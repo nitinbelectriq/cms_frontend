@@ -1,0 +1,108 @@
+
+
+<div class="header">
+    <h2>Manage Stations</h2>
+    <button mat-raised-button color="primary" class="create" (click)="onCreate()">
+      <mat-icon>add</mat-icon> Create
+    </button>
+</div>
+
+
+  <form class="filter-container" [formGroup]="filterform">
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label class="label-cpo">Select client</mat-label>
+        <input class="input-cpo" matInput formControlName="client" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="custom-label">
+        <mat-label class="label-cpo">Select CPOs</mat-label>
+        <input class="input-cpo" matInput formControlName="cpo" required />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" class="custom-label">
+        <mat-label class="label-cpo">Select Charging Stations</mat-label>
+        <input class="input-cpo" matInput formControlName="chargingstations" required />
+      </mat-form-field>
+    </form>
+
+  
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+    <pre>{{ dataSource.data | json }}</pre>
+
+  
+    <!-- station name Column -->
+    <ng-container matColumnDef="stationName">
+      <th mat-header-cell *matHeaderCellDef> Station Name </th>
+      <td mat-cell *matCellDef="let element"> {{ element.stationName }} </td>
+    </ng-container>
+
+    <!-- contact person -->
+    <ng-container matColumnDef="contactperson">
+        <th mat-header-cell *matHeaderCellDef> Contact Person</th>
+        <td mat-cell *matCellDef="let element"> {{element.contactperson}}</td>
+    </ng-container>
+
+
+    <!-- cpo name -->
+
+    <ng-container matColumnDef="cpo">
+        <th mat-header-cell *matHeaderCellDef> CPO Name</th>
+        <td mat-cell *matCellDef="let element"> {{element.cpo}}</td>
+    </ng-container>
+
+    <!-- station code -->
+
+    <ng-container matColumnDef="stationcode">
+        <th mat-header-cell *matHeaderCellDef> Station Code</th>
+        <td mat-cell *matCellDef="let element"> {{element.stationcode}}</td>
+    </ng-container>
+
+    <!-- charger count -->
+
+    <ng-container matColumnDef="chargercount">
+        <th mat-header-cell *matHeaderCellDef> Charger Count</th>
+        <td mat-cell *matCellDef="let element"> {{element.chargercount}}</td>
+    </ng-container>
+
+    <!-- address column -->
+
+    <ng-container matColumnDef="address">
+        <th mat-header-cell *matHeaderCellDef> Address</th>
+        <td mat-cell *matCellDef="let element"> {{element.address}}</td>
+    </ng-container>
+    
+  
+    <!-- Status Column -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef> Status </th>
+      <td mat-cell *matCellDef="let element">
+        <span class="status active" [ngClass]="{'status-green': element.status === 'Active', 'status-red': element.status === 'Inactive'}">{{ element.status }}</span>
+      </td>
+    </ng-container>
+  
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef> Action </th>
+      <td class="action-btn" mat-cell *matCellDef="let element">
+        <div>
+         <button mat-icon-button class="btn-view" (click)="onView(element.id)">
+          <mat-icon>visibility</mat-icon>
+        </button>
+        <button mat-icon-button class="btn-edit" (click)="onEdit(element)">
+          <mat-icon>edit</mat-icon>
+        </button>
+        <button mat-icon-button class="btn-delete" color="warn" (click)="onDelete(element.id)">
+          <mat-icon>delete</mat-icon>
+        </button>
+        </div>
+
+      </td>
+    </ng-container>
+  
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+  
+  <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+  
+

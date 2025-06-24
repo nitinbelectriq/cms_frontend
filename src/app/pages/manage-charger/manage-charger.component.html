@@ -1,4 +1,3 @@
-
 <div class="header">
   <h2>Manage Chargers</h2>
   <button mat-raised-button color="primary" class="create" (click)="onCreate()">
@@ -8,33 +7,43 @@
 
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
-  <ng-container matColumnDef="chargerId">
-    <th mat-header-cell *matHeaderCellDef> Charger ID </th>
-    <td mat-cell *matCellDef="let element"> {{element.chargerId}} </td>
+  <ng-container matColumnDef="clientName">
+    <th mat-header-cell *matHeaderCellDef> Client Name </th>
+    <td mat-cell *matCellDef="let element"> {{element.client_name}} </td>
   </ng-container>
 
-  <ng-container matColumnDef="model">
-    <th mat-header-cell *matHeaderCellDef> Model </th>
-    <td mat-cell *matCellDef="let element"> {{element.model}} </td>
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> Name </th>
+    <td mat-cell *matCellDef="let element"> {{element.name}} </td>
   </ng-container>
 
-  <ng-container matColumnDef="location">
-    <th mat-header-cell *matHeaderCellDef> Location </th>
-    <td mat-cell *matCellDef="let element"> {{element.location}} </td>
+  <ng-container matColumnDef="serialNo">
+    <th mat-header-cell *matHeaderCellDef> Serial No </th>
+    <td mat-cell *matCellDef="let element"> {{element.serial_no}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="modelName">
+    <th mat-header-cell *matHeaderCellDef> Model Name </th>
+    <td mat-cell *matCellDef="let element"> {{element.model_name}} </td>
   </ng-container>
 
   <ng-container matColumnDef="status">
     <th mat-header-cell *matHeaderCellDef> Status </th>
-    <td mat-cell *matCellDef="let element" [ngClass]="{'status-green': element.status === 'Active', 'status-red': element.status === 'Inactive'}"> {{element.status}} </td>
+    <td mat-cell *matCellDef="let element" [ngClass]="{
+      'status-green': element.status === 'Active',
+      'status-red': element.status === 'Inactive'
+    }">
+      {{element.status}}
+    </td>
   </ng-container>
 
   <ng-container matColumnDef="action">
     <th mat-header-cell *matHeaderCellDef> Action </th>
     <td mat-cell *matCellDef="let element">
-      <button mat-icon-button class="btn-view" (click)="onView(element.id)">
+      <button mat-icon-button (click)="onView(element.id)">
         <mat-icon>visibility</mat-icon>
       </button>
-      <button mat-icon-button class="btn-edit" (click)="onEdit(element.id)">
+      <button mat-icon-button (click)="onEdit(element.id)">
         <mat-icon>edit</mat-icon>
       </button>
       <button mat-icon-button color="warn" (click)="onDelete(element.id)">
@@ -42,7 +51,6 @@
       </button>
     </td>
   </ng-container>
-
 
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>

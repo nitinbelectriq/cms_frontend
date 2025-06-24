@@ -101,3 +101,19 @@ mat-sidenav-content {
   width: 110px;
   margin: 0px auto;
 }
+.nested-links {
+  padding-left: 20px;
+}
+
+.nested-parent-item {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  padding-left: 16px;
+  font-size: 14px;
+  color: #555;
+}
+
+.expand-icon {
+  margin-left: auto;
+}

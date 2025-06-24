@@ -1,0 +1,48 @@
+<div style="text-align: right; margin-bottom: 10px;">
+  <button mat-raised-button color="primary" (click)="onCreate()">Create RFID</button>
+</div>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;">
+
+  <ng-container matColumnDef="clientName">
+    <th mat-header-cell *matHeaderCellDef> Client Name </th>
+    <td mat-cell *matCellDef="let element"> {{element.clientName}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="cpoName">
+    <th mat-header-cell *matHeaderCellDef> CPO Name </th>
+    <td mat-cell *matCellDef="let element"> {{element.cpoName}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="rfidNo">
+    <th mat-header-cell *matHeaderCellDef> RFID No </th>
+    <td mat-cell *matCellDef="let element"> {{element.rfidNo}} </td>
+  </ng-container>
+
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef> Status </th>
+    <td mat-cell *matCellDef="let element">
+      {{ element.status === 'Y' ? 'Active' : 'Inactive' }}
+    </td>
+  </ng-container>
+
+  <ng-container matColumnDef="action">
+    <th mat-header-cell *matHeaderCellDef> Action </th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-icon-button color="primary" (click)="onView(element.id)">
+        <mat-icon>visibility</mat-icon>
+      </button>
+      <button mat-icon-button color="accent" (click)="onEdit(element.id)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" (click)="onDelete(element.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>

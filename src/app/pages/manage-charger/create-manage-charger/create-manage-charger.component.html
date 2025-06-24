@@ -1,31 +1,59 @@
-<h2 mat-dialog-title>Create Manage Charger </h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()">
 
-<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
-  <mat-form-field appearance="fill" class="custom-label">
-    <mat-label>Charger ID</mat-label>
-    <input matInput formControlName="chargerId" required />
+  <!-- Model Variant Dropdown -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Model Variant</mat-label>
+    <mat-select formControlName="model_id" required>
+      <mat-option *ngFor="let model of modelVariants" [value]="model.id">
+        {{ model.name || model.charger_type_name }}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="form.get('model_id')?.hasError('required')">
+      Model Variant is required
+    </mat-error>
   </mat-form-field>
 
-  <mat-form-field appearance="fill" class="custom-label description-field">
-    <mat-label class="label">Model</mat-label>
-    <input matInput formControlName="model" rows="4" required>
+  <!-- Serial No -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Serial No</mat-label>
+    <input matInput formControlName="serial_no" required />
+    <mat-error *ngIf="form.get('serial_no')?.hasError('required')">
+      Serial No is required
+    </mat-error>
   </mat-form-field>
 
-  <mat-form-field appearance="fill" class="custom-label description-field">
-    <mat-label class="label">Location</mat-label>
-    <input matInput formControlName="location"  required>
+  <!-- Charger Display ID -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Charger Display ID</mat-label>
+    <input matInput formControlName="charger_display_id" required />
+    <mat-error *ngIf="form.get('charger_display_id')?.hasError('required')">
+      Charger Display ID is required
+    </mat-error>
   </mat-form-field>
 
-  <mat-slide-toggle formControlName="status" class="toggle-green">
-    <span>
-      Active
-    </span>
-    
-  </mat-slide-toggle>
+  <!-- Current Version Dropdown -->
+  <mat-form-field appearance="fill" class="full-width">
+    <mat-label>Current Version</mat-label>
+    <mat-select formControlName="current_version_id" required>
+      <mat-option *ngFor="let version of versionList" [value]="version.id">
+        {{ version.name }}
+      </mat-option>
+    </mat-select>
+    <mat-error *ngIf="form.get('current_version_id')?.hasError('required')">
+      Current Version is required
+    </mat-error>
+  </mat-form-field>
 
-  <div class="button-row">
-    <button mat-stroked-button type="button" class="cancel"  (click)="onCancel()">Cancel</button>
-    <button mat-flat-button color="primary" type="submit" class="create" [disabled]="form.invalid">Create</button>
+  <!-- Is Available Slide Toggle -->
+  <mat-slide-toggle formControlName="is_available">Is Available</mat-slide-toggle>
+
+  <!-- Status Slide Toggle -->
+  <mat-slide-toggle formControlName="status">Status</mat-slide-toggle>
+
+  <!-- Buttons -->
+  <div class="button-row" style="margin-top: 20px;">
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Save</button>
+    <button mat-raised-button color="warn" type="button" (click)="onCancel()">Cancel</button>
   </div>
-</form>
 
+</form>
