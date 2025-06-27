@@ -1,33 +1,32 @@
 import { CommonModule } from '@angular/common';
-import { Component, ViewChild } from '@angular/core';
+import { Component, ViewChild, OnInit, AfterViewInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
-import { inject } from '@angular/core';
-
-
-
-import { MatDialog } from '@angular/material/dialog';
-
-import { MatIcon } from '@angular/material/icon';
-
-import { Router, RouterModule } from '@angular/router';
-
-
+import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
-import { CreatemanagestationComponent } from './createmanagestation/createmanagestation.component';
+import { AuthService } from '../../services/login.service';
+// Import your StationService (adjust the path as needed)
+import { StationService } from '../../services/manage-station.service';
 
+// Stub dialog components — replace with your actual components
+@Component({ template: '', standalone: true }) export class CreatemanagestationComponent {}
+@Component({ template: '', standalone: true }) export class EditmanagestationComponent {}
+@Component({ template: '', standalone: true }) export class ViewmanagestationComponent {}
 
 @Component({
   selector: 'app-managestation',
   standalone: true,
-  imports: [CommonModule,
+  templateUrl: './managestation.component.html',
+  styleUrls: ['./managestation.component.scss'],
+  imports: [
+    CommonModule,
     MatTableModule,
     MatButtonModule,
     MatInputModule,
@@ -38,59 +37,38 @@ import { CreatemanagestationComponent } from './createmanagestation/createmanage
     MatPaginatorModule,
     ReactiveFormsModule,
     RouterModule,
-    MatIcon
-
-  ],
-  templateUrl: './managestation.component.html',
-  styleUrl: './managestation.component.scss'
+    HttpClientModule
+  ]
 })
-export class ManagestationComponent {
+export class ManagestationComponent implements OnInit, AfterViewInit {
   fb = inject(FormBuilder);
 
-  filterform : FormGroup = this.fb.group({
+  filterform: FormGroup = this.fb.group({
     client: [''],
     cpo: [''],
     chargingstations: ['']
-  })
-  displayedColumns: string[]= ['stationName','contactperson','cpo','stationcode','chargercount','address','status','action']
-  dataSource = new MatTableDataSource<any>([
-    {
-      stationName: 'Station A',
-      contactperson: 'John Doe',
-      cpo: 'CPO A',
-      stationcode: 'ST123',
-      chargercount: 5,
-      address: '123 Main St, City, State, ZIP',
-      status: "Active"
-    },
-    {
-      stationName: 'Station B',
-      contactperson: 'Jane Smith',
-      cpo: 'CPO B',
-      stationcode: 'ST456',
-      chargercount: 3,
-      address: '456 Elm St, City, State, ZIP',
-      status: 'Inactive'
-    },
-    {
-      stationName: 'Station C',
-      contactperson: 'Alice Johnson',
-      cpo: 'CPO C',
-      stationcode: 'ST789',
-      chargercount: 4,
-      address: '789 Oak St, City, State, ZIP',
-      status: 'Active'
-    }
+  });
 
+  displayedColumns: string[] = [
+    'stationName',
+    'contactperson',
+    'cpo',
+    'stationcode',
+    'chargercount',
+    'address',
+    'status',
+    'action'
+  ];
 
-  ]);
+  dataSource = new MatTableDataSource<any>([]);
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
 
   constructor(
     private dialog: MatDialog,
-
-  ){ }
-
-  @ViewChild(MatPaginator) paginator!: MatPaginator;
+    private stationService: StationService,
+    private AuthService:AuthService
+  ) {}
 
   ngOnInit() {
     this.loadData();
@@ -101,29 +79,44 @@ export class ManagestationComponent {
   }
 
   loadData() {
-    // this.chargerService.getAll().subscribe((data) => {
-    //   this.dataSource.data = data;
-    // });
-  }
+    const user_id = this.AuthService.getUserId() || 0;
+    if (!user_id) {
+      console.error('User ID not found');
+      return;
+    }
 
-  onEdit(element:any){
-    // edit
-  }
-
-  onView(id:string){
-    // view
-  }
-
-  onCreate(){
-    // create
-    const dialogRef = this.dialog.open(CreatemanagestationComponent,{
-    height: '100vh'
+    this.stationService.getAllStations(user_id).subscribe({
+      next: (data) => {
+        console.log('API data:', data);
+        this.dataSource.data = data.data || data;
+      },
+      error: (error) => {
+        console.error('Failed to load charging stations', error);
+      }
     });
   }
 
-
-  onDelete(id : string){
-    // delete
+  onCreate() {
+    this.dialog.open(CreatemanagestationComponent, {
+      height: '100vh'
+    });
   }
 
+  onEdit(element: any) {
+    this.dialog.open(EditmanagestationComponent, {
+      height: '100vh',
+      data: element
+    });
+  }
+
+  onView(element: any) {
+    this.dialog.open(ViewmanagestationComponent, {
+      width: '400px',
+      data: element
+    });
+  }
+
+  onDelete(id: string) {
+    console.log('Delete station with id:', id);
+  }
 }

@@ -1,0 +1,12 @@
+<h2 mat-dialog-title>Client Details</h2>
+
+<mat-dialog-content>
+  <p><strong>Client Name:</strong> {{ data?.name }}</p>
+  <p><strong>Contact Person:</strong> {{ data?.cp_name }}</p>
+  <p><strong>GSTIN:</strong> {{ data?.gst_no }}</p>
+  <p><strong>Status:</strong> {{ data?.status === 'Y' ? 'Active' : 'Inactive' }}</p>
+</mat-dialog-content>
+
+<mat-dialog-actions align="end">
+  <button mat-button mat-dialog-close>Close</button>
+</mat-dialog-actions>

@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>Edit Charging Station</h2>
 
-<form [formGroup]="form" (ngSubmit)="onSubmit" class="form-container">
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
 
     <div class="form-row">
 
@@ -175,8 +175,8 @@
 
     
     <mat-slide-toggle formControlName="status" class="custom-label">
-        <span class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'">
-            {{form.get('status')?.value ? 'active' : 'inactive'}}
+        <span class="status" [ngClass]="form.get('status')?.value  ? 'active' : 'inactive'">
+            {{form.get('status')?.value  ? 'Active' : 'Inactive'}}
         </span>
     </mat-slide-toggle>
     </div>
