@@ -1,92 +1,120 @@
-<h2 mat-dialog-title>Create CPO</h2>
+<h2 mat-dialog-title>{{ form.get('clientName')?.value ? 'Edit CPO' : 'Create CPO' }}</h2>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
-  <mat-form-field appearance="outline" width="full-width" class="custom-label">
+
+  <!-- Client -->
+  <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Client</mat-label>
-    <input matInput formControlName="clientName" required />
+    <mat-select formControlName="clientName" required>
+      <mat-option *ngFor="let client of clients" [value]="client.id">
+        {{ client.name }}
+      </mat-option>
+    </mat-select>
   </mat-form-field>
 
+  <!-- Name -->
   <mat-form-field appearance="outline" class="custom-label">
-    <mat-label> Name</mat-label>
+    <mat-label>Name</mat-label>
     <input matInput formControlName="cpoName" required />
   </mat-form-field>
 
+  <!-- Contact Person -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Contact Person Name</mat-label>
     <input matInput formControlName="contactPerson" required />
   </mat-form-field>
 
+  <!-- Phone -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Mobile</mat-label>
     <input matInput formControlName="phone" required />
   </mat-form-field>
 
-  
-
+  <!-- GST -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>GST Number</mat-label>
     <input matInput formControlName="GSTIN" required />
   </mat-form-field>
 
+  <!-- TIN -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>TIN Number</mat-label>
     <input matInput formControlName="tinnumber" required />
   </mat-form-field>
 
+  <!-- Email -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Email</mat-label>
     <input matInput formControlName="email" required />
   </mat-form-field>
 
+  <!-- Address Line 1 -->
   <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Adress Line 1</mat-label>
+    <mat-label>Address Line 1</mat-label>
     <input matInput formControlName="addressline1" required />
   </mat-form-field>
 
+  <!-- Address Line 2 -->
   <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Adress Line 2</mat-label>
+    <mat-label>Address Line 2</mat-label>
     <input matInput formControlName="addressline2" required />
   </mat-form-field>
 
+  <!-- Pincode -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Pincode</mat-label>
     <input matInput formControlName="pincode" required />
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>City</mat-label>
-    <input matInput formControlName="city" required />
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>State</mat-label>
-    <input matInput formControlName="state" required />
-  </mat-form-field>
-
+  <!-- Country -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Country</mat-label>
-    <input matInput formControlName="country" required />
+    <mat-select formControlName="country" required>
+      <mat-option *ngFor="let country of countries" [value]="country.id">
+        {{ country.name }}
+      </mat-option>
+    </mat-select>
   </mat-form-field>
-  
+
+  <!-- State -->
   <mat-form-field appearance="outline" class="custom-label">
-    <mat-label class="label-cpo">Landmark</mat-label>
-    <input class="input-cpo" matInput formControlName="landmark" required />
+    <mat-label>State</mat-label>
+    <mat-select formControlName="state" required>
+      <mat-option *ngFor="let state of states" [value]="state.id">
+        {{ state.name }}
+      </mat-option>
+    </mat-select>
   </mat-form-field>
 
-  <mat-slide-toggle formControlName="status" class="toggle-green custom-label">
-    <!-- <span class="status" [ngClass]="element.status === 'Active' ? 'active' : 'inactive'">
-      Active
-    </span> -->
+  <!-- City -->
+  <mat-form-field appearance="outline" class="custom-label">
+    <mat-label>City</mat-label>
+    <mat-select formControlName="city" required>
+      <mat-option *ngFor="let city of cities" [value]="city.id">
+        {{ city.name }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
 
+  <!-- Landmark -->
+  <mat-form-field appearance="outline" class="custom-label">
+    <mat-label>Landmark</mat-label>
+    <input matInput formControlName="landmark" required />
+  </mat-form-field>
+
+  <!-- Status -->
+  <mat-slide-toggle formControlName="status" class="toggle-green custom-label">
     <span class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'">
-        {{ form.get('status')?.value ? 'Active' : 'Inactive' }}
-      </span>
-    
+      {{ form.get('status')?.value ? 'Active' : 'Inactive' }}
+    </span>
   </mat-slide-toggle>
 
+  <!-- Buttons -->
   <div class="button-row custom-label">
-    <button mat-stroked-button type="button" class="cancel"  (click)="onCancel()">Cancel</button>
-    <button mat-flat-button color="primary" type="submit" class="create" [disabled]="form.invalid">Create</button>
+    <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>
+    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
+      {{ form.get('clientName')?.value ? 'Update' : 'Create' }}
+    </button>
   </div>
-</form>
 
+</form>

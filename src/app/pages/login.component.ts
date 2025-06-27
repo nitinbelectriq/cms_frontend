@@ -2,7 +2,7 @@ import { Component } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { AuthService } from '../services/login.service';
 import { CommonModule } from '@angular/common';
-import { Router } from '@angular/router'; // <-- import Router
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'app-login',
@@ -16,7 +16,7 @@ export class LoginComponent {
   password = '';
   project_code = 'CMS';
 
-  constructor(private authService: AuthService, private router: Router) {} // <-- inject Router
+  constructor(private authService: AuthService, private router: Router) {}
 
   onSubmit() {
     const credentials = {
@@ -28,11 +28,20 @@ export class LoginComponent {
     this.authService.login(credentials).subscribe({
       next: (response) => {
         console.log('Login successful:', response);
-        this.router.navigate(['/home']); // <-- navigate on success
+
+        // ✅ Store the token in localStorage for session persistence
+        if (response && response.token) {
+          localStorage.setItem('token', response.token);
+        } else {
+          console.warn('No token received in response.');
+        }
+
+        // ✅ Navigate to home
+        this.router.navigate(['/home']);
       },
       error: (error) => {
         console.error('Login failed:', error);
-        alert('Invalid user_name or password.');
+        alert('Invalid username or password.');
       }
     });
   }

@@ -1,0 +1,41 @@
+<h2 mat-dialog-title> Edit Client</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit" class="form-container">
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Client Name</mat-label>
+        <input matInput formControlName="clientName">
+        <mat-icon matSuffix>person</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>CPO Name</mat-label>
+        <input matInput formControlName="cpo">
+        <mat-icon matSuffix>person</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label> Contact Person</mat-label>
+        <input matInput formControlName="contactperson">
+        <mat-icon matSuffix>person</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>GSTIN Number</mat-label>
+        <input matInput formControlName="GSTINnumber">
+        <mat-icon matSuffix>pin</mat-icon>
+    </mat-form-field>
+
+    <mat-slide-toggle formControlName="status" class="custom-label">
+        <span class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'">
+            {{form.get('status')?.value ? 'active' : 'inactive'}}
+        </span>
+    </mat-slide-toggle>
+    
+
+
+    <div class="button-row custom-label">
+        <button mat-stroked-button type="button" class="cancel"  (click)="onCancel()">Cancel</button>
+        <button mat-flat-button color="primary" type="submit" class="create" [disabled]="form.invalid">Create</button>
+    </div>
+</form>
+

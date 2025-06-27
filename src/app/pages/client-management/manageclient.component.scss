@@ -1,0 +1,93 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  
+    button {
+      background-color: #119347;
+      color: white;
+  
+      &:hover {
+        background-color: #209311; /* darker blue on hover */
+      }
+    }
+  }
+  .create{
+    background-color: #44d62d !important;
+  }
+
+  .btn-edit, .btn-view{
+    color: #119347 !important;
+    
+    margin: -9px !important;
+  }
+
+  .btn-delete{
+    margin: -10px !important;
+
+  }
+
+ 
+
+.status-green {
+    color:#119347;
+  }
+
+.status-red {
+    color: #d62d2d;
+  }
+  
+
+  .filter-container {
+    display: flex;
+    background-color: white;
+    // justify-content: space-between;
+    flex-direction: row;
+    gap: 16px;
+    width: 100%;
+    align-items: center;
+    margin: 16px 0;
+  }
+
+  .custom-label {
+    width: 100%;
+    margin-top: 16px;
+  }
+
+
+  .action-btn {
+    gap: 0;
+    margin: 0;
+  }
+
+
+   //      
+
+   ::ng-deep .custom-label .mat-mdc-text-field-wrapper {
+    min-height: 36px !important;
+    padding: 0 !important;
+  }
+  
+  ::ng-deep .custom-label .mat-mdc-form-field-infix {
+    padding: 0 8px !important;
+    min-height: 36px !important;
+  }
+  
+  ::ng-deep .custom-label input.mat-mdc-input-element {
+    padding: 6px 0 !important;
+    font-size: 14px !important;
+    height: 28px !important;
+    line-height: 28px !important;
+  }
+  
+  ::ng-deep .custom-label .mdc-floating-label {
+    font-size: 14px !important;
+    top: 18px !important;
+  }
+  
+
+
+
+
+  

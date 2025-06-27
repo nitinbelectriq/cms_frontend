@@ -1,13 +1,13 @@
-<h2 mat-dialog-title> Manage CPO</h2>
+<h2 mat-dialog-title>Manage CPO</h2>
+
 <div mat-dialog-content>
-    <p><strong>Client Name:</strong> {{ data.clientName }}</p>
-    <p><strong>CPO Name:</strong> {{ data.cpoName }}</p>  
-    <p><strong>Status:</strong> {{ data.status }}</p>  
-    <p><strong>GSTIN:</strong> {{ data.GSTIN }}</p>
-    <p><strong>Contact Person:</strong> {{ data.contactPerson }}</p>    
-
-
+  <p><strong>Client Name:</strong> {{ data.client_name }}</p>
+  <p><strong>CPO Name:</strong> {{ data.name }}</p>  
+  <p><strong>Status:</strong> {{ data.status === 'Y' ? 'Active' : 'Inactive' }}</p>  
+  <p><strong>GSTIN:</strong> {{ data.gst_no }}</p>
+  <p><strong>Contact Person:</strong> {{ data.cp_name }}</p>    
 </div>
+
 <div mat-dialog-actions align="end">
-    <button mat-stroked-button (click)="close()">Close</button>
+  <button mat-stroked-button (click)="close()">Close</button>
 </div>

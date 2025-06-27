@@ -1,0 +1,63 @@
+<div class="header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+  <h2>Manage Client</h2>
+  <button mat-raised-button color="primary" (click)="onCreate()">
+    <mat-icon>add</mat-icon> Create
+  </button>
+</div>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z8 full-width-table">
+
+  <!-- Client Name -->
+  <ng-container matColumnDef="clientName">
+    <th mat-header-cell *matHeaderCellDef> Client Name </th>
+    <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
+  </ng-container>
+
+  <!-- Contact Person -->
+  <ng-container matColumnDef="contactPerson">
+    <th mat-header-cell *matHeaderCellDef> Contact Person </th>
+    <td mat-cell *matCellDef="let element"> {{ element.cp_name }} </td>
+  </ng-container>
+
+  <!-- GSTIN -->
+  <ng-container matColumnDef="GSTIN">
+    <th mat-header-cell *matHeaderCellDef> GSTIN </th>
+    <td mat-cell *matCellDef="let element"> {{ element.gst_no }} </td>
+  </ng-container>
+
+  <!-- Status -->
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef> Status </th>
+    <td mat-cell *matCellDef="let element">
+      <span [ngClass]="{
+        'status-green': element.status === 'Y',
+        'status-red': element.status === 'N'
+      }">
+        {{ element.status === 'Y' ? 'Active' : 'Inactive' }}
+      </span>
+    </td>
+  </ng-container>
+
+  <!-- Action Buttons -->
+  <ng-container matColumnDef="action">
+    <th mat-header-cell *matHeaderCellDef> Action </th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-icon-button color="primary" (click)="onView(element.id)">
+        <mat-icon>visibility</mat-icon>
+      </button>
+      <button mat-icon-button color="accent" (click)="onEdit(element)">
+        <mat-icon>edit</mat-icon>
+      </button>
+      <button mat-icon-button color="warn" (click)="onDelete(element.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <!-- Table Headers and Rows -->
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+
+</table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>

@@ -1,18 +1,18 @@
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 
-import { EditManageCpoComponent } from './edit-manage-cpo.component';
+import { ManageclientComponent } from './manageclient.component';
 
-describe('EditManageCpoComponent', () => {
-  let component: EditManageCpoComponent;
-  let fixture: ComponentFixture<EditManageCpoComponent>;
+describe('ManageclientComponent', () => {
+  let component: ManageclientComponent;
+  let fixture: ComponentFixture<ManageclientComponent>;
 
   beforeEach(async () => {
     await TestBed.configureTestingModule({
-      imports: [EditManageCpoComponent]
+      imports: [ManageclientComponent]
     })
     .compileComponents();
     
-    fixture = TestBed.createComponent(EditManageCpoComponent);
+    fixture = TestBed.createComponent(ManageclientComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
   });

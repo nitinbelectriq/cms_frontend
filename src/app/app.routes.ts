@@ -22,51 +22,91 @@ export const routes: Routes = [
           {
             path: '',
             loadComponent: () =>
-              import('./pages/charger-model/charger-model.component').then((m) => m.ChargerModelComponent),
+              import('./pages/charger-model/charger-model.component').then(
+                (m) => m.ChargerModelComponent
+              ),
           },
           {
             path: 'edit/:id',
             loadComponent: () =>
-              import('./pages/charger-model/edit-charger-model-dialog/edit-charger-model-dialog.component').then((m) => m.EditChargerModelDialogComponent),
-          }
+              import(
+                './pages/charger-model/edit-charger-model-dialog/edit-charger-model-dialog.component'
+              ).then((m) => m.EditChargerModelDialogComponent),
+          },
         ],
       },
       {
         path: 'charger-variant',
         loadComponent: () =>
-          import('./pages/charger-variant/charger-variant.component').then((m) => m.ChargerVariantComponent),
+          import('./pages/charger-variant/charger-variant.component').then(
+            (m) => m.ChargerVariantComponent
+          ),
       },
       {
         path: 'manage-chargers',
         loadComponent: () =>
-          import('./pages/manage-charger/manage-charger.component').then((m) => m.ManageChargersComponent),
+          import('./pages/manage-charger/manage-charger.component').then(
+            (m) => m.ManageChargersComponent
+          ),
       },
       {
         path: 'chargers-connector',
         loadComponent: () =>
-          import('./pages/charger-connector/charger-connector.component').then(m => m.ChargerConnectorComponent),
+          import('./pages/charger-connector/charger-connector.component').then(
+            (m) => m.ChargerConnectorComponent
+          ),
       },
       {
         path: 'manage-rfid',
         loadComponent: () =>
-          import('./pages/rfid/manage-rfid/manage-rfid.component').then(m => m.ManageRfidComponent),
+          import('./pages/rfid/manage-rfid/manage-rfid.component').then(
+            (m) => m.ManageRfidComponent
+          ),
       },
       {
         path: 'cpo-rfid-mapping',
         loadComponent: () =>
-          import('./pages/rfid/manage-cpo-rfid/manage-cpo-rfid.component').then(m => m.ManageCpoRfidComponent),
+          import('./pages/rfid/manage-cpo-rfid/manage-cpo-rfid.component').then(
+            (m) => m.ManageCpoRfidComponent
+          ),
       },
       {
         path: 'manage-cpo',
         loadComponent: () =>
-          import('./pages/manage-cpo/manage-cpo.component').then(m => m.ManageCpoComponent),
+          import('./pages/manage-cpo/manage-cpo.component').then(
+            (m) => m.ManageCpoComponent
+          ),
       },
+      {
+  path: 'charger-dispatch',
+  loadComponent: () =>
+    import('./pages/charger-dispatch/dispatchmanagement.component').then(
+      (m) => m.DispatchmanagementComponent
+    ),
+},
+
       {
         path: 'connectors',
         redirectTo: '/home/chargers-connector',
-        pathMatch: 'full'
-      }
+        pathMatch: 'full',
+      },
+       {
+  path: 'client-management',
+  loadComponent: () =>
+    import('./pages/client-management/manageclient.component').then(
+      (m) => m.ManageclientComponent
+    ),
+},
+{
+  path: 'charging-station',
+  loadComponent: () =>
+    import('./pages/manage-station/managestation.component').then(
+      (m) => m.ManagestationComponent
+    ),
+},
+
     ],
   },
-  { path: '', redirectTo: 'login', pathMatch: 'full' }
+  { path: '', redirectTo: 'login', pathMatch: 'full' },
+  { path: '**', redirectTo: 'login' }, // Wildcard route for unknown paths
 ];
