@@ -1,14 +1,14 @@
 <h2 mat-dialog-title>View Charging Station</h2>
 
 <div mat-dialog-content>
-    <p><strong>Station Name : </strong>{{data.stationName}}</p>
-    <p><strong>Contact Person Name : </strong> {{data.contactperson}}</p>
-    <p><strong>CPO Name : </strong> {{data.cpo}}</p>
-    <p><strong>Station Code : </strong> {{data.stationcode}}</p>
-    <p><strong>Charger Count : </strong> {{data.chargercount}}</p>
-    <p> <strong>Address : </strong> {{data.address}}</p>
+  <p><strong>Station Name : </strong>{{ data.stationName || data.name }}</p>
+  <p><strong>Contact Person Name : </strong>{{ data.contactperson || data.cp_name }}</p>
+  <p><strong>CPO Name : </strong>{{ data.cpo || data.cpo_name }}</p>
+  <p><strong>Station Code : </strong>{{ data.stationcode || data.code }}</p>
+  <p><strong>Charger Count : </strong>{{ data.chargercount || data.total_chargers }}</p>
+  <p><strong>Address : </strong>{{ data.address || (data.address1 + ', ' + data.address2 + ', ' + data.city_name + ', ' + data.state_name + ', ' + data.country_name + ', ' + data.PIN) }}</p>
 </div>
 
 <div mat-dialog-actions align="end">
-    <button mat-stroked-button (click)="close()">Close</button>
+  <button mat-stroked-button (click)="close()">Close</button>
 </div>

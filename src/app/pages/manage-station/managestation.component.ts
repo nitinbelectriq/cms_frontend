@@ -11,15 +11,12 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
+import { MatSnackBar } from '@angular/material/snack-bar';
 import { AuthService } from '../../services/login.service';
-// Import your StationService (adjust the path as needed)
 import { StationService } from '../../services/manage-station.service';
 
-// Stub dialog components — replace with your actual components
-@Component({ template: '', standalone: true }) export class CreatemanagestationComponent {}
-@Component({ template: '', standalone: true }) export class EditmanagestationComponent {}
-@Component({ template: '', standalone: true }) export class ViewmanagestationComponent {}
-
+import { CreatemanagestationComponent } from './createmanagestation/createmanagestation.component';
+import {ViewStationComponent} from './viewmanagestation/viewmanagestation.component';
 @Component({
   selector: 'app-managestation',
   standalone: true,
@@ -41,7 +38,11 @@ import { StationService } from '../../services/manage-station.service';
   ]
 })
 export class ManagestationComponent implements OnInit, AfterViewInit {
+  private snackBar = inject(MatSnackBar);
   fb = inject(FormBuilder);
+  private dialog = inject(MatDialog);
+  private stationService = inject(StationService);
+  private authService = inject(AuthService);
 
   filterform: FormGroup = this.fb.group({
     client: [''],
@@ -64,12 +65,6 @@ export class ManagestationComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  constructor(
-    private dialog: MatDialog,
-    private stationService: StationService,
-    private AuthService:AuthService
-  ) {}
-
   ngOnInit() {
     this.loadData();
   }
@@ -79,16 +74,26 @@ export class ManagestationComponent implements OnInit, AfterViewInit {
   }
 
   loadData() {
-    const user_id = this.AuthService.getUserId() || 0;
+    const user_id = this.authService.getUserId() || 0;
     if (!user_id) {
       console.error('User ID not found');
       return;
     }
 
     this.stationService.getAllStations(user_id).subscribe({
-      next: (data) => {
-        console.log('API data:', data);
-        this.dataSource.data = data.data || data;
+      next: (response) => {
+        const stations = (response?.data || []).map((item: any) => ({
+          stationName: item.name,
+          contactperson: item.cp_name,
+          cpo: item.cpo_name,
+          stationcode: item.code,
+          chargercount: item.total_chargers,
+          address: `${item.address1 || ''}, ${item.address2 || ''}, ${item.city_name || ''}, ${item.state_name || ''}, ${item.country_name || ''} - ${item.PIN || ''}`,
+          status: item.status === 'Y',
+          raw: item
+        }));
+
+        this.dataSource.data = stations;
       },
       error: (error) => {
         console.error('Failed to load charging stations', error);
@@ -97,26 +102,78 @@ export class ManagestationComponent implements OnInit, AfterViewInit {
   }
 
   onCreate() {
-    this.dialog.open(CreatemanagestationComponent, {
-      height: '100vh'
+    const dialogRef = this.dialog.open(CreatemanagestationComponent, {
+      height: '100vh',
+      width: '100vw',
+      data: { edit: false }
+    });
+
+    dialogRef.afterClosed().subscribe((formData) => {
+      if (formData) {
+        const userId = this.authService.getUserId();
+        const payload = {
+          ...formData,
+          created_by: userId,
+          status: formData.status ? 'Y' : 'N',
+          created_date: new Date().toISOString()
+        };
+
+        this.stationService.createStation(payload).subscribe({
+          next: () => this.loadData(),
+          error: (err) => console.error('Error creating station:', err)
+        });
+      }
     });
   }
 
   onEdit(element: any) {
-    this.dialog.open(EditmanagestationComponent, {
+    const dialogRef = this.dialog.open(CreatemanagestationComponent, {
       height: '100vh',
-      data: element
+      width: '100vw',
+      data: {
+        edit: true,
+        station: element.raw
+      }
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if (result) {
+        this.loadData();
+      }
     });
   }
 
-  onView(element: any) {
-    this.dialog.open(ViewmanagestationComponent, {
-      width: '400px',
-      data: element
-    });
-  }
+onView(element: any) {
+  this.dialog.open(ViewStationComponent, {
+    width: '600px',
+    data: element.raw
+  });
+}
 
-  onDelete(id: string) {
-    console.log('Delete station with id:', id);
-  }
+onDelete(id: string | number): void {
+  if (!id) return;
+
+  const confirmed = confirm('Are you sure you want to delete this station?');
+  if (!confirmed) return;
+
+  const stationId = typeof id === 'string' ? +id : id;
+
+  this.stationService.deleteStation(stationId).subscribe({
+    next: () => {
+      this.snackBar.open('Station deleted successfully.', 'Close', {
+        duration: 3000,
+        panelClass: ['snack-bar-success']
+      });
+      this.loadData(); // Reload data after delete
+    },
+    error: (err) => {
+      console.error('Failed to delete station:', err);
+      this.snackBar.open('Failed to delete station. Please try again.', 'Close', {
+        duration: 3000,
+        panelClass: ['snack-bar-error']
+      });
+    }
+  });
+}
+
 }
