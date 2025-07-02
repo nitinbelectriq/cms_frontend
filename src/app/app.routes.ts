@@ -78,39 +78,45 @@ export const routes: Routes = [
           ),
       },
       {
-  path: 'charger-dispatch',
-  loadComponent: () =>
-    import('./pages/charger-dispatch/dispatchmanagement.component').then(
-      (m) => m.DispatchmanagementComponent
-    ),
-},
-
+        path: 'charger-dispatch',
+        loadComponent: () =>
+          import('./pages/charger-dispatch/dispatchmanagement.component').then(
+            (m) => m.DispatchmanagementComponent
+          ),
+      },
+      {
+        path: 'client-management',
+        loadComponent: () =>
+          import('./pages/client-management/manageclient.component').then(
+            (m) => m.ManageclientComponent
+          ),
+      },
+      {
+        path: 'charging-station',
+        loadComponent: () =>
+          import('./pages/manage-station/managestation.component').then(
+            (m) => m.ManagestationComponent
+          ),
+      },
+      {
+        path: 'ocpp-diagnostic',
+        loadComponent: () =>
+          import('./pages/OCPP/ocpp-operation.component/ocpp-operation.component').then(
+            (m) => m.OcppOperationComponent
+          ),
+      },
+      {
+        path: 'ocpp-diagnostic/charger/:id',
+        loadComponent: () =>
+          import('./pages/OCPP/ocpp-details/ocpp-details.component').then(
+            (m) => m.ChargerDetailComponent
+          ),
+      },
       {
         path: 'connectors',
         redirectTo: '/home/chargers-connector',
         pathMatch: 'full',
       },
-       {
-  path: 'client-management',
-  loadComponent: () =>
-    import('./pages/client-management/manageclient.component').then(
-      (m) => m.ManageclientComponent
-    ),
-},
-{
-  path: 'charging-station',
-  loadComponent: () =>
-    import('./pages/manage-station/managestation.component').then(
-      (m) => m.ManagestationComponent
-    ),
-},{
-      path: 'ocpp-diagnostic',
-      loadComponent: () =>
-        import('./pages/OCPP/ocpp-operation.component/ocpp-operation.component').then(
-          (m) => m.OcppOperationComponent
-        ),
-    },
-
     ],
   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },

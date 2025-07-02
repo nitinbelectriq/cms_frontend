@@ -1,0 +1,27 @@
+<mat-card style="max-width: 900px; margin: 40px auto; padding: 20px;">
+  <h2>OCPP Operations</h2>
+
+  <div style="margin-bottom: 16px;">
+    <button mat-raised-button color="primary">Charger Logs</button>
+    <button mat-raised-button color="accent" style="margin-left: 8px;">OCPP Dashboard</button>
+  </div>
+
+  <div *ngIf="charger">
+    <h3>Charger ID: {{ charger.serial_no }}</h3>
+    <p><strong>Station:</strong> {{ charger.station_name }}</p>
+    <p><strong>Status:</strong> {{ charger.charger_status }}</p>
+    <p><strong>Charger Capacity:</strong> {{ charger.power || '7.4 KW' }}</p>
+    <p><strong>Last Ping Date:</strong> {{ charger.last_ping_datetime || 'N/A' }}</p>
+    <p><strong>Heartbeat Interval:</strong> {{ charger.heartbeat_interval || 'N/A' }}</p>
+
+    <h4>Connector Status</h4>
+    <div *ngFor="let conn of charger.connector_data" style="margin: 8px 0;">
+      <mat-card style="padding: 12px;">
+        <div style="display: flex; align-items: center;">
+          <img src="assets/connector.png" alt="icon" width="32" height="32" style="margin-right: 8px;" />
+          <strong>Connector {{ conn.connector_no }}:</strong> {{ conn.connector_type_name }}
+        </div>
+      </mat-card>
+    </div>
+  </div>
+</mat-card>
