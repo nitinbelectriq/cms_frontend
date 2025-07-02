@@ -1,33 +1,16 @@
-import { CommonModule } from '@angular/common';
-import { Component, Inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
-import { MatIconModule } from '@angular/material/icon';
+import { Component, inject } from '@angular/core';
+import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
 
 @Component({
-  selector: 'app-viewmanagestation',
-  standalone: true,
-  imports: [
-    CommonModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatIconModule
-
-  ],
+  selector: 'app-view-station',
   templateUrl: './viewmanagestation.component.html',
-  styleUrl: './viewmanagestation.component.scss'
+  styleUrls: ['./viewmanagestation.component.scss']
 })
-export class ViewmanagestationComponent {
-  constructor(
-    private dailogRef: MatDialogRef<ViewmanagestationComponent>,
-    @Inject(MAT_DIALOG_DATA) public data: any,
-  ){
+export class ViewStationComponent {
+  data = inject(MAT_DIALOG_DATA);
+  dialogRef = inject(MatDialogRef<ViewStationComponent>);
 
+  close() {
+    this.dialogRef.close();
   }
-
-  close(){
-    this.dailogRef.close();
-
-  }
-
 }

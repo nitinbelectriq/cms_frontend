@@ -1,0 +1,78 @@
+<mat-card style="padding: 16px; max-width: 900px; margin: 40px auto;">
+  <h2>OCPP Operations</h2>
+
+  <!-- Navigation buttons -->
+  <div style="margin: 16px 0;">
+    <button mat-raised-button color="primary" (click)="onNavigate('Charger Logs')">
+      Charger Logs
+    </button>
+    <button mat-raised-button color="accent" style="margin-left: 8px;" (click)="onNavigate('OCPP Dashboard')">
+      OCPP Dashboard
+    </button>
+  </div>
+
+  <!-- Material Table -->
+  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;">
+
+    <!-- Serial -->
+    <ng-container matColumnDef="serial">
+      <th mat-header-cell *matHeaderCellDef> Serial No </th>
+      <td mat-cell *matCellDef="let element; let i = index"> {{ i + 1 }} </td>
+    </ng-container>
+
+    <!-- Charger ID -->
+    <ng-container matColumnDef="chargerId">
+      <th mat-header-cell *matHeaderCellDef> Charger ID </th>
+      <td mat-cell *matCellDef="let element"> {{ element.chargerId }} </td>
+    </ng-container>
+
+    <!-- Station -->
+    <ng-container matColumnDef="station">
+      <th mat-header-cell *matHeaderCellDef> Station </th>
+      <td mat-cell *matCellDef="let element"> {{ element.station }} </td>
+    </ng-container>
+
+    <!-- Current V -->
+    <ng-container matColumnDef="currentV">
+      <th mat-header-cell *matHeaderCellDef> Current V </th>
+      <td mat-cell *matCellDef="let element"> {{ element.currentV }} </td>
+    </ng-container>
+
+    <!-- Guns -->
+    <ng-container matColumnDef="guns">
+      <th mat-header-cell *matHeaderCellDef> No Of Guns </th>
+      <td mat-cell *matCellDef="let element"> {{ element.guns }} </td>
+    </ng-container>
+
+    <!-- Address -->
+    <ng-container matColumnDef="address">
+      <th mat-header-cell *matHeaderCellDef> Address </th>
+      <td mat-cell *matCellDef="let element"> {{ element.address }} </td>
+    </ng-container>
+
+    <!-- Available -->
+    <ng-container matColumnDef="available">
+      <th mat-header-cell *matHeaderCellDef> Available </th>
+      <td mat-cell *matCellDef="let element"> {{ element.available }} </td>
+    </ng-container>
+
+    <!-- Status -->
+    <ng-container matColumnDef="status">
+      <th mat-header-cell *matHeaderCellDef> Status </th>
+      <td mat-cell *matCellDef="let element"> {{ element.status }} </td>
+    </ng-container>
+
+    <!-- Action -->
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef> Action </th>
+      <td mat-cell *matCellDef="let element">
+        <button mat-button color="primary" (click)="onActionClick(element)">
+          Action
+        </button>
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+  </table>
+</mat-card>

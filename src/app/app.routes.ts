@@ -103,7 +103,13 @@ export const routes: Routes = [
     import('./pages/manage-station/managestation.component').then(
       (m) => m.ManagestationComponent
     ),
-},
+},{
+      path: 'ocpp-diagnostic',
+      loadComponent: () =>
+        import('./pages/OCPP/ocpp-operation.component/ocpp-operation.component').then(
+          (m) => m.OcppOperationComponent
+        ),
+    },
 
     ],
   },
