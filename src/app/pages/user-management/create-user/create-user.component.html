@@ -1,0 +1,123 @@
+<mat-card class="user-form-card">
+  <form [formGroup]="form" (ngSubmit)="onSubmit()">
+    <div class="form-grid">
+      <mat-form-field appearance="outline">
+        <mat-label>Client *</mat-label>
+        <input matInput formControlName="client_id" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Roles *</mat-label>
+        <input matInput formControlName="role_id" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>First Name *</mat-label>
+        <input matInput formControlName="f_name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Middle Name</mat-label>
+        <input matInput formControlName="m_name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Last Name *</mat-label>
+        <input matInput formControlName="l_name" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Date of Birth</mat-label>
+        <input matInput formControlName="dob" type="date" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Email *</mat-label>
+        <input matInput formControlName="email" type="email" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Employee Code</mat-label>
+        <input matInput formControlName="employee_code" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Username *</mat-label>
+        <input matInput formControlName="username" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" *ngIf="!isEdit">
+        <mat-label>Password *</mat-label>
+        <input matInput formControlName="password" type="password" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline" *ngIf="!isEdit">
+        <mat-label>Confirm Password *</mat-label>
+        <input matInput formControlName="confirm_password" type="password" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Mobile Number *</mat-label>
+        <input matInput formControlName="mobile" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Alternate Mobile Number</mat-label>
+        <input matInput formControlName="alt_mobile" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>PAN Number</mat-label>
+        <input matInput formControlName="PAN" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Aadhar Number</mat-label>
+        <input matInput formControlName="aadhar" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Address Line 1 *</mat-label>
+        <input matInput formControlName="address1" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Address Line 2</mat-label>
+        <input matInput formControlName="address2" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Pin Code *</mat-label>
+        <input matInput formControlName="PIN" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>City *</mat-label>
+        <input matInput formControlName="city_id" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>State *</mat-label>
+        <input matInput formControlName="state_id" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Country *</mat-label>
+        <input matInput formControlName="country_id" />
+      </mat-form-field>
+
+      <mat-form-field appearance="outline">
+        <mat-label>Landmark</mat-label>
+        <input matInput formControlName="landmark" />
+      </mat-form-field>
+
+      <mat-checkbox formControlName="status">Active</mat-checkbox>
+    </div>
+
+    <div class="form-actions">
+      <button mat-raised-button color="primary" type="submit">
+        {{ isEdit ? 'Update' : 'Create' }}
+      </button>
+    </div>
+  </form>
+</mat-card>
