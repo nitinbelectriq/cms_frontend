@@ -1,11 +1,11 @@
-<mat-toolbar color="primary" class="toolbar">
-  <span>Manage User</span>
+<div class="toolbar header">
+  <h2>Manage User</h2>
   <span class="spacer"></span>
-  <button mat-raised-button color="accent" (click)="onCreate()">
-    <mat-icon>person_add</mat-icon>
-    Create New User
+  <button mat-raised-button class="create" (click)="onCreate()">
+    <mat-icon>add</mat-icon>
+    Create 
   </button>
-</mat-toolbar>
+</div>
 
 <mat-card>
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 full-width">

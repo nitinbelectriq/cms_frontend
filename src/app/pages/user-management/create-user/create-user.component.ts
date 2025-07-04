@@ -9,7 +9,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatCardModule } from '@angular/material/card';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { UserService, User } from '../../../services/user-management.service';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-create-user',
@@ -23,6 +24,8 @@ import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
     MatButtonModule,
     MatIconModule,
     MatCardModule,
+    MatDialogModule,
+    MatSlideToggleModule,
     MatCheckboxModule,
   ],
   templateUrl: './create-user.component.html',
