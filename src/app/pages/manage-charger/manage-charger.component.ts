@@ -78,7 +78,12 @@ export class ManageChargersComponent implements OnInit, AfterViewInit {
     if (selectedItem) {
       const dialogRef = this.dialog.open(CreateManageChargerComponent, {
         data: selectedItem,
-        width: '600px',
+        width: '88%',
+      height: '100vh',
+      position: {
+        top: '0',
+        right: '0',
+      },
         disableClose: true
       });
 
@@ -104,7 +109,12 @@ export class ManageChargersComponent implements OnInit, AfterViewInit {
 
   onCreate(): void {
     const dialogRef = this.dialog.open(CreateManageChargerComponent, {
-      width: '600px',
+      width: '88%',
+      height: '100vh',
+      position: {
+        top: '0',
+        right: '0',
+      },
       disableClose: true
     });
 

@@ -1,37 +1,41 @@
-<div class="dispatch-container">
+<!-- <div class="dispatch-container">
   <h2 class="page-title">Charger Dispatch</h2>
 
   <div class="action-bar">
     <button mat-flat-button color="primary" (click)="onCreate()">Create</button>
+  </div> -->
+<!-- 
+  <div class="header">
+    <h2>Charger Dispatch</h2>
+    <button mat-raised-button color="primary" class="create" (click)="onCreate()">
+      <mat-icon>add</mat-icon> Create
+    </button>
   </div>
 
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
 
-    <!-- Client Name Column -->
     <ng-container matColumnDef="clientName">
       <th mat-header-cell *matHeaderCellDef> Client Name </th>
       <td mat-cell *matCellDef="let element"> {{ element.clientName }} </td>
     </ng-container>
 
-    <!-- Name Column -->
     <ng-container matColumnDef="name">
       <th mat-header-cell *matHeaderCellDef> Name </th>
       <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
     </ng-container>
 
-    <!-- Serial Number Column -->
+ 
     <ng-container matColumnDef="serialnumber">
       <th mat-header-cell *matHeaderCellDef> Serial No </th>
       <td mat-cell *matCellDef="let element"> {{ element.serialnumber }} </td>
     </ng-container>
 
-    <!-- Model Name Column -->
+   
     <ng-container matColumnDef="modelname">
       <th mat-header-cell *matHeaderCellDef> Model Name </th>
       <td mat-cell *matCellDef="let element"> {{ element.model_name }} </td>
     </ng-container>
 
-    <!-- Status Column -->
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef> Status </th>
       <td mat-cell *matCellDef="let element">
@@ -39,7 +43,7 @@
       </td>
     </ng-container>
 
-    <!-- Action Column -->
+   
     <ng-container matColumnDef="action">
       <th mat-header-cell *matHeaderCellDef> Action </th>
       <td mat-cell *matCellDef="let element">
@@ -60,4 +64,75 @@
   </table>
 
   <mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+ -->
+
+ 
+ <div class="header">
+  <h2>Charger Dispatch</h2>
+  <button mat-raised-button color="primary" class="create" (click)="onCreate()">
+    <mat-icon>add</mat-icon> Create
+  </button>
 </div>
+
+<table mat-table [dataSource]="dataSource" class="mat-elevation-z2">
+
+  <!-- Client Name Column -->
+  <ng-container matColumnDef="clientName">
+    <th mat-header-cell *matHeaderCellDef> Client Name </th>
+    <td mat-cell *matCellDef="let element"> {{ element.clientName }} </td>
+  </ng-container>
+
+  <!-- Name Column -->
+  <ng-container matColumnDef="name">
+    <th mat-header-cell *matHeaderCellDef> Name </th>
+    <td mat-cell *matCellDef="let element"> {{ element.name }} </td>
+  </ng-container>
+
+  <!-- Serial Number Column -->
+  <ng-container matColumnDef="serialnumber">
+    <th mat-header-cell *matHeaderCellDef> Serial No </th>
+    <td mat-cell *matCellDef="let element"> {{ element.serialnumber }} </td>
+  </ng-container>
+
+  <!-- Model Name Column -->
+  <ng-container matColumnDef="modelname">
+    <th mat-header-cell *matHeaderCellDef> Model Name </th>
+    <td mat-cell *matCellDef="let element"> {{ element.model_name }} </td>
+  </ng-container>
+
+  <!-- Status Column -->
+  <ng-container matColumnDef="status">
+    <th mat-header-cell *matHeaderCellDef> Status </th>
+    <td mat-cell *matCellDef="let element">
+      <span [ngClass]="{'status-green': element.status === '1',
+         'status-red' : element.status === 'N'}">
+        {{ element.status === '1' ? 'Active' : 'Inactive' }}
+         
+      </span>
+      
+    </td>
+  </ng-container>
+
+  <!-- Action Column -->
+  <ng-container matColumnDef="action">
+    <th mat-header-cell *matHeaderCellDef> Action </th>
+    <td mat-cell *matCellDef="let element">
+      <button mat-icon-button class="btn-view" color="accent" (click)="onView(element.id)">
+        <mat-icon>visibility</mat-icon>
+      </button>
+      <button mat-icon-button class="btn-edit" color="primary" (click)="onEdit(element)">
+        <mat-icon>edit</mat-icon>
+      </button>
+
+      <button mat-icon-button color="warn" (click)="onDelete(element.id)">
+        <mat-icon>delete</mat-icon>
+      </button>
+    </td>
+  </ng-container>
+
+  <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+  <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+</table>
+
+<mat-paginator [pageSizeOptions]="[5, 10, 25]" showFirstLastButtons></mat-paginator>
+

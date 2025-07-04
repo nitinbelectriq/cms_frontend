@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>{{ data?.edit ? 'Edit Charging Station' : 'Add Charging Station' }}</h2>
 
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
 
   <div class="form-row">
     <mat-form-field appearance="outline" class="custom-label">
@@ -8,6 +8,7 @@
       <mat-select formControlName="cpo">
         <mat-option *ngFor="let item of cpoList" [value]="item.id">{{ item.name }}</mat-option>
       </mat-select>
+      <mat-icon matSuffix>account_circle</mat-icon>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="custom-label">
@@ -19,7 +20,7 @@
     <mat-form-field appearance="outline" class="custom-label">
       <mat-label>Code</mat-label>
       <input matInput formControlName="code" />
-      <mat-icon matSuffix>scan</mat-icon>
+      <mat-icon matSuffix>code</mat-icon>
     </mat-form-field>
   </div>
 
@@ -29,6 +30,8 @@
       <input matInput formControlName="description" />
       <mat-icon matSuffix>description</mat-icon>
     </mat-form-field>
+
+    <div class="form-row-between">
 
     <mat-form-field appearance="outline" class="custom-label">
       <mat-label>Latitude</mat-label>
@@ -42,11 +45,14 @@
       <mat-icon matSuffix>place</mat-icon>
     </mat-form-field>
 
+    </div>
+
     <mat-form-field appearance="outline" class="custom-label">
       <mat-label>Location Type</mat-label>
       <mat-select formControlName="locationtype">
         <mat-option *ngFor="let item of locationTypes" [value]="item.id">{{ item.name }}</mat-option>
       </mat-select>
+      <mat-icon matSuffix>place</mat-icon>
     </mat-form-field>
   </div>
 
@@ -96,6 +102,7 @@
       <mat-select formControlName="city">
         <mat-option *ngFor="let item of cities" [value]="item.id">{{ item.name }}</mat-option>
       </mat-select>
+      <mat-icon matSuffix>help</mat-icon>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="custom-label">
@@ -103,6 +110,7 @@
       <mat-select formControlName="state">
         <mat-option *ngFor="let item of states" [value]="item.id">{{ item.name }}</mat-option>
       </mat-select>
+      <mat-icon matSuffix>help</mat-icon>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="custom-label">
@@ -110,6 +118,7 @@
       <mat-select formControlName="country">
         <mat-option *ngFor="let item of countries" [value]="item.id">{{ item.name }}</mat-option>
       </mat-select>
+      <mat-icon matSuffix>help</mat-icon>
     </mat-form-field>
   </div>
 
@@ -162,9 +171,10 @@
   </mat-slide-toggle>
 
   <div class="button-row custom-label">
-    <button mat-stroked-button type="button" class="cancel" (click)="onCancel()">Cancel</button>
-    <button mat-flat-button color="primary" type="submit" class="create" [disabled]="form.invalid">
+    
+    <button mat-raised-button color="primary" type="submit" class="create" [disabled]="form.invalid">
       {{ data?.edit ? 'Update' : 'Create' }}
     </button>
+    <button mat-raised-button type="button"  (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>
   </div>
 </form>

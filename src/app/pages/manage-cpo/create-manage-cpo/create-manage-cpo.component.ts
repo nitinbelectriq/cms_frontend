@@ -9,6 +9,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatSelectModule } from '@angular/material/select';
 import { CpoService } from '../../../services/manage-cpo.service';
 import { AuthService } from '../../../services/login.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-create-manage-cpo',
@@ -16,7 +17,7 @@ import { AuthService } from '../../../services/login.service';
   imports: [
     CommonModule, ReactiveFormsModule, MatDialogModule,
     MatFormFieldModule, MatInputModule, MatSlideToggleModule,
-    MatButtonModule, MatSelectModule
+    MatButtonModule, MatSelectModule, MatIconModule
   ],
   templateUrl: './create-manage-cpo.component.html',
   styleUrls: ['./create-manage-cpo.component.scss']

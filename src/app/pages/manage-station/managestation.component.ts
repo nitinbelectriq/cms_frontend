@@ -104,7 +104,11 @@ export class ManagestationComponent implements OnInit, AfterViewInit {
   onCreate() {
     const dialogRef = this.dialog.open(CreatemanagestationComponent, {
       height: '100vh',
-      width: '100vw',
+      width: '92vw',
+      position: {
+        top: '0',
+        right: '0',
+      },
       data: { edit: false }
     });
 
@@ -129,7 +133,11 @@ export class ManagestationComponent implements OnInit, AfterViewInit {
   onEdit(element: any) {
     const dialogRef = this.dialog.open(CreatemanagestationComponent, {
       height: '100vh',
-      width: '100vw',
+      width: '92vw',
+      position: {
+        top: '0',
+        right: '0',
+      },
       data: {
         edit: true,
         station: element.raw

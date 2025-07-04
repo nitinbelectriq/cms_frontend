@@ -108,7 +108,12 @@ export class ManageCpoRfidComponent implements OnInit, AfterViewInit {
 
   onCreate() {
     const dialogRef = this.dialog.open(CreateCpoRfidComponent, {
-      width: '400px',
+      width: '88%',
+      height: '100vh',
+      position: {
+        top: '0',
+        right: '0',
+      },
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -125,7 +130,12 @@ onEdit(id: number) {
   if (!record) return;
 
   const dialogRef = this.dialog.open(CreateCpoRfidComponent, {
-    width: '400px',
+    width: '88%',
+    height: '100vh',
+    position: {
+      top: '0',
+      right: '0',
+    },
     data: record,
   });
 

@@ -60,7 +60,12 @@ export class ChargerModelComponent implements OnInit, AfterViewInit {
 
   onCreate() {
     const dialogRef = this.dialog.open(CreateChargerModelDialogComponent, {
-      width: '400px',
+      width: '88%',
+      height: '100vh',
+      position: {
+        top: '0',
+        right: '0',
+      },
     });
 
     dialogRef.afterClosed().subscribe((result) => {
@@ -77,7 +82,12 @@ export class ChargerModelComponent implements OnInit, AfterViewInit {
 
     const dialogRef = this.dialog.open(EditChargerModelDialogComponent, {
       data: selectedItem,
-      width: '400px',
+      width: '88%',
+      height: '100vh',
+      position: {
+        top: '0',
+        right: '0',
+      },
     });
 
     dialogRef.afterClosed().subscribe(result => {

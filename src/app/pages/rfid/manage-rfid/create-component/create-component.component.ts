@@ -6,6 +6,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { AuthService } from '../../../../services/login.service';
+import { MatIconModule } from '@angular/material/icon';
 
 export interface RfidData {
   id?: number;
@@ -24,8 +25,10 @@ export interface RfidData {
     MatInputModule,
     MatButtonModule,
     MatSlideToggleModule,
+    MatIconModule
   ],
   templateUrl: './create-component.component.html',
+  styleUrls: ['./create-component.component.scss'],
 })
 export class RfidFormDialogComponent implements OnInit {
   rfidForm!: FormGroup;

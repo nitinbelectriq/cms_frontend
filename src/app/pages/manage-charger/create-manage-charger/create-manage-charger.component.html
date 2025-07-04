@@ -1,59 +1,73 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Create' }} Manage Charger </h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
 
   <!-- Model Variant Dropdown -->
-  <mat-form-field appearance="fill" class="full-width">
+  <mat-form-field appearance="outline" class="full-width custom-label">
     <mat-label>Model Variant</mat-label>
     <mat-select formControlName="model_id" required>
       <mat-option *ngFor="let model of modelVariants" [value]="model.id">
         {{ model.name || model.charger_type_name }}
       </mat-option>
     </mat-select>
+    <mat-icon matSuffix> help</mat-icon>
     <mat-error *ngIf="form.get('model_id')?.hasError('required')">
       Model Variant is required
     </mat-error>
   </mat-form-field>
 
   <!-- Serial No -->
-  <mat-form-field appearance="fill" class="full-width">
+  <mat-form-field appearance="outline" class="full-width custom-label">
     <mat-label>Serial No</mat-label>
     <input matInput formControlName="serial_no" required />
+    <mat-icon matSuffix>pin</mat-icon>
     <mat-error *ngIf="form.get('serial_no')?.hasError('required')">
       Serial No is required
     </mat-error>
   </mat-form-field>
 
   <!-- Charger Display ID -->
-  <mat-form-field appearance="fill" class="full-width">
+  <mat-form-field appearance="outline" class="full-width custom-label">
     <mat-label>Charger Display ID</mat-label>
     <input matInput formControlName="charger_display_id" required />
+    <mat-icon matSuffix>person</mat-icon>
     <mat-error *ngIf="form.get('charger_display_id')?.hasError('required')">
       Charger Display ID is required
     </mat-error>
   </mat-form-field>
 
   <!-- Current Version Dropdown -->
-  <mat-form-field appearance="fill" class="full-width">
+  <mat-form-field appearance="outline" class="full-width custom-label">
     <mat-label>Current Version</mat-label>
     <mat-select formControlName="current_version_id" required>
       <mat-option *ngFor="let version of versionList" [value]="version.id">
         {{ version.name }}
       </mat-option>
     </mat-select>
+    <mat-icon matSuffix> help</mat-icon>
     <mat-error *ngIf="form.get('current_version_id')?.hasError('required')">
       Current Version is required
     </mat-error>
   </mat-form-field>
 
+
+  <div class="togle-btn">
+
   <!-- Is Available Slide Toggle -->
   <mat-slide-toggle formControlName="is_available">Is Available</mat-slide-toggle>
 
   <!-- Status Slide Toggle -->
-  <mat-slide-toggle formControlName="status">Status</mat-slide-toggle>
+  <mat-slide-toggle formControlName="status">Status
+    <span class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'">
+      {{form.get('status')?.value ? 'Active' : 'Inactive'}}
+    </span>
+  </mat-slide-toggle>
+
+  </div>
 
   <!-- Buttons -->
   <div class="button-row" style="margin-top: 20px;">
-    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">Save</button>
-    <button mat-raised-button color="warn" type="button" (click)="onCancel()">Cancel</button>
+    <button mat-raised-button class="create"  type="submit" [disabled]="form.invalid">Save</button>
+    <button mat-raised-button  type="button" (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>
   </div>
 
 </form>

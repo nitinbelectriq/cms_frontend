@@ -10,60 +10,70 @@
         {{ client.name }}
       </mat-option>
     </mat-select>
+    <mat-icon matSuffix>person</mat-icon>
   </mat-form-field>
 
   <!-- Name -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Name</mat-label>
     <input matInput formControlName="cpoName" required />
+    <mat-icon matSuffix>person</mat-icon>
   </mat-form-field>
 
   <!-- Contact Person -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Contact Person Name</mat-label>
     <input matInput formControlName="contactPerson" required />
+    <mat-icon matSuffix>person</mat-icon>
   </mat-form-field>
 
   <!-- Phone -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Mobile</mat-label>
     <input matInput formControlName="phone" required />
+    <mat-icon matSuffix>smartphone</mat-icon>
   </mat-form-field>
 
   <!-- GST -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>GST Number</mat-label>
     <input matInput formControlName="GSTIN" required />
+    <mat-icon matSuffix>help</mat-icon>
   </mat-form-field>
 
   <!-- TIN -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>TIN Number</mat-label>
     <input matInput formControlName="tinnumber" required />
+    <mat-icon matSuffix>help</mat-icon>
   </mat-form-field>
 
   <!-- Email -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Email</mat-label>
     <input matInput formControlName="email" required />
+    <mat-icon matSuffix>email</mat-icon>
   </mat-form-field>
 
   <!-- Address Line 1 -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Address Line 1</mat-label>
     <input matInput formControlName="addressline1" required />
+    <mat-icon matSuffix>home</mat-icon>
   </mat-form-field>
 
   <!-- Address Line 2 -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Address Line 2</mat-label>
     <input matInput formControlName="addressline2" required />
+    <mat-icon matSuffix>home</mat-icon>
   </mat-form-field>
 
   <!-- Pincode -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Pincode</mat-label>
     <input matInput formControlName="pincode" required />
+    <mat-icon matSuffix>pin</mat-icon>
   </mat-form-field>
 
   <!-- Country -->
@@ -74,6 +84,7 @@
         {{ country.name }}
       </mat-option>
     </mat-select>
+    <mat-icon matSuffix>help</mat-icon>
   </mat-form-field>
 
   <!-- State -->
@@ -84,6 +95,7 @@
         {{ state.name }}
       </mat-option>
     </mat-select>
+    <mat-icon matSuffix>help</mat-icon>
   </mat-form-field>
 
   <!-- City -->
@@ -94,16 +106,18 @@
         {{ city.name }}
       </mat-option>
     </mat-select>
+    <mat-icon matSuffix>location_city</mat-icon>
   </mat-form-field>
 
   <!-- Landmark -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Landmark</mat-label>
     <input matInput formControlName="landmark" required />
+    <mat-icon matSuffix>flag</mat-icon>
   </mat-form-field>
 
   <!-- Status -->
-  <mat-slide-toggle formControlName="status" class="toggle-green custom-label">
+  <mat-slide-toggle formControlName="status" class="toggle-green togle-btn"> Status
     <span class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'">
       {{ form.get('status')?.value ? 'Active' : 'Inactive' }}
     </span>
@@ -111,10 +125,11 @@
 
   <!-- Buttons -->
   <div class="button-row custom-label">
-    <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>
-    <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid">
+    
+    <button mat-raised-button class="create" color="primary" type="submit" [disabled]="form.invalid">
       {{ form.get('clientName')?.value ? 'Update' : 'Create' }}
     </button>
+    <button mat-raised-button type="button" (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>
   </div>
 
 </form>

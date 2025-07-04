@@ -67,17 +67,17 @@ export class EditmanagestationComponent {
       this.dialogRef.close();
   
     }
-    onSubmit(){
-      if(this.form.valid){
-        this.dialogRef.close(this.form.value);
-      }
-    }
+    // onSubmit(){
+    //   if(this.form.valid){
+    //     this.dialogRef.close(this.form.value);
+    //   }
+    // }
 
-    ngOnInit(): void {
-      //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
-      //Add 'implements OnInit' to the class.
-      this.form.patchValue(this.data.element);
-    }
+    // ngOnInit(): void {
+    //   //Called after the constructor, initializing input properties, and the first call to ngOnChanges.
+    //   //Add 'implements OnInit' to the class.
+    //   this.form.patchValue(this.data.element);
+    // }
   
 
 }

@@ -13,6 +13,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { ChargerService } from '../../../services/manage-charger.service';
 import { AuthService } from '../../../services/login.service';
+import { MatIconModule } from '@angular/material/icon';
 
 interface ModelVariant {
   id: number;
@@ -39,7 +40,8 @@ interface Version {
     MatSelectModule,
     MatOptionModule,
     HttpClientModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatIconModule
   ],
   templateUrl: './create-manage-charger.component.html',
   styleUrls: ['./create-manage-charger.component.scss']

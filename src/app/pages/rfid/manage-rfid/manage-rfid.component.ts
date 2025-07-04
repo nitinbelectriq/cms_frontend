@@ -66,7 +66,12 @@ export class ManageRfidComponent implements OnInit, AfterViewInit {
 
   onCreate() {
     const dialogRef = this.dialog.open(RfidFormDialogComponent, {
-      width: '400px',
+      width: '88%',
+      height: '100vh',
+      position: {
+        top: '0',
+        right: '0',
+      },
       data: null,
     });
 
@@ -91,7 +96,12 @@ export class ManageRfidComponent implements OnInit, AfterViewInit {
     if (!rfid) return;
 
     const dialogRef = this.dialog.open(RfidFormDialogComponent, {
-      width: '400px',
+      width: '88%',
+      height: '100vh',
+      position: {
+        top: '0',
+        right: '0',
+      },
       data: rfid,
     });
 

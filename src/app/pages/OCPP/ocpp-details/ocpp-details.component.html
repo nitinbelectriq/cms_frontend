@@ -1,12 +1,18 @@
-<mat-card style="max-width: 900px; margin: 40px auto; padding: 20px;">
-  <h2>OCPP Operations</h2>
+<h2>OCPP Operations</h2>
 
-  <div style="margin-bottom: 16px;">
-    <button mat-raised-button color="primary">Charger Logs</button>
-    <button mat-raised-button color="accent" style="margin-left: 8px;">OCPP Dashboard</button>
-  </div>
+  <mat-card style="margin-bottom: 16px; max-width: fit-content; display: flex; flex-direction: row;">
+    <button routerLink="/home/ocpp-diagnostic" mat-raised-button >Charger Logs</button>
+    <button mat-raised-button color="primary" style="margin-left: 8px;">OCPP Dashboard</button>
+  </mat-card>
+<mat-card style="max-width: 100%; margin: 40px auto; padding: 20px;">
+  <!-- <h2>OCPP Operations</h2>
 
-  <div *ngIf="charger">
+  <mat-card style="margin-bottom: 16px; max-width: fit-content; display: flex; flex-direction: row;">
+    <button mat-raised-button >Charger Logs</button>
+    <button mat-raised-button color="primary" style="margin-left: 8px;">OCPP Dashboard</button>
+  </mat-card> -->
+
+  <!-- <div *ngIf="charger">
     <h3>Charger ID: {{ charger.serial_no }}</h3>
     <p><strong>Station:</strong> {{ charger.station_name }}</p>
     <p><strong>Status:</strong> {{ charger.charger_status }}</p>
@@ -23,5 +29,89 @@
         </div>
       </mat-card>
     </div>
+  </div> -->
+
+
+
+  <div class="dashboard-container">
+    <!-- Charger Summary -->
+    <div class="dashboard-row mat-elevation-z2">
+      <div class="section left">
+        <p><strong>Charger ID:</strong> {{ charger.serial_no }}</p>
+        <p><strong>Station:</strong> {{ charger.station_name }}</p>
+        <p><strong>Status: </strong> <span [ngClass]="charger.status">{{ charger.charger_status  }}</span></p>
+      </div>
+      <div class="section middle">
+        <p><strong>Charger ID:</strong> {{ charger.serial_no }}</p>
+        <p><strong>Station:</strong> {{ charger.station_name }}</p>
+        <p><strong>Capacity:</strong> {{ charger.power || '7.4 KW' }} kW</p>
+      </div>
+      <div class="section right">
+        <p><strong>Last Ping Date:</strong> {{ charger.last_ping_datetime || 'N/A' }}</p>
+        <p><strong>Heartbeat Interval:</strong> {{ charger.heartbeat_interval || 'N/A' }}</p>
+        <button mat-stroked-button color="primary" (click)="toggleActions()"><mat-icon>add_task</mat-icon>Action</button>
+          <!-- Bottom Settings Panel from Action Button -->
+      <div *ngIf="showActions" class="bottom-settings mat-elevation-z1">
+        <div class="settings-action">
+          <button mat-raised-button color="primary" (click)="clearCache()">Clear Cache</button>
+          <button mat-raised-button color="primary" (click)="reset()">Reset</button>
+          <button mat-raised-button color="primary" (click)="getLocalListVersion()">Get Local List Version</button>
+        </div>
+      </div>
+      </div>
+    </div>
+
   </div>
+
+  <div class="connector-heading dashboard-row">
+
+    <h4><strong> Conector Status </strong></h4>
+    <div>
+      <button mat-stroked-button  (click)="toggleSettings()">Settings<mat-icon>settings</mat-icon></button>
+
+    </div> 
+  </div>
+
+  
+    <div *ngFor="let conn of charger.connector_data" style="margin: 8px 0;" class="">
+      <mat-card style="padding: 12px;">
+        <div style="display: flex; align-items: center;">
+          <img src="assets/connector.png" alt="icon" width="32" height="32" style="margin-right: 8px;" />
+          <strong>Connector {{ conn.connector_no }}:</strong> {{ conn.connector_type_name }}
+        </div>
+      </mat-card>
+    </div>
+
+</mat-card>
+
+<mat-card>
+
+<div class="set-ocpp">
+  <div *ngIf="showSettings" class="dashboard-row1 mat-elevation-z1 action-wrapper">
+    <div  class="action-detail">
+      <h4>{{ selectedAction }} Panel</h4>
+      <p>Details or controls for "{{ selectedAction }}" go here...</p>
+      
+      
+    </div>
+  </div>
+
+  <div *ngIf="showSettings" class="settings-backdrop" >
+    <div class="settings-container mat-elevation-z4" (click)="$event.stopPropagation()">
+      <h3>Charger Controls</h3>
+      <div class="settings-actions">
+       
+        
+        <button mat-stroked-button  >Remote Start</button>
+        <button mat-stroked-button  >Remote Stop</button>
+        <button mat-stroked-button  >Hard Reset</button>
+        <button mat-stroked-button  >Soft Reset</button>
+        <button mat-stroked-button  >Unlock Connector</button>
+      </div>
+    </div>
+  </div>
+</div>
+  
+
+
 </mat-card>

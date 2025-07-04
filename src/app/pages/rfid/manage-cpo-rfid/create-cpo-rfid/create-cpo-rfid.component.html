@@ -1,5 +1,6 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <mat-form-field appearance="fill" style="width: 100%;">
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Create' }} Manage CPO RFID</h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
+  <mat-form-field appearance="outline"  class="custom-label">
     <mat-label id="client-label">Client Name</mat-label>
     <mat-select
       id="clientId"
@@ -12,9 +13,10 @@
         {{ client.client_name }}
       </mat-option>
     </mat-select>
+    <mat-icon matSuffix>person</mat-icon>
   </mat-form-field>
 
-  <mat-form-field appearance="fill" style="width: 100%;">
+  <mat-form-field appearance="outline"  class="custom-label">
     <mat-label id="cpo-label">CPO Name</mat-label>
     <mat-select
       id="cpoId"
@@ -27,9 +29,10 @@
         {{ cpo.name }}
       </mat-option>
     </mat-select>
+    <mat-icon matSuffix>person</mat-icon>
   </mat-form-field>
 
-<mat-form-field appearance="fill" style="width: 100%;">
+<mat-form-field appearance="outline"  class="custom-label" >
   <mat-label id="rfid-label">RFID List</mat-label>
   <mat-select
     id="rfidId"
@@ -43,16 +46,21 @@
       {{ rfid.rfid_no }}
     </mat-option>
   </mat-select>
+  <mat-icon matSuffix>list</mat-icon>
 </mat-form-field>
 
 
 
 
   <mat-slide-toggle id="statusToggle" formControlName="status" aria-labelledby="statusToggleLabel">
-    <span id="statusToggleLabel">Active</span>
+    <span id="statusToggleLabel" class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'"> {{ form.get('status')?.value ? 'Active' : 'Inactive' }}</span>
   </mat-slide-toggle>
 
-  <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid">
-    {{ isEditMode ? 'Update' : 'Create' }}
-  </button>
+  <div class="button-row">
+    <button mat-raised-button class="create" color="primary" type="submit" [disabled]="form.invalid">
+   {{ isEditMode ? 'Update' : 'Create' }}
+ </button>
+
+ <button mat-raised-button type="button" (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>
+ </div>
 </form>

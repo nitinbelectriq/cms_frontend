@@ -13,6 +13,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { CreatedishpatchmanagementComponent } from './createdishpatchmanagement/createdishpatchmanagement.component';
 import { ViewdishpatchmanagementComponent } from './viewdishpatchmanagement/viewdishpatchmanagement.component';
 import { DispatchService } from '../../services/dispatch-charger.service';
+import { MatButtonModule } from '@angular/material/button';
 
 interface ChargerData {
   charger_id: number;
@@ -86,7 +87,8 @@ interface Cpo {
     HttpClientModule,
     MatIconModule,
     MatFormFieldModule,
-    MatSelectModule
+    MatSelectModule,
+    MatButtonModule
   ],
   templateUrl: './dispatchmanagement.component.html',
   styleUrls: ['./dispatchmanagement.component.scss']
@@ -148,10 +150,13 @@ export class DispatchmanagementComponent implements OnInit, AfterViewInit {
   }
 
   onCreate(): void {
+    //console.log(this.dataSource);
     this.dialog.open(CreatedishpatchmanagementComponent, {
-      width: '60%',
+      width: '88%',
       height: '100%',
-      position: { top: '0' }
+      position: { top: '0',
+        right: '0',
+       },
     }).afterClosed().subscribe(result => {
       if (result) this.loadData();
     });
@@ -159,9 +164,11 @@ export class DispatchmanagementComponent implements OnInit, AfterViewInit {
 
   onEdit(element: ChargerDisplay): void {
     this.dialog.open(CreatedishpatchmanagementComponent, {
-      width: '60%',
+      width: '88%',
       height: '100%',
-      position: { top: '0' },
+      position: { top: '0',
+        right: '0',
+       },
       data: element
     }).afterClosed().subscribe(result => {
       if (result) this.loadData();

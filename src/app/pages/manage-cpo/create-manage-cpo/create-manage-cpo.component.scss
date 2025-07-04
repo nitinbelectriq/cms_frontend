@@ -2,31 +2,54 @@
     display: flex;
     flex-wrap: wrap;
     // gap: 40px;
+    margin: 10px;
     gap: 20px;
-    color: #119347 !important;
+   
     // width: 100%;
     // max-width: 400px;
     padding: 24px;
     box-sizing: border-box;
+    border: 1px solid #ccc;
+    border-radius: 4px;
     overflow-y: auto;
     justify-content: center;
+    scrollbar-width: none;
   }
     .custom-label{
-    width: 45%;
+    width: 35%;
      height: 40px;
     // margin-bottom: 1px;
     
   }
+
+// form-container {
+//   display: flex;
+//   flex-wrap: wrap;
+//   margin-top: 10px;
+//   gap: 25px;
+//   margin: 10px;
+//   //width: 100%;
+//   //max-width: 1000px;   // increase max width to widen form
+//   max-height: 600px;   // limit height so scrollbar appears if needed
+//   padding: 30px;       // increase padding for better spacing
+//   box-sizing: border-box;
+//   overflow-y: auto;    // enable vertical scroll when overflow
+//   background: #fff;    // optional, good for clarity
+//   border: 1px solid #ccc; // optional border for clarity
+//   border-radius: 4px;  // optional rounded corners
+//   scrollbar-width: none;
+// }
+
   
 
 
-  input::placeholder{
-    color: #119347;
-  }
+  // input::placeholder{
+  //   color: #119347;
+  // }
   
-  .label .mat-form-field-label {
-    color: green !important; /* default label color */
-  }
+  // .label .mat-form-field-label {
+  //   color: green !important; /* default label color */
+  // }
   
   // /* On focus (when the input is active) */
   
@@ -77,10 +100,11 @@
   
   
   .button-row {
+    width: 90%;
     display: flex;
     justify-content: flex-end;
     gap: 12px;
-    margin-top: 16px;
+    
   }
   
   .cancel{
@@ -107,6 +131,12 @@
 // .input-cpo{
 //   height: 1px !important;
 // }
+
+.togle-btn{
+  width: 72%;
+  display: flex;
+  justify-content: flex-start;
+}
 
 
 

@@ -1,0 +1,34 @@
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  
+    button {
+      background-color: #119347;
+      color: white;
+  
+      &:hover {
+        background-color: #209311; /* darker blue on hover */
+      }
+    }
+  }
+  .create{
+    background-color: #44d62d !important;
+  }
+  // .btn-view:hover, .btn-edit:hover{
+  //   background-color: #71be65 !important;
+  //   color:darkgreen;
+  // }
+  .btn-edit, .btn-view{
+    color: #119347 !important;
+  }
+
+
+  .status-green {
+    color:#119347;
+  }
+
+.status-red {
+    color: #d62d2d;
+  }

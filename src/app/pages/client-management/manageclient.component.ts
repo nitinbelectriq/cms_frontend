@@ -65,7 +65,12 @@ export class ManageclientComponent implements OnInit, AfterViewInit {
 
   onCreate() {
     const dialogRef = this.dialog.open(CreatemanageclientComponent, {
-      width: '600px',
+      width: '88%',
+      height: '100vh',
+      position: {
+        top: '0',
+        right: '0',
+      },
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -93,7 +98,12 @@ export class ManageclientComponent implements OnInit, AfterViewInit {
 
  onEdit(client: any) {
   const dialogRef = this.dialog.open(CreatemanageclientComponent, {
-    width: '600px',
+    width: '88%',
+    height: '100vh',
+    position: {
+      top: '0',
+      right: '0',
+    },
     data: client
   });
 

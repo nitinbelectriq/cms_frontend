@@ -1,42 +1,60 @@
-<form [formGroup]="form" (ngSubmit)="onSubmit()">
-  <mat-form-field appearance="fill">
+<h2 mat-dialog-title> Charger Connector</h2>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
+  <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Brand</mat-label>
     <mat-select formControlName="brandId" required>
       <mat-option *ngFor="let brand of brands" [value]="brand.id">
         {{ brand.name }}
       </mat-option>
     </mat-select>
+    <mat-icon matSuffix>help</mat-icon>
   </mat-form-field>
 
-  <mat-form-field appearance="fill">
+  <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Vehicle Model</mat-label>
     <mat-select formControlName="modelId" required [disabled]="models.length === 0">
       <mat-option *ngFor="let model of models" [value]="model.id">
         {{ model.name }}
       </mat-option>
     </mat-select>
+    <mat-icon matSuffix>electric_car</mat-icon>
   </mat-form-field>
 
-  <mat-form-field appearance="fill">
+  <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Vehicle Type</mat-label>
     <mat-select formControlName="vehicleTypeId" required>
       <mat-option *ngFor="let vt of vehicleTypes" [value]="vt.id">
         {{ vt.name }}
       </mat-option>
     </mat-select>
+    <mat-icon matSuffix>electric_car</mat-icon>
   </mat-form-field>
 
-  <mat-form-field appearance="fill">
+  <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Connector Types</mat-label>
     <mat-select formControlName="connectorTypes" multiple required [disabled]="connectorTypes.length === 0">
       <mat-option *ngFor="let ct of connectorTypes" [value]="ct.id">
         {{ ct.name }}
       </mat-option>
     </mat-select>
+    <mat-icon matSuffix>help</mat-icon>
   </mat-form-field>
 
-  <button type="submit" mat-raised-button color="primary" [disabled]="form.invalid">
-    Submit
-  </button>
-  <button type="button" mat-button (click)="onCancel()">Cancel</button>
+  <!-- <div class="togle-btn"> -->
+  <mat-slide-toggle formControlName="status" class="toggle-green togle-btn">
+    <span class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'">
+      {{ form.get('status')?.value ? 'Active' : 'Inactive' }}
+    </span>
+  </mat-slide-toggle>
+
+
+  <div class="button-row ">
+
+     <button type="submit" mat-raised-button class="create" [disabled]="form.invalid">
+       Submit
+     </button>
+      <button type="button" mat-raised-button (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>
+  </div>
+
+ 
 </form>
