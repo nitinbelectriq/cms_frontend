@@ -1,9 +1,9 @@
 .user-form-card {
-  max-width: 900px;
-  margin: 20px auto;
-  padding: 20px;
+ // max-width: 900px;
+  margin: 20px ;
+  //padding: 20px;
   overflow-y: auto;
-  max-height: 80vh;
+  //max-height: 80vh;
   display: flex;
   flex-direction: column;
 }
@@ -15,7 +15,190 @@
 }
 
 .form-actions {
-  margin-top: 20px;
+  margin: 20px;
   display: flex;
+  gap: 10px;
+  width: 100%;
   justify-content: flex-end;
 }
+
+
+
+// 
+
+
+.form-container-name {
+  margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  margin: 10px;
+  padding-top: 20px;
+  gap: 10px;
+  //justify-content: space-between;
+  //align-items: center;
+  //width: 100%;
+  //max-width: 1000px;   // increase max width to widen form
+  //max-height: 600px;   // limit height so scrollbar appears if needed
+   padding:30px 70px;       // increase padding for better spacing
+  box-sizing: border-box;
+  overflow-y: auto;    // enable vertical scroll when overflow
+  background: #fff;    // optional, good for clarity
+  border: 1px solid #ccc; // optional border for clarity
+  border-radius: 4px;  // optional rounded corners
+  scrollbar-width: none;
+}
+
+.form-container-pass {
+  margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  // flex-direction: column;
+  margin: 10px;
+  padding-top: 20px;
+  gap: 10px;
+  justify-content: center;
+  justify-items: center;
+  width: 100%;
+  //max-width: 1000px;   // increase max width to widen form
+  //max-height: 600px;   // limit height so scrollbar appears if needed
+  // padding: 30px;       // increase padding for better spacing
+  box-sizing: border-box;
+  overflow-y: auto;    // enable vertical scroll when overflow
+  background: #fff;    // optional, good for clarity
+  border: 1px solid #ccc; // optional border for clarity
+  border-radius: 4px;  // optional rounded corners
+  scrollbar-width: none;
+}
+
+
+.form-container {
+  margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  
+  margin-top: 10px;
+  gap: 10px;
+  //justify-content: center;
+  //width: 100%;
+  //max-width: 1000px;   // increase max width to widen form
+  //max-height: 600px;   // limit height so scrollbar appears if needed
+  //padding: 30px;
+  padding: 30px;
+        // increase padding for better spacing
+  box-sizing: border-box;
+  overflow-y: auto;    // enable vertical scroll when overflow
+  background: #fff;    // optional, good for clarity
+  border: 1px solid #ccc; // optional border for clarity
+  border-radius: 4px;  // optional rounded corners
+  scrollbar-width: none;
+}
+
+.form-container::-webkit-scrollbar {
+    display: none;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    gap: 20px;
+    width: 90%;
+}
+.form-row1 {
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  gap: 10px;
+  padding:0px 30px;
+  width: 100%;
+}
+.form-row-between {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    max-width: 32%;
+}
+// .custom-l{
+//     width: 45%;
+// }
+.custom-label{
+    width: 30%;
+    //margin: 4px;
+  }
+
+  .custom-label-pass{
+    width: 40%;
+  }
+ 
+  .button-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  
+  .cancel{
+    background-color: rgb(255, 51, 0);
+  }
+  
+  .create{
+    background-color: #119347;
+  }
+
+
+  .status.active {
+    color: green;
+    // font-weight: bold;
+  }
+  
+  .status.inactive {
+    color: red;
+    font-weight: bold;
+  }
+  
+
+
+.mat-mdc-slide-toggle.mat-accent  {
+   
+    --mdc-switch-selected-focus-state-layer-color: #25d81b;
+    --mdc-switch-selected-handle-color: #1bd83b;
+    --mdc-switch-selected-hover-state-layer-color: #1bd834;
+    --mdc-switch-selected-pressed-state-layer-color: #36d81b;
+    --mdc-switch-selected-focus-handle-color: #0e8813;
+    --mdc-switch-selected-hover-handle-color: #0e881e;
+    --mdc-switch-selected-pressed-handle-color: #0e8818;
+    --mdc-switch-selected-focus-track-color: #62f075;
+    --mdc-switch-selected-hover-track-color: #62f07b;
+    --mdc-switch-selected-pressed-track-color: #6af062;
+    --mdc-switch-selected-track-color: #05911d;
+  }
+
+
+//   
+
+
+  //      
+
+  ::ng-deep .custom-label .mat-mdc-text-field-wrapper {
+    min-height: 36px !important;
+    padding: 0 !important;
+  }
+  
+  ::ng-deep .custom-label .mat-mdc-form-field-infix {
+    padding: 0 8px !important;
+    min-height: 36px !important;
+  }
+  
+  ::ng-deep .custom-label input.mat-mdc-input-element {
+    padding: 6px 0 !important;
+    font-size: 14px !important;
+    height: 28px !important;
+    line-height: 28px !important;
+  }
+  
+  ::ng-deep .custom-label .mdc-floating-label {
+    font-size: 14px !important;
+    top: 18px !important;
+  }
+  
+
