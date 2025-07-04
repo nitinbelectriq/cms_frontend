@@ -64,7 +64,13 @@ export class ChargerVariantComponent implements OnInit, AfterViewInit {
     if (selectedItem) {
       const dialogRef = this.dialog.open(CreateChargerVariantComponent, {
         data: selectedItem,
-        width: '650px',
+        width: '88%',
+    
+        height: '100vh',
+        position: {
+          top: '0',
+          right: '0',
+        },
         disableClose: true,
       });
 
@@ -105,7 +111,13 @@ export class ChargerVariantComponent implements OnInit, AfterViewInit {
 
   onCreate(): void {
     const dialogRef = this.dialog.open(CreateChargerVariantComponent, {
-      width: '650px',
+      width: '88%',
+    
+      height: '100vh',
+      position: {
+        top: '0',
+        right: '0',
+      },
       disableClose: true
     });
 

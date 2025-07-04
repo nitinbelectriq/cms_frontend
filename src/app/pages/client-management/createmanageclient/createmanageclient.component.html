@@ -1,105 +1,117 @@
-<form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="client-form">
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Create' }} Charger Variant</h2>
+
+<form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="client-form form-container">
 
   <!-- Client Name -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label><mat-icon>badge</mat-icon> Client Name</mat-label>
-    <input matInput formControlName="name" required />
+  <mat-form-field appearance="outline" class="full-width custom-label">
+    <mat-label> Client Name</mat-label>
+    <input matInput formControlName="name" required /><mat-icon matSuffix>badge</mat-icon>
   </mat-form-field>
 
   <!-- Contact Person -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label><mat-icon>person</mat-icon> Contact Person</mat-label>
+  <mat-form-field appearance="outline" class="full-width custom-label">
+    <mat-label>Contact Person</mat-label>
     <input matInput formControlName="cp_name" required />
+    <mat-icon matSuffix>person</mat-icon> 
   </mat-form-field>
 
   <!-- Mobile -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label><mat-icon>phone</mat-icon> Mobile</mat-label>
+  <mat-form-field appearance="outline" class="full-width custom-label">
+    <mat-label> Mobile</mat-label>
     <input matInput formControlName="mobile" maxlength="10" required />
+    <mat-icon matSuffix>phone</mat-icon>
   </mat-form-field>
 
   <!-- Email -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label><mat-icon>email</mat-icon> Email</mat-label>
+  <mat-form-field appearance="outline" class="full-width custom-label">
+    <mat-label> Email</mat-label>
     <input matInput formControlName="email" type="email" required />
+    <mat-icon matSuffix>email</mat-icon>
   </mat-form-field>
 
   <!-- GST No -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label><mat-icon>receipt_long</mat-icon> GST No</mat-label>
+  <mat-form-field appearance="outline" class="full-width custom-label">
+    <mat-label> GST No</mat-label>
     <input matInput formControlName="gst_no" />
+    <mat-icon matSuffix>receipt_long</mat-icon>
   </mat-form-field>
 
   <!-- TIN No -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label><mat-icon>confirmation_number</mat-icon> TIN No</mat-label>
+  <mat-form-field appearance="outline" class="full-width custom-label">
+    <mat-label>TIN No</mat-label>
     <input matInput formControlName="tin_no" />
+    <mat-icon matSuffix>confirmation_number</mat-icon> 
   </mat-form-field>
 
   <!-- Address 1 -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label><mat-icon>home</mat-icon> Address Line 1</mat-label>
+  <mat-form-field appearance="outline" class="full-width custom-label">
+    <mat-label> Address Line 1</mat-label>
     <input matInput formControlName="address1" required />
+    <mat-icon matSuffix>home</mat-icon>
   </mat-form-field>
 
   <!-- Address 2 -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label><mat-icon>home</mat-icon> Address Line 2</mat-label>
+  <mat-form-field appearance="outline" class="full-width custom-label">
+    <mat-label> Address Line 2</mat-label>
     <input matInput formControlName="address2" />
+    <mat-icon matSuffix>home</mat-icon>
   </mat-form-field>
 
   <!-- Pin -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label><mat-icon>location_on</mat-icon> Pin</mat-label>
+  <mat-form-field appearance="outline" class="full-width custom-label">
+    <mat-label> Pin</mat-label>
     <input matInput formControlName="pin" maxlength="6" required />
+    <mat-icon matSuffix>location_on</mat-icon>
   </mat-form-field>
 
   <!-- Country -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label><mat-icon>flag</mat-icon> Country</mat-label>
+  <mat-form-field appearance="outline" class="full-width custom-label">
+    <mat-label> Country</mat-label>
     <mat-select formControlName="country_id" required>
       <mat-option *ngFor="let c of countries" [value]="c.id">{{ c.name }}</mat-option>
-    </mat-select>
+    </mat-select><mat-icon matSuffix>flag</mat-icon>
   </mat-form-field>
 
   <!-- State -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label><mat-icon>map</mat-icon> State</mat-label>
+  <mat-form-field appearance="outline" class="full-width custom-label">
+    <mat-label> State</mat-label>
     <mat-select formControlName="state_id" required>
       <mat-option *ngFor="let s of states" [value]="s.id">{{ s.name }}</mat-option>
-    </mat-select>
+    </mat-select><mat-icon matSuffix>map</mat-icon>
   </mat-form-field>
 
   <!-- City -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label><mat-icon>location_city</mat-icon> City</mat-label>
+  <mat-form-field appearance="outline" class="full-width custom-label">
+    <mat-label> City</mat-label>
     <mat-select formControlName="city_id" required>
       <mat-option *ngFor="let c of cities" [value]="c.id">{{ c.name }}</mat-option>
-    </mat-select>
+    </mat-select><mat-icon matSuffix>location_city</mat-icon>
   </mat-form-field>
 
   <!-- Landmark -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label><mat-icon>place</mat-icon> Landmark</mat-label>
+  <mat-form-field appearance="outline" class="full-width custom-label">
+    <mat-label> Landmark</mat-label>
     <input matInput formControlName="landmark" />
+    <mat-icon matSuffix>place</mat-icon>
   </mat-form-field>
 
   <!-- Status -->
-  <mat-form-field appearance="fill" class="full-width">
-    <mat-label><mat-icon>toggle_on</mat-icon> Status</mat-label>
+  <mat-form-field appearance="outline" class="full-width custom-label">
+    <mat-label> Status</mat-label>
     <mat-select formControlName="status">
       <mat-option value="Y">Active</mat-option>
       <mat-option value="N">Inactive</mat-option>
     </mat-select>
+    <mat-icon matSuffix>toggle_on</mat-icon>
   </mat-form-field>
 
   <!-- Actions -->
-  <div class="actions" style="text-align: right; margin-top: 16px;">
-    <button mat-raised-button color="primary" type="submit" [disabled]="clientForm.invalid">
+  <div class="actions button-row" style="text-align: right; margin-top: 16px;">
+    <button mat-raised-button class="create" color="primary" type="submit" [disabled]="clientForm.invalid">
       <mat-icon>check</mat-icon>
       {{ isEditMode ? 'Update' : 'Create' }}
     </button>
-    <button mat-button type="button" (click)="onCancel()">
+    <button mat-raised-button type="button" (click)="onCancel()">
       <mat-icon>cancel</mat-icon> Cancel
     </button>
   </div>

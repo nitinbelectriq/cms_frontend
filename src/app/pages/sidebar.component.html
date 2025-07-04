@@ -29,7 +29,7 @@
         <a mat-list-item routerLink="/home/connectors" class="nested-link">Chargers Connector</a>
 
         <!-- RFID Collapsible Submenu -->
-        <div mat-list-item (click)="toggleSection('rfid')" class="nested-parent-item">
+        <div mat-list-item (click)="toggleSection('rfid')" class="parent-item">
           <span>RFID</span>
           <mat-icon class="expand-icon">
             {{ isSectionOpen['rfid'] ? 'expand_less' : 'expand_more' }}
@@ -113,6 +113,15 @@
   </mat-sidenav>
 
   <mat-sidenav-content>
+
+    <div class="top-profile-bar">
+      <div class="profile-icon">
+        <mat-icon>account_circle</mat-icon>
+      </div>
+      <div class="user-greeting">
+        <span>Hey! User</span>
+      </div>
+    </div>
     <!-- Main content -->
     <div class="main-content">
       <router-outlet></router-outlet>

@@ -23,13 +23,13 @@
   </div>
 
   <div class="form-row">
-    <mat-slide-toggle formControlName="status" class="toggle-green custom-label">
+    <mat-slide-toggle formControlName="status" class="toggle-green ">
       <span class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'">
         {{ form.get('status')?.value ? 'Active' : 'Inactive' }}
       </span>
     </mat-slide-toggle>
 
-    <mat-slide-toggle formControlName="public" class="toggle-green custom-label">
+    <mat-slide-toggle formControlName="public" class="toggle-green ">
       <span class="status" [ngClass]="form.get('public')?.value ? 'Public' : 'Private'">
         {{ form.get('public')?.value ? 'Public' : 'Private' }}
       </span>
@@ -52,9 +52,10 @@
 
 
   <div class="button-row custom-label">
-    <button mat-stroked-button type="button" class="cancel" (click)="onCancel()">Cancel</button>
-    <button mat-flat-button color="primary" type="submit" class="create" [disabled]="form.invalid">
+    
+    <button mat-raised-button color="primary" type="submit" class="create" [disabled]="form.invalid">
       {{ data ? 'Update' : 'Create' }}
     </button>
+    <button mat-raised-button type="button"  (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>
   </div>
 </form>

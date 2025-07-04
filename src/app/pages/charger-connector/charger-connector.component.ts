@@ -89,7 +89,12 @@ export class ChargerConnectorComponent implements OnInit {
 
   onCreate(): void {
     const dialogRef = this.dialog.open(CreateChargerConnectorComponent, {
-      width: '600px'
+      width: '88%',
+      height: '100vh',
+      position: {
+        top: '0',
+        right: '0',
+      },
     });
 
     dialogRef.afterClosed().subscribe(result => {
@@ -114,7 +119,12 @@ export class ChargerConnectorComponent implements OnInit {
     const selected = this.dataSource.data.find(item => item.id === id);
     if (selected) {
       const dialogRef = this.dialog.open(CreateChargerConnectorComponent, {
-        width: '600px',
+        width: '88%',
+      height: '100vh',
+      position: {
+        top: '0',
+        right: '0',
+      },
         data: selected
       });
 

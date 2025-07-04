@@ -12,7 +12,7 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { ManageRfidService } from '../../../../services/cpo-rfid-mapping.service';
-import { MAT_DIALOG_DATA, MatDialogRef } from '@angular/material/dialog';
+import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -24,6 +24,7 @@ import { MatOptionModule } from '@angular/material/core';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { AuthService } from '../../../../services/login.service';
+import { MatIconModule } from '@angular/material/icon';
 
 interface RfidPayload {
   client_id: number;
@@ -49,6 +50,8 @@ interface RfidPayload {
     MatInputModule,
     MatOptionModule,
     MatSnackBarModule,
+    MatIconModule,
+    MatDialogModule
   ],
   templateUrl: './create-cpo-rfid.component.html',
   styleUrls: ['./create-cpo-rfid.component.scss'],
@@ -293,6 +296,11 @@ export class CreateCpoRfidComponent implements OnInit {
       );
     },
   });
+}
+
+
+onCancel(){
+  this.dialogRef.close()
 }
 
 }

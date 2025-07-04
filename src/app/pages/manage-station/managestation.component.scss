@@ -20,13 +20,13 @@
   .btn-edit, .btn-view{
     color: #119347 !important;
     
-    margin: -9px !important;
+    // margin: -9px !important;
   }
 
-  .btn-delete{
-    margin: -10px !important;
+  // .btn-delete{
+  //   margin: -10px !important;
 
-  }
+  // }
 
  
 
@@ -39,51 +39,64 @@
   }
   
 
-  .filter-container {
-    display: flex;
-    background-color: white;
-    // justify-content: space-between;
-    flex-direction: row;
-    gap: 16px;
+  // .filter-container {
+  //   display: flex;
+  //   background-color: white;
+  //   // justify-content: space-between;
+  //   flex-direction: row;
+  //   gap: 16px;
+  //   width: 100%;
+  //   align-items: center;
+  //   margin: 16px 0;
+  // }
+
+  // .custom-label {
+  //   width: 100%;
+  //   margin-top: 16px;
+  // }
+
+
+  // .action-btn {
+  //   gap: 0;
+  //   margin: 0;
+  // }
+
+
+  //  //      
+
+  //  ::ng-deep .custom-label .mat-mdc-text-field-wrapper {
+  //   min-height: 36px !important;
+  //   padding: 0 !important;
+  // }
+  
+  // ::ng-deep .custom-label .mat-mdc-form-field-infix {
+  //   padding: 0 8px !important;
+  //   min-height: 36px !important;
+  // }
+  
+  // ::ng-deep .custom-label input.mat-mdc-input-element {
+  //   padding: 6px 0 !important;
+  //   font-size: 14px !important;
+  //   height: 28px !important;
+  //   line-height: 28px !important;
+  // }
+  
+  // ::ng-deep .custom-label .mdc-floating-label {
+  //   font-size: 14px !important;
+  //   top: 18px !important;
+  // }
+
+  
+
+
+  .table-scroll-container {
     width: 100%;
-    align-items: center;
-    margin: 16px 0;
-  }
-
-  .custom-label {
-    width: 100%;
-    margin-top: 16px;
-  }
-
-
-  .action-btn {
-    gap: 0;
-    margin: 0;
-  }
-
-
-   //      
-
-   ::ng-deep .custom-label .mat-mdc-text-field-wrapper {
-    min-height: 36px !important;
-    padding: 0 !important;
+    overflow-x: auto;
   }
   
-  ::ng-deep .custom-label .mat-mdc-form-field-infix {
-    padding: 0 8px !important;
-    min-height: 36px !important;
-  }
-  
-  ::ng-deep .custom-label input.mat-mdc-input-element {
-    padding: 6px 0 !important;
-    font-size: 14px !important;
-    height: 28px !important;
-    line-height: 28px !important;
-  }
-  
-  ::ng-deep .custom-label .mdc-floating-label {
-    font-size: 14px !important;
-    top: 18px !important;
+  table {
+   // min-width: 100%; /* or a larger value depending on your content */
+   overflow: auto;
   }
   
 

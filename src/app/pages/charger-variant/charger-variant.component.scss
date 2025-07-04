@@ -3,16 +3,32 @@
   justify-content: space-between;
   align-items: center;
   margin-bottom: 16px;
+
+  button {
+    background-color: #119347;
+    color: white;
+
+    &:hover {
+      background-color: #209311; /* darker blue on hover */
+    }
+  }
+}
+.create{
+  background-color: #44d62d !important;
+}
+// .btn-view:hover, .btn-edit:hover{
+//   background-color: #71be65 !important;
+//   color:darkgreen;
+// }
+.btn-edit, .btn-view{
+  color: #119347 !important;
 }
 
-.create mat-icon {
-  margin-right: 4px;
+
+.status-green {
+  color:#119347;
 }
 
-table {
-  width: 100%;
-}
-
-.mat-elevation-z8 {
-  box-shadow: 0 5px 5px -3px rgba(0,0,0,.2), 0 8px 10px 1px rgba(0,0,0,.14), 0 3px 14px 2px rgba(0,0,0,.12);
+.status-red {
+  color: #d62d2d;
 }

@@ -3,32 +3,36 @@
 <mat-dialog-content>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
 
-    <mat-form-field appearance="fill" class="custom-label" style="width: 100%;">
+    <mat-form-field appearance="outline" class="custom-label" >
       <mat-label>Model Name</mat-label>
       <input matInput formControlName="name" required />
+      <mat-icon matSuffix>person</mat-icon>
       <mat-error *ngIf="form.controls['name'].hasError('required')">
         Model Name is required
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="custom-label description-field" style="width: 100%;">
+    <mat-form-field appearance="outline" class="custom-label ">
       <mat-label>Description</mat-label>
-      <textarea matInput formControlName="description" rows="4" required></textarea>
+      <textarea matInput formControlName="description"  required></textarea>
+      <mat-icon matSuffix>description</mat-icon>
       <mat-error *ngIf="form.controls['description'].hasError('required')">
         Description is required
       </mat-error>
     </mat-form-field>
 
     <mat-slide-toggle formControlName="status" class="toggle-green">
-      Active
+      <span class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'">
+        {{ form.get('status')?.value ? 'Active' : 'Inactive' }}
+      </span>
     </mat-slide-toggle>
 
   </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" style="margin-top: 15px;">
-  <button mat-stroked-button type="button" (click)="onCancel()">Cancel</button>
-  <button mat-flat-button color="primary" [disabled]="form.invalid || isLoading" (click)="onSubmit()">
+  <button mat-raised-button type="button" (click)="onCancel()">Cancel</button>
+  <button mat-raised-button class="create" [disabled]="form.invalid || isLoading" (click)="onSubmit()">
     {{ isLoading ? 'Saving...' : 'Save' }}
   </button>
 </mat-dialog-actions>

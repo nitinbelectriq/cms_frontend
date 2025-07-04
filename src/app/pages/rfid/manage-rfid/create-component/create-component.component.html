@@ -1,22 +1,28 @@
 <h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Create' }} RFID</h2>
 
-<form [formGroup]="rfidForm" (ngSubmit)="onSubmit()" mat-dialog-content>
-  <mat-form-field appearance="fill" style="width: 100%;">
+<form [formGroup]="rfidForm" (ngSubmit)="onSubmit()"  class="form-container">
+  <mat-form-field appearance="outline" class="custom-label">
     <mat-label>RFID Number</mat-label>
     <input matInput formControlName="rf_id_no" />
+    <mat-icon matSuffix>pin</mat-icon>
   </mat-form-field>
 
-  <mat-form-field appearance="fill" style="width: 100%;">
+  <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Expiry Date</mat-label>
     <input matInput type="date" formControlName="expiry_date" />
+    <mat-icon matSuffix>date_range</mat-icon>
   </mat-form-field>
 
-  <mat-slide-toggle formControlName="status" color="primary" style="margin-top: 1rem;">
-    {{ rfidForm.get('status')?.value ? 'Active' : 'Inactive' }}
+  <mat-slide-toggle formControlName="status"  class="toggle-green">
+    <span class="status" [ngClass]="rfidForm.get('status')?.value ? 'active' : 'inactive'">
+       {{ rfidForm.get('status')?.value ? 'Active' : 'Inactive' }}
+    </span>
+   
   </mat-slide-toggle>
 
-  <div mat-dialog-actions align="end" style="margin-top: 1.5rem;">
-    <button mat-button type="button" (click)="onCancel()">Cancel</button>
-    <button mat-raised-button color="primary" type="submit">Save</button>
+  <div class="button-row">
+   
+    <button mat-raised-button color="primary" class="create" type="submit">Save</button>
+     <button mat-raised-button type="button" (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>
   </div>
 </form>

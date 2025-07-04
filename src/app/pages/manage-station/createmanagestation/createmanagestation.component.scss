@@ -1,15 +1,36 @@
 
-.form-container{
-    // width: 100%;
-    height: 600px;
-    display: flex;
-    flex-direction: column;
-    overflow: auto;
-    scrollbar-width: none;
-    gap: 20px;
-    padding: 24px;
-    -ms-overflow-style: none;
+// .form-container{
+//     // width: 100%;
+//     //height: 600px;
+//     display: flex;
+//     flex-direction: column;
+//     overflow: auto;
+//     scrollbar-width: none;
+//     gap: 20px;
+//     padding: 24px;
+//     -ms-overflow-style: none;
+// }
+
+
+.form-container {
+  margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+ // gap: 25px;
+  justify-content: center;
+  //width: 100%;
+  //max-width: 1000px;   // increase max width to widen form
+  //max-height: 600px;   // limit height so scrollbar appears if needed
+  padding: 30px;       // increase padding for better spacing
+  box-sizing: border-box;
+  overflow-y: auto;    // enable vertical scroll when overflow
+  background: #fff;    // optional, good for clarity
+  border: 1px solid #ccc; // optional border for clarity
+  border-radius: 4px;  // optional rounded corners
+  scrollbar-width: none;
 }
+
 .form-container::-webkit-scrollbar {
     display: none;
 }

@@ -9,6 +9,7 @@ import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { ChargerModelService, ChargerModel } from '../../../services/charger-model.service';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-edit-charger-model-dialog',
@@ -21,6 +22,7 @@ import { ChargerModelService, ChargerModel } from '../../../services/charger-mod
     MatInputModule,
     MatButtonModule,
     MatSlideToggleModule,
+    MatIconModule,
     MatSnackBarModule,  // Added MatSnackBarModule here
   ],
   templateUrl: './edit-charger-model-dialog.component.html',

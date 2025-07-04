@@ -1,6 +1,6 @@
 import { Component, inject, OnInit } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { debounceTime, distinctUntilChanged } from 'rxjs/operators';
 
@@ -10,6 +10,9 @@ import { MatOptionModule } from '@angular/material/core';
 
 import { ConnectorService } from '../../../services/charger-connector.service';
 import { AuthService } from '../../../services/login.service';
+import { MatButtonModule } from '@angular/material/button';
+import { MatIconModule } from '@angular/material/icon';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
   selector: 'app-create-charger-connector',
@@ -20,6 +23,10 @@ import { AuthService } from '../../../services/login.service';
     MatFormFieldModule,
     MatSelectModule,
     MatOptionModule,
+    MatButtonModule,
+    MatIconModule,
+    MatDialogModule,
+    MatSlideToggleModule
   ],
   templateUrl: './create-charger-connector.component.html',
   styleUrls: ['./create-charger-connector.component.scss'],
