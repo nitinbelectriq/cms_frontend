@@ -100,7 +100,19 @@
       <div *ngIf="isSectionOpen['ocpp']" class="nested-links">
         <a mat-list-item routerLink="/home/ocpp-diagnostic" class="nested-link">OCPP Diagnostic</a>
       </div>
+<!-- User Management -->
+<div mat-list-item (click)="toggleSection('user')" class="parent-item">
+  <mat-icon>person</mat-icon>
+  <span>User Management</span>
+  <mat-icon class="expand-icon">
+    {{ isSectionOpen['user'] ? 'expand_less' : 'expand_more' }}
+  </mat-icon>
+</div>
+<div *ngIf="isSectionOpen['user']" class="nested-links">
+  <a mat-list-item routerLink="/home/manage-user" class="nested-link">Manage User</a>
+</div>
 
+<mat-divider></mat-divider>
       <mat-divider></mat-divider>
 
       <!-- Logout -->

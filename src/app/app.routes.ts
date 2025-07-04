@@ -113,6 +113,13 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'manage-user',
+        loadComponent: () =>
+          import('./pages/user-management/user-management/user-management.component').then(
+            (m) => m.ManageUserComponent
+          ),
+      },
+      {
         path: 'connectors',
         redirectTo: '/home/chargers-connector',
         pathMatch: 'full',
@@ -120,5 +127,5 @@ export const routes: Routes = [
     ],
   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
-  { path: '**', redirectTo: 'login' }, // Wildcard route for unknown paths
+  { path: '**', redirectTo: 'login' },
 ];

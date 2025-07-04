@@ -6,14 +6,14 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatIconModule } from '@angular/material/icon';
 import { MatListModule } from '@angular/material/list';
 import { MatDividerModule } from '@angular/material/divider';
-import { AuthService } from '../services/login.service'; // Adjust path
+import { AuthService } from '../services/login.service'; // Adjust path if needed
 
 @Component({
   selector: 'app-sidebar',
   standalone: true,
   imports: [
     CommonModule,
-    RouterModule, // for routerLink
+    RouterModule,
     MatSidenavModule,
     MatToolbarModule,
     MatIconModule,
@@ -24,7 +24,16 @@ import { AuthService } from '../services/login.service'; // Adjust path
   styleUrls: ['./sidebar.component.scss'],
 })
 export class SidebarComponent {
-  isSectionOpen: { [key: string]: boolean } = {};
+  isSectionOpen: { [key: string]: boolean } = {
+    charger: false,
+    rfid: false,
+    dispatch: false,
+    client: false,
+    cpo: false,
+    station: false,
+    ocpp: false,
+    user: false, // Added User Management section
+  };
 
   constructor(private router: Router, private authService: AuthService) {}
 
@@ -33,7 +42,7 @@ export class SidebarComponent {
   }
 
   logout(): void {
-    this.authService.logout(); // clear token, user data
+    this.authService.logout();
     this.router.navigate(['/login']);
   }
 }

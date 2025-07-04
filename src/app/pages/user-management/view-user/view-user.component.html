@@ -1,0 +1,8 @@
+<mat-card>
+  <h2>User Details</h2>
+  <p><strong>Name:</strong> {{ user.f_name}} {{ user.l_name }}</p>
+  <p><strong>Email:</strong> {{ user.email }}</p>
+  <p><strong>Mobile:</strong> {{ user.mobile }}</p>
+  <p><strong>Status:</strong> {{ user.status === 'Y' ? 'Active' : 'Inactive' }}</p>
+  <button mat-raised-button mat-dialog-close color="primary">Close</button>
+</mat-card>
