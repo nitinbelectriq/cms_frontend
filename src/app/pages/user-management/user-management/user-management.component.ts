@@ -100,7 +100,12 @@ export class ManageUserComponent implements OnInit {
     if (!user) return;
 
     const dialogRef = this.dialog.open(CreateUserComponent, {
-      width: '600px',
+      width: '88%',
+      height: '100vh',
+      position: {
+        top: '0',
+        right: '0',
+      },
       data: user,
     });
 

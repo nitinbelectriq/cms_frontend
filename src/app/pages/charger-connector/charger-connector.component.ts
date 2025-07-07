@@ -90,7 +90,7 @@ export class ChargerConnectorComponent implements OnInit {
   onCreate(): void {
     const dialogRef = this.dialog.open(CreateChargerConnectorComponent, {
       width: '88%',
-      height: '100vh',
+      height: 'fit-content',
       position: {
         top: '0',
         right: '0',
@@ -120,7 +120,7 @@ export class ChargerConnectorComponent implements OnInit {
     if (selected) {
       const dialogRef = this.dialog.open(CreateChargerConnectorComponent, {
         width: '88%',
-      height: '100vh',
+      height: 'fit-content',
       position: {
         top: '0',
         right: '0',
