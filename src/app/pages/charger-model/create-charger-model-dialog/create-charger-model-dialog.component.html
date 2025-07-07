@@ -1,29 +1,34 @@
 <h2 mat-dialog-title>Create Charger Model</h2>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
+
+  <!-- Model Name -->
   <mat-form-field appearance="outline" class="custom-label">
     <mat-label>Model Name</mat-label>
     <input matInput formControlName="name" required />
-     <mat-icon matSuffix>person</mat-icon>
+    <mat-icon matSuffix>person</mat-icon>
   </mat-form-field>
 
+  <!-- Description -->
   <mat-form-field appearance="outline" class="custom-label description-field">
     <mat-label>Description</mat-label>
-    <textarea matInput formControlName="description"  required></textarea>
+    <textarea matInput formControlName="description" required></textarea>
     <mat-icon matSuffix>description</mat-icon>
   </mat-form-field>
 
-  <mat-slide-toggle formControlName="status" class="toggle-green ">Status
-    <!-- <span class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'">
-      {{ form.get('status')?.value ? 'Active' : 'Inactive' }}
-    </span> -->
+  <!-- Status Toggle -->
+  <mat-slide-toggle formControlName="status" class="toggle-green">
+    Status
   </mat-slide-toggle>
 
+  <!-- Buttons -->
   <div class="button-row">
-    
     <button mat-raised-button class="create" color="primary" type="submit" [disabled]="form.invalid || isLoading">
       {{ isLoading ? 'Creating...' : 'Create' }}
     </button>
-    <button mat-raised-button type="button" (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>
+    <button mat-raised-button type="button" (click)="onCancel()">
+      <mat-icon>cancel</mat-icon>Cancel
+    </button>
   </div>
+
 </form>

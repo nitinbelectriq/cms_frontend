@@ -67,7 +67,7 @@ export class ManageRfidComponent implements OnInit, AfterViewInit {
   onCreate() {
     const dialogRef = this.dialog.open(RfidFormDialogComponent, {
       width: '88%',
-      height: '100vh',
+      height: 'fit-content',
       position: {
         top: '0',
         right: '0',
@@ -97,7 +97,7 @@ export class ManageRfidComponent implements OnInit, AfterViewInit {
 
     const dialogRef = this.dialog.open(RfidFormDialogComponent, {
       width: '88%',
-      height: '100vh',
+      height: 'fit-content',
       position: {
         top: '0',
         right: '0',
