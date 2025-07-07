@@ -67,7 +67,7 @@ export class UserService {
 
   getUsers(loginId: number): Observable<UserApiResponse> {
     return this.http.get<UserApiResponse>(
-      `${this.baseUrl}/user/getUsersCW/${loginId}`,
+      `${this.baseUrl}/user/getUsersCW/${loginId}`,  
       { headers: this.getAuthHeaders() }
     );
   }
@@ -77,6 +77,16 @@ export class UserService {
       `${this.baseUrl}/usermanagement/getUserById/${userId}`,
       { headers: this.getAuthHeaders() }
     );
+  }
+  
+  getActiveClientsCW(userId: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get(`${this.baseUrl}/client/getActiveClientsCW/${userId}`, { headers });
+  }
+
+    getActiveRoles(userId: number): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get(`${this.baseUrl}/role/getActiveRolesByClientId/:project_id/:client_id`, { headers });
   }
 
   createUser(payload: any): Observable<any> {
