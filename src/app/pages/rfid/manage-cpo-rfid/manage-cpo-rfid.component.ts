@@ -109,7 +109,7 @@ export class ManageCpoRfidComponent implements OnInit, AfterViewInit {
   onCreate() {
     const dialogRef = this.dialog.open(CreateCpoRfidComponent, {
       width: '88%',
-      height: '100vh',
+      height: 'fit-content',
       position: {
         top: '0',
         right: '0',
@@ -131,7 +131,7 @@ onEdit(id: number) {
 
   const dialogRef = this.dialog.open(CreateCpoRfidComponent, {
     width: '88%',
-    height: '100vh',
+    height: 'fit-content',
     position: {
       top: '0',
       right: '0',

@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{ data?.edit ? 'Edit Charging Station' : 'Add Charging Station' }}</h2>
+<h2 mat-dialog-title>{{ data?.edit ? 'Edit Charging Station' : 'Create Charging Station' }}</h2>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
 
@@ -164,10 +164,10 @@
     </mat-form-field>
   </div>
 
-  <mat-slide-toggle formControlName="status" class="custom-label">
-    <span class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'">
+  <mat-slide-toggle formControlName="status" class="custom-label"> Status
+    <!-- <span class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'">
       {{ form.get('status')?.value ? 'Active' : 'Inactive' }}
-    </span>
+    </span> -->
   </mat-slide-toggle>
 
   <div class="button-row custom-label">

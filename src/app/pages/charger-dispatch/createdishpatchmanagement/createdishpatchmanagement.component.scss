@@ -32,7 +32,7 @@
 .form-row {
     display: flex;
     flex-direction: row;
-    gap: 20px;
+    gap: 25px;
     width: 100%;
 }
 
@@ -71,6 +71,16 @@
   
   .create{
     background-color: #119347;
+  }
+
+  .status.active {
+    color: green;
+    // font-weight: bold;
+  }
+  
+  .status.inactive {
+    color: red;
+    font-weight: bold;
   }
 
   .custom-label{

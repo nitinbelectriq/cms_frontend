@@ -153,7 +153,7 @@ export class DispatchmanagementComponent implements OnInit, AfterViewInit {
     //console.log(this.dataSource);
     this.dialog.open(CreatedishpatchmanagementComponent, {
       width: '88%',
-      height: '100%',
+      height: 'fit-content',
       position: { top: '0',
         right: '0',
        },
@@ -165,7 +165,7 @@ export class DispatchmanagementComponent implements OnInit, AfterViewInit {
   onEdit(element: ChargerDisplay): void {
     this.dialog.open(CreatedishpatchmanagementComponent, {
       width: '88%',
-      height: '100%',
+      height: 'fit-content',
       position: { top: '0',
         right: '0',
        },

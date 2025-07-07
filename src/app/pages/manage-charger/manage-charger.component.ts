@@ -79,7 +79,7 @@ export class ManageChargersComponent implements OnInit, AfterViewInit {
       const dialogRef = this.dialog.open(CreateManageChargerComponent, {
         data: selectedItem,
         width: '88%',
-      height: '100vh',
+      height: 'fit-content',
       position: {
         top: '0',
         right: '0',
@@ -110,7 +110,7 @@ export class ManageChargersComponent implements OnInit, AfterViewInit {
   onCreate(): void {
     const dialogRef = this.dialog.open(CreateManageChargerComponent, {
       width: '88%',
-      height: '100vh',
+      height: 'fit-content',
       position: {
         top: '0',
         right: '0',
