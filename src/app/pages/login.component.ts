@@ -29,14 +29,11 @@ export class LoginComponent {
       next: (response) => {
         console.log('Login successful:', response);
 
-        // ✅ Store the token in localStorage for session persistence
         if (response && response.token) {
           localStorage.setItem('token', response.token);
-        } else {
-          console.warn('No token received in response.');
+          localStorage.setItem('userName', `${response.f_Name} ${response.l_Name}`); // ✅ Store user full name
         }
 
-        // ✅ Navigate to home
         this.router.navigate(['/home']);
       },
       error: (error) => {
