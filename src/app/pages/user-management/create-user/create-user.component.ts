@@ -1,78 +1,71 @@
-import { Component, inject, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject } from '@angular/core';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
+import { MAT_DIALOG_DATA, MatDialogRef, MatDialogModule } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
+
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
-import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
-import { MatCardModule } from '@angular/material/card';
-import { MatCheckboxModule } from '@angular/material/checkbox';
-import { UserService, User } from '../../../services/user-management.service';
-import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
+import { MatButtonModule } from '@angular/material/button';
+
+import { UserService } from '../../../services/user-management.service';
 
 @Component({
   selector: 'app-create-user',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     ReactiveFormsModule,
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
-    MatButtonModule,
     MatIconModule,
-    MatCardModule,
-    MatDialogModule,
     MatSlideToggleModule,
-    MatCheckboxModule,
+    MatButtonModule,
+    MatDialogModule,
+    MatSnackBarModule,
   ],
   templateUrl: './create-user.component.html',
   styleUrls: ['./create-user.component.scss'],
 })
 export class CreateUserComponent implements OnInit {
-  private fb = inject(FormBuilder);
-  private userService = inject(UserService);
-  private dialogRef = inject(MatDialogRef<CreateUserComponent>);
-  private data = inject(MAT_DIALOG_DATA) as User | null;
-
   form!: FormGroup;
   isEdit = false;
-  userId: number | null = null;
+  clients: any[] = [];
+  roles: any[] = [];
+  countries: any[] = [];
+  states: any[] = [];
+  cities: any[] = [];
+
+  loggedInUserId = Number(localStorage.getItem('user_id')) || 1;
+  projectId = 1; // Replace with actual project ID if needed
+
+  constructor(
+    private fb: FormBuilder,
+    private userService: UserService,
+    private snackBar: MatSnackBar,
+    private dialogRef: MatDialogRef<CreateUserComponent>,
+    @Inject(MAT_DIALOG_DATA) public data: any
+  ) {}
 
   ngOnInit(): void {
-    this.buildForm();
-
-    if (this.data) {
-      this.isEdit = true;
-      this.userId = this.data.id;
-      this.form.patchValue({
-        ...this.data,
-        status: this.data.status === 'Y',
-        password: '',
-        confirm_password: '',
-      });
-      this.form.get('password')?.clearValidators();
-      this.form.get('confirm_password')?.clearValidators();
-      this.form.get('password')?.updateValueAndValidity();
-      this.form.get('confirm_password')?.updateValueAndValidity();
-    }
-  }
-
-  buildForm(): void {
     this.form = this.fb.group({
-      client_id: [null, Validators.required],
-      role_id: [null, Validators.required],
-      f_name: ['', Validators.required],
-      m_name: [''],
-      l_name: ['', Validators.required],
+      id: [null],
+      client_id: ['', Validators.required],
+      role_id: ['', Validators.required],
+      employee_code: [''],
+      f_Name: ['', Validators.required],
+      m_Name: [''],
+      l_Name: ['', Validators.required],
       dob: [''],
       email: ['', [Validators.required, Validators.email]],
-      employee_code: [''],
       username: ['', Validators.required],
-      password: ['', Validators.required],
-      confirm_password: ['', Validators.required],
+      password: ['', this.data ? [] : Validators.required],
+      confirm_password: ['', this.data ? [] : Validators.required],
       mobile: ['', Validators.required],
       alt_mobile: [''],
       PAN: [''],
@@ -80,33 +73,98 @@ export class CreateUserComponent implements OnInit {
       address1: ['', Validators.required],
       address2: [''],
       PIN: ['', Validators.required],
-      city_id: [null, Validators.required],
-      state_id: [null, Validators.required],
-      country_id: [null, Validators.required],
+      country_id: ['', Validators.required],
+      state_id: ['', Validators.required],
+      city_id: ['', Validators.required],
       landmark: [''],
       status: [true],
     });
+
+    this.loadDropdowns();
+
+    if (this.data) {
+      this.isEdit = true;
+      this.form.patchValue(this.data);
+      this.loadRoles(this.data.client_id); // prefill roles
+      this.loadCities(this.data.state_id); // prefill cities
+    }
+
+    this.form.get('client_id')?.valueChanges.subscribe((clientId) => {
+      this.loadRoles(clientId);
+    });
+
+    this.form.get('state_id')?.valueChanges.subscribe((stateId) => {
+      this.loadCities(stateId);
+    });
+  }
+
+  loadDropdowns() {
+    this.userService.getActiveClientsCW(this.loggedInUserId).subscribe(res => {
+  this.clients = res; // ✅ NOT res.data
+});
+
+    this.userService.getCountries().subscribe(res => {
+      this.countries = res || [];
+    });
+
+    this.userService.getStates().subscribe(res => {
+      this.states = res || [];
+    });
+  }
+
+  loadRoles(clientId: number) {
+    if (clientId) {
+      this.userService.getActiveRoles(this.projectId, clientId).subscribe(res => {
+        this.roles = res.data || [];
+      });
+    }
+  }
+
+  loadCities(stateId: number) {
+    if (stateId) {
+      this.userService.getCitiesByState(stateId).subscribe(res => {
+        this.cities = res || [];
+      });
+    }
   }
 
   onSubmit(): void {
-    if (this.form.invalid) return;
+    if (this.form.invalid) {
+      this.snackBar.open('Please fill all required fields', 'Close', { duration: 3000 });
+      return;
+    }
+
+    if (!this.isEdit && this.form.value.password !== this.form.value.confirm_password) {
+      this.snackBar.open('Passwords do not match', 'Close', { duration: 3000 });
+      return;
+    }
+
+    const formValue = this.form.value;
 
     const payload = {
-      ...this.form.value,
-      status: this.form.value.status ? 'Y' : 'N',
+      ...formValue,
+      status: formValue.status ? 'Y' : 'N',
+      created_by: this.isEdit ? formValue.created_by : this.loggedInUserId,
+      created_date: this.isEdit ? formValue.created_date : new Date(),
+      modify_by: this.isEdit ? this.loggedInUserId : null,
+      modify_date: this.isEdit ? new Date() : null,
     };
 
-    if (this.isEdit && this.userId) {
-      this.userService.updateUser(this.userId, payload).subscribe({
-        next: () => this.dialogRef.close('success'),
-        error: (err) => console.error(err),
-      });
-    } else {
-      this.userService.createUser(payload).subscribe({
-        next: () => this.dialogRef.close('success'),
-        error: (err) => console.error(err),
-      });
-    }
+    const request$ = this.isEdit
+      ? this.userService.updateUser(payload)
+      : this.userService.createUser(payload);
+
+    request$.subscribe({
+      next: (res) => {
+        if (res?.status) {
+          this.snackBar.open(this.isEdit ? 'User updated successfully' : 'User created successfully', 'Close', { duration: 3000 });
+          this.dialogRef.close('success');
+        } else {
+          this.snackBar.open(res?.message || 'Failed to save user', 'Close', { duration: 3000 });
+        }
+      },
+      error: () => this.snackBar.open('Server error occurred', 'Close', { duration: 3000 }),
+    });
   }
 
   onCancel(): void {

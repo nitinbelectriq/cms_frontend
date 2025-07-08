@@ -5,18 +5,24 @@
     <div>
       <h3>Personal Details</h3>
     <div class="form-container-name">
+<mat-form-field appearance="outline" class="custom-label">
+  <mat-label>Client *</mat-label>
+  <mat-select formControlName="client_id">
+    <mat-option *ngFor="let client of clients" [value]="client.id">
+      {{ client.name }}
+    </mat-option>
+  </mat-select>
+</mat-form-field>
 
-      <mat-form-field appearance="outline" class="custom-label">
-        <mat-label>Client *</mat-label>
-        <input matInput formControlName="client_id" />
-        <mat-icon matSuffix>person</mat-icon>
-      </mat-form-field>
 
-      <mat-form-field appearance="outline" class="custom-label">
-        <mat-label>Roles *</mat-label>
-        <input matInput formControlName="role_id" />
-        <mat-icon matSuffix>person</mat-icon>
-      </mat-form-field>
+
+
+<mat-form-field appearance="outline" class="custom-label">
+  <mat-label>Role *</mat-label>
+  <mat-select formControlName="role_id">
+    <mat-option *ngFor="let role of roles" [value]="role.id">{{ role.name }}</mat-option>
+  </mat-select>
+</mat-form-field>
 
       <mat-form-field appearance="outline" class="custom-label">
         <mat-label>Employee Code</mat-label>
@@ -28,19 +34,19 @@
 
       <mat-form-field appearance="outline" class="custom-label">
         <mat-label>First Name *</mat-label>
-        <input matInput formControlName="f_name" />
+        <input matInput formControlName="f_Name" />
         <mat-icon matSuffix>person</mat-icon>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="custom-label">
         <mat-label>Middle Name</mat-label>
-        <input matInput formControlName="m_name" />
+        <input matInput formControlName="m_Name" />
         <mat-icon matSuffix>person</mat-icon>
       </mat-form-field>
 
       <mat-form-field appearance="outline" class="custom-label">
         <mat-label>Last Name *</mat-label>
-        <input matInput formControlName="l_name" />
+        <input matInput formControlName="l_Name" />
         <mat-icon matSuffix>person</mat-icon>
       </mat-form-field>
 
@@ -139,23 +145,32 @@
         <mat-icon matSuffix>pin</mat-icon>
       </mat-form-field>
 
-      <mat-form-field appearance="outline" class="custom-label">
-        <mat-label>City *</mat-label>
-        <input matInput formControlName="city_id" />
-        <mat-icon matSuffix>help</mat-icon>
-      </mat-form-field>
+      <!-- Country Dropdown -->
+<mat-form-field appearance="outline" class="custom-label">
+  <mat-label>Country *</mat-label>
+  <mat-select formControlName="country_id">
+    <mat-option *ngFor="let country of countries" [value]="country.id">{{ country.name }}</mat-option>
+  </mat-select>
+  <mat-icon matSuffix>help</mat-icon>
+</mat-form-field>
 
-      <mat-form-field appearance="outline" class="custom-label">
-        <mat-label>State *</mat-label>
-        <input matInput formControlName="state_id" />
-        <mat-icon matSuffix>help</mat-icon>
-      </mat-form-field>
+<!-- State Dropdown -->
+<mat-form-field appearance="outline" class="custom-label">
+  <mat-label>State *</mat-label>
+  <mat-select formControlName="state_id">
+    <mat-option *ngFor="let state of states" [value]="state.id">{{ state.name }}</mat-option>
+  </mat-select>
+  <mat-icon matSuffix>help</mat-icon>
+</mat-form-field>
 
-      <mat-form-field appearance="outline" class="custom-label">
-        <mat-label>Country *</mat-label>
-        <input matInput formControlName="country_id" />
-        <mat-icon matSuffix>help</mat-icon>
-      </mat-form-field>
+<!-- City Dropdown -->
+<mat-form-field appearance="outline" class="custom-label">
+  <mat-label>City *</mat-label>
+  <mat-select formControlName="city_id">
+    <mat-option *ngFor="let city of cities" [value]="city.id">{{ city.name }}</mat-option>
+  </mat-select>
+  <mat-icon matSuffix>help</mat-icon>
+</mat-form-field>
 
       <!-- <div class="form-container-pass"> -->
 
