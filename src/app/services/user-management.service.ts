@@ -84,25 +84,49 @@ export class UserService {
     return this.http.get(`${this.baseUrl}/client/getActiveClientsCW/${userId}`, { headers });
   }
 
-    getActiveRoles(userId: number): Observable<any> {
-    const headers = this.getAuthHeaders();
-    return this.http.get(`${this.baseUrl}/role/getActiveRolesByClientId/:project_id/:client_id`, { headers });
-  }
+getActiveRoles(project_id: number, client_id: number): Observable<any> {
+  const headers = this.getAuthHeaders();
+  const url = `${this.baseUrl}/role/getActiveRolesByClientId/${project_id}/${client_id}`;
+  return this.http.get(url, { headers });
+}
+getCountries(): Observable<any> {
+  const headers = this.getAuthHeaders();
+  return this.http.get(`${this.baseUrl}/master/getCountries`, { headers });
+}
 
-  createUser(payload: any): Observable<any> {
+getStates(): Observable<any> {
+  const headers = this.getAuthHeaders();
+  return this.http.get(`${this.baseUrl}/master/getStates`, { headers });
+}
+
+getCitiesByState(stateId: number): Observable<any> {
+  const headers = this.getAuthHeaders();
+  return this.http.get(`${this.baseUrl}/master/getCityByState/${stateId}`, { headers });
+}
+
+
+   createUser(payload: any): Observable<any> {
     return this.http.post<any>(
-      `${this.baseUrl}/usermanagement/createUser`,
+      `${this.baseUrl}/user/create`,
       payload,
       { headers: this.getAuthHeaders() }
     );
   }
 
-  updateUser(userId: number, payload: any): Observable<any> {
-    return this.http.put<any>(
-      `${this.baseUrl}/usermanagement/updateUser/${userId}`,
-      payload,
-      { headers: this.getAuthHeaders() }
-    );
-  }
+  updateUser(payload: any): Observable<any> {
+  return this.http.post<any>(
+    `${this.baseUrl}/user/update`,
+    payload,
+    { headers: this.getAuthHeaders() }
+  );
+}
+deleteUser(id: number, userId: number): Observable<any> {
+  return this.http.delete<any>(
+    `${this.baseUrl}/user/delete/${id}/${userId}`,
+    { headers: this.getAuthHeaders() }
+  );
+}
+
+
 }
 
