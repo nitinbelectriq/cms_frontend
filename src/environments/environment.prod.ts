@@ -1,4 +1,3 @@
-// export const environment = {
-//   production: true,
-//   apiBaseUrl: 'https://api.yourdomain.com/api' // ← change this to your prod API
-// };
+export const environment = {
+  apiBaseUrl: 'http://15.207.222.80:5500' 
+};

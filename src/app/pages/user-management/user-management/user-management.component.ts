@@ -117,7 +117,23 @@ export class ManageUserComponent implements OnInit {
     });
   }
 
-  onDelete(id: number): void {
-    // Implement delete logic here
-  }
+onDelete(id: number): void {
+  if (!confirm('Are you sure you want to delete this user?')) return;
+
+  const loginUserId = Number(localStorage.getItem('user_id'));
+
+  this.userService.deleteUser(id, loginUserId).subscribe({
+    next: (res) => {
+      if (res?.status) {
+        this.snackBar.open('User deleted successfully', 'Close', { duration: 3000 });
+        this.fetchUsers(loginUserId); // Refresh the table
+      } else {
+        this.snackBar.open(res?.message || 'Delete failed', 'Close', { duration: 3000 });
+      }
+    },
+    error: () => {
+      this.snackBar.open('Server error', 'Close', { duration: 3000 });
+    }
+  });
+}
 }
