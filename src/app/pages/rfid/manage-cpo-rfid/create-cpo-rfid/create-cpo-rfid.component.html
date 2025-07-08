@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Create' }} Manage CPO RFID</h2>
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Create' }} CPO RFID</h2>
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
   <mat-form-field appearance="outline"  class="custom-label">
     <mat-label id="client-label">Client Name</mat-label>
@@ -58,7 +58,7 @@
 
   <div class="button-row">
     <button mat-raised-button class="create" color="primary" type="submit" [disabled]="form.invalid">
-   {{ isEditMode ? 'Update' : 'Create' }}
+   {{ isEditMode ? 'Save' : 'Create' }}
  </button>
 
  <button mat-raised-button type="button" (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>

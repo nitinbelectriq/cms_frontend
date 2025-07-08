@@ -2,6 +2,7 @@ import { Component, Inject } from '@angular/core';
 import { MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
 
 @Component({
   selector: 'app-viewmanageclient',
@@ -9,6 +10,7 @@ import { MatDialogModule } from '@angular/material/dialog';
   imports: [
     CommonModule,
     MatDialogModule,
+    MatButtonModule
   ],
   templateUrl: './viewmanageclient.component.html',
   styleUrls: ['./viewmanageclient.component.scss']

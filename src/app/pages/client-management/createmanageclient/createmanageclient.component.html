@@ -1,4 +1,4 @@
-<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Create' }} Charger Variant</h2>
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Create' }} Charger Client</h2>
 
 <form [formGroup]="clientForm" (ngSubmit)="onSubmit()" class="client-form form-container">
 
@@ -108,8 +108,8 @@
   <!-- Actions -->
   <div class="actions button-row" style="text-align: right; margin-top: 16px;">
     <button mat-raised-button class="create" color="primary" type="submit" [disabled]="clientForm.invalid">
-      <mat-icon>check</mat-icon>
-      {{ isEditMode ? 'Update' : 'Create' }}
+      <!-- <mat-icon>check</mat-icon> -->
+      {{ isEditMode ? 'Save' : 'Create' }}
     </button>
     <button mat-raised-button type="button" (click)="onCancel()">
       <mat-icon>cancel</mat-icon> Cancel
