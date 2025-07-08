@@ -127,7 +127,7 @@
   <div class="button-row custom-label">
     
     <button mat-raised-button class="create" color="primary" type="submit" [disabled]="form.invalid">
-      {{ form.get('clientName')?.value ? 'Update' : 'Create' }}
+      {{ form.get('clientName')?.value ? 'Save' : 'Create' }}
     </button>
     <button mat-raised-button type="button" (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>
   </div>

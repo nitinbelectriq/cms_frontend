@@ -12,9 +12,9 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="custom-label ">
+    <mat-form-field appearance="outline" class="custom-labe ">
       <mat-label>Description</mat-label>
-      <textarea matInput formControlName="description"  required></textarea>
+      <input matInput formControlName="description"  required />
       <mat-icon matSuffix>description</mat-icon>
       <mat-error *ngIf="form.controls['description'].hasError('required')">
         Description is required

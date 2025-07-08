@@ -2,7 +2,7 @@
 
   <mat-card style="margin-bottom: 16px; max-width: fit-content; display: flex; flex-direction: row;">
     <button routerLink="/home/ocpp-diagnostic" mat-raised-button >Charger Logs</button>
-    <button mat-raised-button color="primary" style="margin-left: 8px;">OCPP Dashboard</button>
+    <button mat-raised-button  style="margin-left: 8px; "><strong>OCPP Dashboard</strong></button>
   </mat-card>
 <mat-card style="max-width: 100%; margin: 40px auto; padding: 20px;">
   <!-- <h2>OCPP Operations</h2>
@@ -53,9 +53,9 @@
           <!-- Bottom Settings Panel from Action Button -->
       <div *ngIf="showActions" class="bottom-settings mat-elevation-z1">
         <div class="settings-action">
-          <button mat-raised-button color="primary" (click)="clearCache()">Clear Cache</button>
-          <button mat-raised-button color="primary" (click)="reset()">Reset</button>
-          <button mat-raised-button color="primary" (click)="getLocalListVersion()">Get Local List Version</button>
+          <button mat-raised-button style="background-color: black; color: #ffffff;" (click)="clearCache()">Clear Cache</button>
+          <button mat-raised-button style="background-color: black; color: #ffffff;" (click)="reset()">Reset</button>
+          <button mat-raised-button style="background-color: black; color: #ffffff;" (click)="getLocalListVersion()">Get Local List Version</button>
         </div>
       </div>
       </div>

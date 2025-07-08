@@ -22,7 +22,7 @@
 
   <div class="button-row">
    
-    <button mat-raised-button color="primary" class="create" type="submit">Save</button>
+    <button mat-raised-button color="primary" class="create" type="submit" [disabled]="rfidForm.invalid">{{ isEditMode ? 'Save' : 'Create' }}</button>
      <button mat-raised-button type="button" (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>
   </div>
 </form>
