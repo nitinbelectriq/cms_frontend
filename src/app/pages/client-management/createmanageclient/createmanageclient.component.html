@@ -105,6 +105,44 @@
     <mat-icon matSuffix>toggle_on</mat-icon>
   </mat-form-field>
 
+  
+
+ 
+
+
+<button mat-raised-button class="create" color="primary" (click)="showBankDetails = !showBankDetails">
+  {{ showBankDetails ? 'Hide' : 'Add' }} Bank Details
+</button>
+
+<!-- Bank Details Section -->
+<div *ngIf="showBankDetails" class=" form-container">
+  <mat-form-field appearance="outline" class="custom-label">
+    <mat-label>Account Holder Name</mat-label>
+    <input matInput placeholder="e.g. John Doe" formControlName="accountHolderName" />
+    <mat-icon matSuffix>person</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="custom-label">
+    <mat-label>Bank Name</mat-label>
+    <input matInput placeholder="e.g. HDFC Bank" formControlName="bankName" />
+    <mat-icon matSuffix>help</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="custom-label">
+    <mat-label>Account Number</mat-label>
+    <input matInput placeholder="e.g. 1234567890" formControlName="accountNumber" />
+    <mat-icon matSuffix>pin</mat-icon>
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="custom-label">
+    <mat-label>IFSC Code</mat-label>
+    <input matInput placeholder="e.g. HDFC0001234" formControlName="ifsc" />
+    <mat-icon matSuffix>pin</mat-icon>
+  </mat-form-field>
+</div>
+
+  
+
   <!-- Actions -->
   <div class="actions button-row" style="text-align: right; margin-top: 16px;">
     <button mat-raised-button class="create" color="primary" type="submit" [disabled]="clientForm.invalid">

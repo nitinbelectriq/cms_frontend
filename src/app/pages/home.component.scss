@@ -14,3 +14,97 @@
   .status-red{
     color: red;
   }
+
+
+
+  // chart css
+
+  .revenue-card {
+    width: 100%;
+    //height: 200px;
+    //max-width: 800px;
+    //margin: 0px 10px;
+    margin-bottom: 10px;
+    padding: 16px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  }
+  
+  .revenue-content {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
+  
+  .view-select {
+    width: 200px;
+  }
+  
+  .chart-canvas {
+    max-width: 100%;
+    height: 400px;
+  }
+  
+
+  // map css
+  .map-wrapper {
+    width: 100%;
+    max-width: 800px;
+    margin-left: 10px;
+    margin-bottom: 10px;
+    padding: 10px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 0 10px #ccc;
+  }
+  
+  .map-title {
+    font-size: 20px;
+    font-weight: bold;
+    margin-bottom: 10px;
+    text-align: center;
+  }
+  
+  .map-container {
+    height: 400px;
+    width: 100%;
+    position: relative;
+    overflow: hidden;
+  }
+  
+  #map {
+    height: 100%;
+    width: 100%;
+    z-index: 0;
+  }
+
+
+  ::ng-deep .custom-label .mat-mdc-text-field-wrapper {
+    min-height: 36px !important;
+    padding: 0 !important;
+  }
+  
+  ::ng-deep .custom-label .mat-mdc-form-field-infix {
+    padding: 0 8px !important;
+    min-height: 36px !important;
+  }
+  
+  ::ng-deep .custom-label input.mat-mdc-input-element {
+    padding: 6px 0 !important;
+    font-size: 12px !important;
+    height: 28px !important;
+    line-height: 28px !important;
+  }
+  
+  ::ng-deep .custom-label .mdc-floating-label {
+    font-size: 14px !important;
+    top: 18px !important;
+  }
+
+  .custom-label{
+    width: fit-content;
+    height: 40px;
+  }
+
+  .map-search{
+    padding: 10px;
+  }
