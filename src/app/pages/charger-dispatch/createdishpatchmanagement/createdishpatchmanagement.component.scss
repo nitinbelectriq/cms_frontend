@@ -119,3 +119,14 @@
 
 
 
+.dialog-title-container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.bulk-dispatch-button {
+  height: 36px;
+  min-width: 120px;
+  font-weight: 600;
+}

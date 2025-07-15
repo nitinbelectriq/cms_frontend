@@ -1,6 +1,6 @@
 import { Component, Inject, OnInit, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
-import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
+import { MatDialog, MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -10,10 +10,11 @@ import { MatSelectModule } from '@angular/material/select';
 import { MatOptionModule } from '@angular/material/core';
 import { HttpClientModule } from '@angular/common/http';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-
-import { ChargerService } from '../../../services/manage-charger.service';
-import { AuthService } from '../../../services/login.service';
 import { MatIconModule } from '@angular/material/icon';
+
+import { BulkUploadChargerComponent } from '../charger-bulk/charger-bulk.component';
+import { ChargerService, ApiResponse } from '../../../services/manage-charger.service';
+import { AuthService } from '../../../services/login.service';
 
 interface ModelVariant {
   id: number;
@@ -41,12 +42,13 @@ interface Version {
     MatOptionModule,
     HttpClientModule,
     MatSnackBarModule,
-    MatIconModule
+    MatIconModule,
   ],
   templateUrl: './create-manage-charger.component.html',
-  styleUrls: ['./create-manage-charger.component.scss']
+  styleUrls: ['./create-manage-charger.component.scss'],
 })
 export class CreateManageChargerComponent implements OnInit {
+  private dialog = inject(MatDialog);
   private dialogRef = inject(MatDialogRef<CreateManageChargerComponent>);
   private fb = inject(FormBuilder);
   private chargerService = inject(ChargerService);
@@ -80,7 +82,7 @@ export class CreateManageChargerComponent implements OnInit {
       charger_display_id: ['', Validators.required],
       current_version_id: [null, Validators.required],
       is_available: [true],
-      status: [true]
+      status: [true],
     });
   }
 
@@ -91,7 +93,7 @@ export class CreateManageChargerComponent implements OnInit {
       charger_display_id: data.name,
       current_version_id: data.current_version_id,
       is_available: data.is_available === '1' || data.is_available === true,
-      status: data.status === 'Y' || data.status === true
+      status: data.status === 'Y' || data.status === true,
     });
   }
 
@@ -103,7 +105,7 @@ export class CreateManageChargerComponent implements OnInit {
       error: (err) => {
         console.error('Failed to load model variants', err);
         this.modelVariants = [];
-      }
+      },
     });
   }
 
@@ -115,7 +117,7 @@ export class CreateManageChargerComponent implements OnInit {
       error: (err) => {
         console.error('Failed to load versions', err);
         this.versionList = [];
-      }
+      },
     });
   }
 
@@ -131,34 +133,38 @@ export class CreateManageChargerComponent implements OnInit {
     const basePayload = {
       ...formValue,
       is_available: formValue.is_available ? '1' : '0',
-      status: formValue.status ? 'Y' : 'N'
+      status: formValue.status ? 'Y' : 'N',
     };
 
     if (this.isEditMode && this.editId !== null) {
       const updatePayload = {
         ...basePayload,
         id: this.editId,
-        modify_by: userId
+        modify_by: userId,
       };
 
       this.chargerService.updateCharger(updatePayload).subscribe({
-        next: (res) => {
-          this.snackBar.open('Charger updated successfully!', 'Close', { duration: 3000 });
-          this.dialogRef.close(true);
+        next: (res: ApiResponse) => {
+          if (res.status) {
+            this.snackBar.open('Charger updated successfully!', 'Close', { duration: 3000 });
+            this.dialogRef.close(true);
+          } else {
+            this.snackBar.open(`Update failed: ${res.message}`, 'Close', { duration: 3000 });
+          }
         },
         error: (err) => {
           console.error('Update failed', err);
           this.snackBar.open('Failed to update charger.', 'Close', { duration: 3000 });
-        }
+        },
       });
     } else {
       const createPayload = {
         ...basePayload,
-        created_by: userId
+        created_by: userId,
       };
 
       this.chargerService.createCharger(createPayload).subscribe({
-        next: (res) => {
+        next: (res: ApiResponse) => {
           if (res.status) {
             this.snackBar.open('Charger created successfully!', 'Close', { duration: 3000 });
             this.dialogRef.close(true);
@@ -169,9 +175,22 @@ export class CreateManageChargerComponent implements OnInit {
         error: (err) => {
           console.error('Create error', err);
           this.snackBar.open('Failed to create charger.', 'Close', { duration: 3000 });
-        }
+        },
       });
     }
+  }
+
+  openBulkUpload(): void {
+    const dialogRef = this.dialog.open(BulkUploadChargerComponent, {
+      width: '600px',
+      disableClose: true,
+    });
+
+    dialogRef.afterClosed().subscribe((result) => {
+      if (result) {
+        this.snackBar.open('Bulk upload completed!', 'Close', { duration: 3000 });
+      }
+    });
   }
 
   onCancel(): void {
