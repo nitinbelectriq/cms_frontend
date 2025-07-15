@@ -142,3 +142,22 @@
     font-size: 14px !important;
     top: 18px !important;
   }
+
+
+  // bank detail
+
+  .bank-details-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 16px;
+    margin-top: 20px;
+    padding: 20px;
+    border: 1px solid #ccc;
+    border-radius: 12px;
+    background-color: #f9f9f9;
+  }
+  
+  .bank-details-section mat-form-field {
+    width: 100%;
+  }
+  

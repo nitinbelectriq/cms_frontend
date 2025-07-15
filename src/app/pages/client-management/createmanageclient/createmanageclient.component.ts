@@ -1,5 +1,5 @@
 import { Component, OnInit, Inject } from '@angular/core';
-import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatSelectModule } from '@angular/material/select';
@@ -9,6 +9,7 @@ import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/materia
 import { MatIconModule } from '@angular/material/icon';
 import { ClientService } from '../../../services/client-management.service';
 import { AuthService } from '../../../services/login.service';
+import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-createmanageclient',
@@ -21,7 +22,10 @@ import { AuthService } from '../../../services/login.service';
     MatInputModule,
     MatButtonModule,
     MatDialogModule,
-    MatIconModule
+    MatIconModule,
+    MatCheckbox,
+    FormsModule,
+    ReactiveFormsModule
   ],
   templateUrl: './createmanageclient.component.html',
   styleUrls: ['./createmanageclient.component.scss']
@@ -32,6 +36,7 @@ export class CreatemanageclientComponent implements OnInit {
   states: any[] = [];
   cities: any[] = [];
   isEditMode = false;
+  showBankDetails = false;
 
   constructor(
     private fb: FormBuilder,
@@ -83,7 +88,12 @@ export class CreatemanageclientComponent implements OnInit {
       city_id: ['', Validators.required],
       landmark: [''],
       status: ['Y'],
-      created_by: userId
+      created_by: userId,
+      accountHolderName: [''],
+      bankName: [''],
+      accountNumber: [''],
+      ifsc: [''],
+      showBankDetails: true
     });
   }
 
