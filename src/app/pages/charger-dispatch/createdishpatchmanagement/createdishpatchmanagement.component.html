@@ -1,5 +1,14 @@
-<h2 mat-dialog-title>
-  {{ data ? 'Edit' : 'Create' }} Charger Dispatch
+<h2 mat-dialog-title class="dialog-title-container">
+  <span>{{ data ? 'Edit' : 'Create' }} Charger Dispatch</span>
+
+  <button
+    mat-stroked-button
+    color="accent"
+    (click)="openBulkDispatchDialog()"
+    style="height: 36px"
+  >
+    Bulk Dispatch
+  </button>
 </h2>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
@@ -21,13 +30,25 @@
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
   </div>
+  <!-- Add warranty_start and warranty_end fields here -->
+  <div class="form-row">
+    <mat-form-field appearance="outline" class="custom-label">
+      <mat-label>Warranty Start</mat-label>
+      <input matInput [matDatepicker]="warrantyStartPicker" formControlName="warranty_start" />
+      <mat-datepicker-toggle matIconSuffix [for]="warrantyStartPicker"></mat-datepicker-toggle>
+      <mat-datepicker #warrantyStartPicker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+      <mat-label>Warranty End</mat-label>
+      <input matInput [matDatepicker]="warrantyEndPicker" formControlName="warranty_end" />
+      <mat-datepicker-toggle matIconSuffix [for]="warrantyEndPicker"></mat-datepicker-toggle>
+      <mat-datepicker #warrantyEndPicker></mat-datepicker>
+    </mat-form-field>
+  </div>
 
   <div class="form-row">
-    <mat-slide-toggle formControlName="status" class="toggle-green ">Status
-      <!-- <span class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'">
-        {{ form.get('status')?.value ? 'Active' : 'Inactive' }}
-      </span> -->
-    </mat-slide-toggle>
+    <mat-slide-toggle formControlName="status" class="toggle-green ">Status</mat-slide-toggle>
 
     <mat-slide-toggle formControlName="public" class="toggle-green ">
       <span class="status" [ngClass]="form.get('public')?.value ? 'Public' : 'Private'">
@@ -36,26 +57,28 @@
     </mat-slide-toggle>
   </div>
 
- <mat-form-field appearance="outline" class="custom-label">
-  <mat-label>Serial no.</mat-label>
-  <mat-select
-    formControlName="serialNo"
-    [multiple]="!isEdit"
-    required
-  >
-    <mat-option *ngFor="let charger of chargers" [value]="charger.id">
-      {{ charger.name }}
-    </mat-option>
-  </mat-select>
-  <mat-icon matSuffix>help</mat-icon>
-</mat-form-field>
 
+
+  <mat-form-field appearance="outline" class="custom-label">
+    <mat-label>Serial no.</mat-label>
+    <mat-select
+      formControlName="serialNo"
+      [multiple]="!isEdit"
+      required
+    >
+      <mat-option *ngFor="let charger of chargers" [value]="charger.id">
+        {{ charger.name }}
+      </mat-option>
+    </mat-select>
+    <mat-icon matSuffix>help</mat-icon>
+  </mat-form-field>
 
   <div class="button-row custom-label">
-    
     <button mat-raised-button color="primary" type="submit" class="create" [disabled]="form.invalid">
       {{ data ? 'Save' : 'Create' }}
     </button>
-    <button mat-raised-button type="button"  (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>
+    <button mat-raised-button type="button" (click)="onCancel()">
+      <mat-icon>cancel</mat-icon>Cancel
+    </button>
   </div>
 </form>

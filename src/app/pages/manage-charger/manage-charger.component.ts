@@ -132,4 +132,5 @@ export class ManageChargersComponent implements OnInit, AfterViewInit {
       });
     }
   }
+
 }

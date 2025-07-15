@@ -9,7 +9,8 @@ import {
 import {
   MatDialogRef,
   MAT_DIALOG_DATA,
-  MatDialogModule
+  MatDialogModule,
+  MatDialog
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -23,6 +24,7 @@ import { provideNativeDateAdapter } from '@angular/material/core';
 
 import { DispatchService } from '../../../services/dispatch-charger.service';
 import { AuthService } from '../../../services/login.service';
+import { BulkDispatchComponent } from '../bulk-dispatch/bulk-dispatch.component';
 
 @Component({
   selector: 'app-createdishpatchmanagement',
@@ -57,6 +59,7 @@ export class CreatedishpatchmanagementComponent implements OnInit {
     private dialogRef: MatDialogRef<CreatedishpatchmanagementComponent>,
     private dispatchService: DispatchService,
     private authService: AuthService,
+    private dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
@@ -69,7 +72,9 @@ export class CreatedishpatchmanagementComponent implements OnInit {
       dispatch_date: [this.data?.dispatch_date ? new Date(this.data.dispatch_date) : '', Validators.required],
       public: [this.data?.is_private === 1 ? false : true],
       status: [this.data?.dispatch_status === 'Y' ? true : false],
-      serialNo: [this.isEdit ? this.data?.charger_id || '' : this.data?.charger_data || [], Validators.required]
+      serialNo: [this.isEdit ? this.data?.charger_id || '' : this.data?.charger_data || [], Validators.required],
+      warranty_start: [null],
+  warranty_end: [null],
     });
 
     this.loadClients();
@@ -87,6 +92,17 @@ export class CreatedishpatchmanagementComponent implements OnInit {
     this.dispatchService.getChargers().subscribe({
       next: (res) => (this.chargers = res?.data || []),
       error: (err) => console.error('Failed to load chargers', err)
+    });
+  }
+
+  openBulkDispatchDialog() {
+    this.dialog.open(BulkDispatchComponent, {
+      width: '600px',
+      data: { clientId: this.form?.value?.clientName || null }
+    }).afterClosed().subscribe((result) => {
+      if (result) {
+        this.dialogRef.close(true);
+      }
     });
   }
 
@@ -138,4 +154,4 @@ export class CreatedishpatchmanagementComponent implements OnInit {
       error: (err) => console.error(`${this.isEdit ? 'Update' : 'Create'} failed:`, err)
     });
   }
-}
+} 
