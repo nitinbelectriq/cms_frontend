@@ -6,9 +6,6 @@ import { importProvidersFrom } from '@angular/core';
 
 import { AppComponent } from './app/app.component';
 import { routes } from './app/app.routes';
-import { HomeComponent } from './app/pages/home.component';
-
-bootstrapApplication(HomeComponent);
 
 // Import Angular Material Datepicker and Native Date module
 import { MatDatepickerModule } from '@angular/material/datepicker';
@@ -19,8 +16,6 @@ bootstrapApplication(AppComponent, {
     provideRouter(routes),
     provideHttpClient(withFetch()),
     provideAnimations(),
-
-    // Import Material Datepicker and Native Date modules here
     importProvidersFrom(MatDatepickerModule, MatNativeDateModule)
   ]
 });

@@ -82,5 +82,12 @@ getCitiesByState(stateId: number): Observable<any> {
       { headers }
     );
   }
+getAmenities(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<any>(
+      `${this.baseUrl}/getAllAmenities`,
+      { headers }
+    );
+  }
 
 }

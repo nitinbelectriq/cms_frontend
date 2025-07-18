@@ -3,7 +3,7 @@
 <mat-dialog-content>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
 
-    <mat-form-field appearance="outline" class="custom-label" >
+    <mat-form-field appearance="outline" class="custom-label">
       <mat-label>Model Name</mat-label>
       <input matInput formControlName="name" required />
       <mat-icon matSuffix>person</mat-icon>
@@ -12,28 +12,24 @@
       </mat-error>
     </mat-form-field>
 
-    <mat-form-field appearance="outline" class="custom-labe ">
+    <mat-form-field appearance="outline" class="custom-label">
       <mat-label>Description</mat-label>
-      <input matInput formControlName="description"  required />
+      <input matInput formControlName="description" required />
       <mat-icon matSuffix>description</mat-icon>
       <mat-error *ngIf="form.controls['description'].hasError('required')">
         Description is required
       </mat-error>
     </mat-form-field>
 
-    <mat-slide-toggle formControlName="status" class="toggle-green">Status
-      <!-- <span class="status" [ngClass]="form.get('status')?.value ? 'active' : 'inactive'">
-        {{ form.get('status')?.value ? 'Active' : 'Inactive' }}
-      </span> -->
-    </mat-slide-toggle>
-<div class="button-row">
-  
-  <button mat-raised-button class="create" [disabled]="form.invalid || isLoading" (click)="onSubmit()">
-    {{ isLoading ? 'Saving...' : 'Save' }}
-  </button>
-  <button mat-raised-button type="button" (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>
-</div>
+    <mat-slide-toggle formControlName="status" class="toggle-green">Status</mat-slide-toggle>
+
+    <div class="button-row">
+      <button mat-raised-button color="primary" [disabled]="form.invalid || isLoading">
+        {{ isLoading ? 'Saving...' : 'Save' }}
+      </button>
+      <button mat-raised-button type="button" color="warn" (click)="onCancel()">
+        <mat-icon>cancel</mat-icon>Cancel
+      </button>
+    </div>
   </form>
 </mat-dialog-content>
-
-

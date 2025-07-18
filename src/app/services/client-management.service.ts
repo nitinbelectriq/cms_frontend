@@ -43,9 +43,16 @@ export class ClientService {
       headers: this.getAuthHeaders(),
     });
   }
- updateClient(payload: any): Observable<any> {
-  return this.http.post<any>(`${this.baseUrl}/client/update`,payload,{
-    headers:this.getAuthHeaders(),
-});
- }
+
+  updateClient(payload: any): Observable<any> {
+    return this.http.post<any>(`${this.baseUrl}/client/update`, payload, {
+      headers: this.getAuthHeaders(),
+    });
+  }
+
+  deleteClient(id: number): Observable<any> {
+    return this.http.delete<any>(`${this.baseUrl}/client/delete/${id}`, {
+      headers: this.getAuthHeaders(),
+    });
+  }
 }

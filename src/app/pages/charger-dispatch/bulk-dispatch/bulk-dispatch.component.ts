@@ -1,3 +1,4 @@
+// bulk-dispatch.component.ts
 import {
   Component,
   OnInit,
@@ -20,6 +21,7 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 import { DispatchService } from '../../../services/dispatch-charger.service';
 import { AuthService } from '../../../services/login.service';
@@ -42,6 +44,7 @@ import { AuthService } from '../../../services/login.service';
     MatNativeDateModule,
     MatSlideToggleModule,
     MatDialogModule,
+    MatSnackBarModule,
   ],
   providers: [MatDatepickerModule, MatNativeDateModule],
 })
@@ -49,9 +52,6 @@ export class BulkDispatchComponent implements OnInit {
   form!: FormGroup;
   clients: any[] = [];
   userId: number = 0;
-  message: string = '';
-  messageType: 'success' | 'error' = 'success';
-
   selectedFile?: File;
 
   constructor(
@@ -59,7 +59,8 @@ export class BulkDispatchComponent implements OnInit {
     private dispatchService: DispatchService,
     private authService: AuthService,
     private dialogRef: MatDialogRef<BulkDispatchComponent>,
-    private cd: ChangeDetectorRef
+    private cd: ChangeDetectorRef,
+    private snackBar: MatSnackBar
   ) {}
 
   ngOnInit(): void {
@@ -82,7 +83,7 @@ export class BulkDispatchComponent implements OnInit {
         this.cd.markForCheck();
       },
       error: () => {
-        this.setMessage('Failed to load clients.', 'error');
+        this.showMessage('Failed to load clients.', 'error');
       },
     });
   }
@@ -92,72 +93,62 @@ export class BulkDispatchComponent implements OnInit {
     if (input.files && input.files.length > 0) {
       const file = input.files[0];
       if (!file.name.endsWith('.csv')) {
-        this.setMessage('Only CSV files are allowed.', 'error');
+        this.showMessage('Only CSV files are allowed.', 'error');
         this.selectedFile = undefined;
         return;
       }
       this.selectedFile = file;
-      this.setMessage('CSV file selected successfully.', 'success');
+      this.showMessage('CSV file selected successfully.', 'success');
       this.cd.markForCheck();
     }
   }
 
-submitBulkDispatch() {
-  if (!this.form.valid) {
-    this.setMessage('Please fill all required fields.', 'error');
-    return;
+  submitBulkDispatch() {
+    if (!this.form.valid) {
+      this.showMessage('Please fill all required fields.', 'error');
+      return;
+    }
+
+    if (!this.selectedFile) {
+      this.showMessage('Please select a CSV file.', 'error');
+      return;
+    }
+
+    const dispatchDate: Date = new Date(this.form.value.dispatch_date);
+    dispatchDate.setHours(0, 0, 0, 0);
+    const formattedDispatchDate = formatDate(
+      dispatchDate,
+      'yyyy-MM-dd HH:mm:ss',
+      'en-IN'
+    );
+
+    const formData = new FormData();
+    formData.append('client_id', this.form.value.clientName);
+    formData.append('dispatch_date', formattedDispatchDate);
+    formData.append('status', this.form.value.status ? 'Y' : 'N');
+    formData.append('public', this.form.value.public ? '0' : '1');
+    formData.append('dispatch_by', this.userId.toString());
+    formData.append('file', this.selectedFile);
+
+    this.dispatchService.dispatchChargers(formData).subscribe({
+      next: (res) => {
+        this.showMessage(res.message || 'Bulk dispatch successful!', 'success');
+        if (res.status) {
+          setTimeout(() => this.dialogRef.close(true), 1500);
+        }
+      },
+      error: (err) => {
+        const errMsg = err?.error?.message || 'Error during dispatch.';
+        this.showMessage(errMsg, 'error');
+      },
+    });
   }
 
-  if (!this.selectedFile) {
-    this.setMessage('Please select a CSV file.', 'error');
-    return;
-  }
-
-  const dispatchDate: Date = new Date(this.form.value.dispatch_date);
-  dispatchDate.setHours(0, 0, 0, 0);
-  const formattedDispatchDate = formatDate(
-    dispatchDate,
-    'yyyy-MM-dd HH:mm:ss',
-    'en-IN'
-  );
-
-  const formData = new FormData();
-  formData.append('client_id', this.form.value.clientName);
-  formData.append('dispatch_date', formattedDispatchDate);
-  formData.append('status', this.form.value.status ? 'Y' : 'N');
-  formData.append('public', this.form.value.public ? '0' : '1');
-  formData.append('dispatch_by', this.userId.toString());
-  formData.append('file', this.selectedFile);
-
-  this.dispatchService.dispatchChargers(formData).subscribe({
-    next: (res) => {
-      // Show backend message, success or failure message
-      this.setMessage(res.message || 'Bulk dispatch successful!', 'success');
-
-      // Close dialog after short delay only if success
-      if (res.status) {
-        setTimeout(() => this.dialogRef.close(true), 1500);
-      }
-    },
-    error: (err) => {
-      // Show backend error message or fallback
-      const errMsg = err?.error?.message || 'Error during dispatch. Please try again.';
-      this.setMessage(errMsg, 'error');
-      console.error(err);
-    },
-  });
-}
-
-
-  setMessage(msg: string, type: 'success' | 'error') {
-    this.message = msg;
-    this.messageType = type;
-    this.cd.markForCheck();
-
-    setTimeout(() => {
-      this.message = '';
-      this.cd.markForCheck();
-    }, 5000);
+  showMessage(message: string, type: 'success' | 'error') {
+    this.snackBar.open(message, 'Close', {
+      duration: 4000,
+      panelClass: type === 'success' ? 'snackbar-success' : 'snackbar-error',
+    });
   }
 
   onCancel() {
@@ -165,20 +156,13 @@ submitBulkDispatch() {
   }
 
   downloadSampleCsv() {
-    const sampleCsv = `serial_no,charger_display_id
-12345,CHG-001
-67890,CHG-002
-11223,CHG-003
-`;
-
+    const sampleCsv = `serial_no,charger_display_id\n12345,CHG-001\n67890,CHG-002\n11223,CHG-003\n`;
     const blob = new Blob([sampleCsv], { type: 'text/csv' });
     const url = window.URL.createObjectURL(blob);
-
     const a = document.createElement('a');
     a.href = url;
     a.download = 'sample_bulk_dispatch.csv';
     a.click();
-
     window.URL.revokeObjectURL(url);
   }
 }
