@@ -56,6 +56,16 @@
     </mat-form-field>
   </div>
 
+  <mat-form-field appearance="outline" class="custom-label full-width">
+  <mat-label>Amenities</mat-label>
+  <mat-select formControlName="amenities" multiple>
+    <mat-option *ngFor="let item of amenitiesList" [value]="item.id">
+      {{ item.name }}
+    </mat-option>
+  </mat-select>
+  <mat-icon matSuffix>checklist</mat-icon>
+</mat-form-field>
+
   <div class="form-row">
     <mat-form-field appearance="outline" class="custom-label">
       <mat-label>Contact Person Name</mat-label>

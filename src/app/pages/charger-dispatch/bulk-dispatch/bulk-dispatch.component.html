@@ -1,20 +1,6 @@
 <h2 mat-dialog-title>Bulk Charger Dispatch</h2>
 
 <mat-dialog-content>
-
-  <!-- Message display -->
-  <div *ngIf="message" style="margin-bottom: 16px;">
-    <div
-      [ngClass]="{
-        'success-msg': messageType === 'success',
-        'error-msg': messageType === 'error'
-      }"
-      style="padding: 12px; border-radius: 4px; font-weight: 500;"
-    >
-      {{ message }}
-    </div>
-  </div>
-
   <form [formGroup]="form" (ngSubmit)="submitBulkDispatch()">
     <!-- Client Dropdown -->
     <mat-form-field appearance="outline" style="width: 100%;">

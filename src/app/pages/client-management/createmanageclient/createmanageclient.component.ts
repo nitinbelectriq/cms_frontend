@@ -7,9 +7,10 @@ import { MatInputModule } from '@angular/material/input';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef, MAT_DIALOG_DATA } from '@angular/material/dialog';
 import { MatIconModule } from '@angular/material/icon';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ClientService } from '../../../services/client-management.service';
 import { AuthService } from '../../../services/login.service';
-import { MatCheckbox } from '@angular/material/checkbox';
 
 @Component({
   selector: 'app-createmanageclient',
@@ -17,15 +18,15 @@ import { MatCheckbox } from '@angular/material/checkbox';
   imports: [
     CommonModule,
     ReactiveFormsModule,
+    FormsModule,
     MatFormFieldModule,
     MatSelectModule,
     MatInputModule,
     MatButtonModule,
     MatDialogModule,
     MatIconModule,
-    MatCheckbox,
-    FormsModule,
-    ReactiveFormsModule
+    MatCheckboxModule,
+    MatSlideToggleModule
   ],
   templateUrl: './createmanageclient.component.html',
   styleUrls: ['./createmanageclient.component.scss']
@@ -43,7 +44,7 @@ export class CreatemanageclientComponent implements OnInit {
     private clientService: ClientService,
     private dialogRef: MatDialogRef<CreatemanageclientComponent>,
     private authService: AuthService,
-    @Inject(MAT_DIALOG_DATA) public data: any // Data for edit
+    @Inject(MAT_DIALOG_DATA) public data: any
   ) {}
 
   ngOnInit(): void {
@@ -53,8 +54,22 @@ export class CreatemanageclientComponent implements OnInit {
     if (this.data) {
       this.isEditMode = true;
       this.clientForm.patchValue(this.data);
+
+      this.showBankDetails = !!(this.data.bankName || this.data.accountNumber);
+
       this.loadStates(this.data.country_id);
       this.loadCities(this.data.state_id);
+
+      // Update validators for bank details after patching data
+      this.updateBankDetailsValidators();
+
+      // Mark bank fields as touched and dirty to trigger validation and enable submit button
+      if (this.showBankDetails) {
+        ['accountHolderName', 'bankName', 'accountNumber', 'ifsc'].forEach(field => {
+          this.clientForm.get(field)?.markAsTouched();
+          this.clientForm.get(field)?.markAsDirty();
+        });
+      }
     }
 
     this.clientForm.get('country_id')?.valueChanges.subscribe((countryId) => {
@@ -87,13 +102,12 @@ export class CreatemanageclientComponent implements OnInit {
       state_id: ['', Validators.required],
       city_id: ['', Validators.required],
       landmark: [''],
-      status: ['Y'],
+      status: ['Y'],  // Default active
       created_by: userId,
       accountHolderName: [''],
       bankName: [''],
       accountNumber: [''],
-      ifsc: [''],
-      showBankDetails: true
+      ifsc: ['']
     });
   }
 
@@ -118,11 +132,64 @@ export class CreatemanageclientComponent implements OnInit {
     });
   }
 
+  onStatusToggle(event: any): void {
+    const checked = event.checked;
+    this.clientForm.patchValue({
+      status: checked ? 'Y' : 'N'
+    });
+  }
+
+  toggleBankDetails(): void {
+    this.showBankDetails = !this.showBankDetails;
+    this.updateBankDetailsValidators();
+
+    if (this.showBankDetails) {
+      ['accountHolderName', 'bankName', 'accountNumber', 'ifsc'].forEach(field => {
+        this.clientForm.get(field)?.markAsTouched();
+        this.clientForm.get(field)?.markAsDirty();
+      });
+    }
+  }
+
+  updateBankDetailsValidators() {
+    if (this.showBankDetails) {
+      this.clientForm.get('accountHolderName')?.setValidators([Validators.required]);
+      this.clientForm.get('bankName')?.setValidators([Validators.required]);
+      this.clientForm.get('accountNumber')?.setValidators([Validators.required]);
+      this.clientForm.get('ifsc')?.setValidators([Validators.required]);
+    } else {
+      this.clientForm.get('accountHolderName')?.clearValidators();
+      this.clientForm.get('bankName')?.clearValidators();
+      this.clientForm.get('accountNumber')?.clearValidators();
+      this.clientForm.get('ifsc')?.clearValidators();
+
+      // Clear bank details fields
+      this.clientForm.patchValue({
+        accountHolderName: '',
+        bankName: '',
+        accountNumber: '',
+        ifsc: ''
+      });
+    }
+
+    this.clientForm.get('accountHolderName')?.updateValueAndValidity();
+    this.clientForm.get('bankName')?.updateValueAndValidity();
+    this.clientForm.get('accountNumber')?.updateValueAndValidity();
+    this.clientForm.get('ifsc')?.updateValueAndValidity();
+  }
+
   onSubmit(): void {
     if (this.clientForm.invalid) return;
 
     const payload = this.clientForm.value;
     const userId = this.authService.getUserId() || 0;
+
+    if (!this.showBankDetails) {
+      payload.accountHolderName = '';
+      payload.bankName = '';
+      payload.accountNumber = '';
+      payload.ifsc = '';
+    }
 
     if (this.isEditMode && this.data?.id) {
       payload.modify_by = userId;

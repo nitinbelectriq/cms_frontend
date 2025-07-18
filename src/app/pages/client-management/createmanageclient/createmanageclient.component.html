@@ -4,34 +4,35 @@
 
   <!-- Client Name -->
   <mat-form-field appearance="outline" class="full-width custom-label">
-    <mat-label> Client Name</mat-label>
-    <input matInput formControlName="name" required /><mat-icon matSuffix>badge</mat-icon>
+    <mat-label>Client Name</mat-label>
+    <input matInput formControlName="name" required />
+    <mat-icon matSuffix>badge</mat-icon>
   </mat-form-field>
 
   <!-- Contact Person -->
   <mat-form-field appearance="outline" class="full-width custom-label">
     <mat-label>Contact Person</mat-label>
     <input matInput formControlName="cp_name" required />
-    <mat-icon matSuffix>person</mat-icon> 
+    <mat-icon matSuffix>person</mat-icon>
   </mat-form-field>
 
   <!-- Mobile -->
   <mat-form-field appearance="outline" class="full-width custom-label">
-    <mat-label> Mobile</mat-label>
+    <mat-label>Mobile</mat-label>
     <input matInput formControlName="mobile" maxlength="10" required />
     <mat-icon matSuffix>phone</mat-icon>
   </mat-form-field>
 
   <!-- Email -->
   <mat-form-field appearance="outline" class="full-width custom-label">
-    <mat-label> Email</mat-label>
+    <mat-label>Email</mat-label>
     <input matInput formControlName="email" type="email" required />
     <mat-icon matSuffix>email</mat-icon>
   </mat-form-field>
 
   <!-- GST No -->
   <mat-form-field appearance="outline" class="full-width custom-label">
-    <mat-label> GST No</mat-label>
+    <mat-label>GST No</mat-label>
     <input matInput formControlName="gst_no" />
     <mat-icon matSuffix>receipt_long</mat-icon>
   </mat-form-field>
@@ -40,117 +41,112 @@
   <mat-form-field appearance="outline" class="full-width custom-label">
     <mat-label>TIN No</mat-label>
     <input matInput formControlName="tin_no" />
-    <mat-icon matSuffix>confirmation_number</mat-icon> 
+    <mat-icon matSuffix>confirmation_number</mat-icon>
   </mat-form-field>
 
   <!-- Address 1 -->
   <mat-form-field appearance="outline" class="full-width custom-label">
-    <mat-label> Address Line 1</mat-label>
+    <mat-label>Address Line 1</mat-label>
     <input matInput formControlName="address1" required />
     <mat-icon matSuffix>home</mat-icon>
   </mat-form-field>
 
   <!-- Address 2 -->
   <mat-form-field appearance="outline" class="full-width custom-label">
-    <mat-label> Address Line 2</mat-label>
+    <mat-label>Address Line 2</mat-label>
     <input matInput formControlName="address2" />
     <mat-icon matSuffix>home</mat-icon>
   </mat-form-field>
 
   <!-- Pin -->
   <mat-form-field appearance="outline" class="full-width custom-label">
-    <mat-label> Pin</mat-label>
+    <mat-label>Pin</mat-label>
     <input matInput formControlName="pin" maxlength="6" required />
     <mat-icon matSuffix>location_on</mat-icon>
   </mat-form-field>
 
   <!-- Country -->
   <mat-form-field appearance="outline" class="full-width custom-label">
-    <mat-label> Country</mat-label>
+    <mat-label>Country</mat-label>
     <mat-select formControlName="country_id" required>
       <mat-option *ngFor="let c of countries" [value]="c.id">{{ c.name }}</mat-option>
-    </mat-select><mat-icon matSuffix>flag</mat-icon>
+    </mat-select>
+    <mat-icon matSuffix>flag</mat-icon>
   </mat-form-field>
 
   <!-- State -->
   <mat-form-field appearance="outline" class="full-width custom-label">
-    <mat-label> State</mat-label>
+    <mat-label>State</mat-label>
     <mat-select formControlName="state_id" required>
       <mat-option *ngFor="let s of states" [value]="s.id">{{ s.name }}</mat-option>
-    </mat-select><mat-icon matSuffix>map</mat-icon>
+    </mat-select>
+    <mat-icon matSuffix>map</mat-icon>
   </mat-form-field>
 
   <!-- City -->
   <mat-form-field appearance="outline" class="full-width custom-label">
-    <mat-label> City</mat-label>
+    <mat-label>City</mat-label>
     <mat-select formControlName="city_id" required>
       <mat-option *ngFor="let c of cities" [value]="c.id">{{ c.name }}</mat-option>
-    </mat-select><mat-icon matSuffix>location_city</mat-icon>
+    </mat-select>
+    <mat-icon matSuffix>location_city</mat-icon>
   </mat-form-field>
 
   <!-- Landmark -->
   <mat-form-field appearance="outline" class="full-width custom-label">
-    <mat-label> Landmark</mat-label>
+    <mat-label>Landmark</mat-label>
     <input matInput formControlName="landmark" />
     <mat-icon matSuffix>place</mat-icon>
   </mat-form-field>
 
-  <!-- Status -->
-  <mat-form-field appearance="outline" class="full-width custom-label">
-    <mat-label> Status</mat-label>
-    <mat-select formControlName="status">
-      <mat-option value="Y">Active</mat-option>
-      <mat-option value="N">Inactive</mat-option>
-    </mat-select>
-    <mat-icon matSuffix>toggle_on</mat-icon>
-  </mat-form-field>
+  <!-- Status Toggle -->
+  <mat-slide-toggle
+    color="primary"
+    [checked]="clientForm.get('status')?.value === 'Y'"
+    (change)="onStatusToggle($event)">
+    Status (Active / Inactive)
+  </mat-slide-toggle>
 
-  
+  <!-- Bank Details Toggle Button -->
+  <button mat-raised-button type="button" class="create" color="primary" (click)="toggleBankDetails()" style="margin-top: 10px;">
+    {{ showBankDetails ? 'Hide' : 'Add' }} Bank Details
+  </button>
 
- 
+  <!-- Bank Details Section -->
+  <div *ngIf="showBankDetails" class="bank-details-section">
+    <mat-form-field appearance="outline" class="custom-label">
+      <mat-label>Account Holder Name</mat-label>
+      <input matInput placeholder="e.g. John Doe" formControlName="accountHolderName" />
+      <mat-icon matSuffix>person</mat-icon>
+    </mat-form-field>
 
+    <mat-form-field appearance="outline" class="custom-label">
+      <mat-label>Bank Name</mat-label>
+      <input matInput placeholder="e.g. HDFC Bank" formControlName="bankName" />
+      <mat-icon matSuffix>help</mat-icon>
+    </mat-form-field>
 
-<button mat-raised-button class="create" color="primary" (click)="showBankDetails = !showBankDetails">
-  {{ showBankDetails ? 'Hide' : 'Add' }} Bank Details
-</button>
+    <mat-form-field appearance="outline" class="custom-label">
+      <mat-label>Account Number</mat-label>
+      <input matInput placeholder="e.g. 1234567890" formControlName="accountNumber" />
+      <mat-icon matSuffix>pin</mat-icon>
+    </mat-form-field>
 
-<!-- Bank Details Section -->
-<div *ngIf="showBankDetails" class=" form-container">
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Account Holder Name</mat-label>
-    <input matInput placeholder="e.g. John Doe" formControlName="accountHolderName" />
-    <mat-icon matSuffix>person</mat-icon>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Bank Name</mat-label>
-    <input matInput placeholder="e.g. HDFC Bank" formControlName="bankName" />
-    <mat-icon matSuffix>help</mat-icon>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>Account Number</mat-label>
-    <input matInput placeholder="e.g. 1234567890" formControlName="accountNumber" />
-    <mat-icon matSuffix>pin</mat-icon>
-  </mat-form-field>
-
-  <mat-form-field appearance="outline" class="custom-label">
-    <mat-label>IFSC Code</mat-label>
-    <input matInput placeholder="e.g. HDFC0001234" formControlName="ifsc" />
-    <mat-icon matSuffix>pin</mat-icon>
-  </mat-form-field>
-</div>
-
-  
+    <mat-form-field appearance="outline" class="custom-label">
+      <mat-label>IFSC Code</mat-label>
+      <input matInput placeholder="e.g. HDFC0001234" formControlName="ifsc" />
+      <mat-icon matSuffix>pin</mat-icon>
+    </mat-form-field>
+  </div>
 
   <!-- Actions -->
   <div class="actions button-row" style="text-align: right; margin-top: 16px;">
     <button mat-raised-button class="create" color="primary" type="submit" [disabled]="clientForm.invalid">
-      <!-- <mat-icon>check</mat-icon> -->
       {{ isEditMode ? 'Save' : 'Create' }}
     </button>
-    <button mat-raised-button type="button" (click)="onCancel()">
+    <button mat-raised-button class="cancel" type="button" (click)="onCancel()">
       <mat-icon>cancel</mat-icon> Cancel
     </button>
   </div>
+
 </form>

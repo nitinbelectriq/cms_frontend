@@ -118,7 +118,22 @@ export class ManageclientComponent implements OnInit, AfterViewInit {
 }
 
 
-  onDelete(id: number) {
-    console.log('Delete client with id:', id);
+onDelete(id: number) {
+  if (confirm('Are you sure you want to delete this client?')) {
+    this.clientService.deleteClient(id).subscribe({
+      next: (res) => {
+        alert('Client deleted successfully');
+        const loginId = this.authService.getUserId();
+        if (loginId) {
+          this.loadClients(loginId); // Refresh list
+        }
+      },
+      error: (error) => {
+        console.error('Error deleting client:', error);
+        alert('Failed to delete the client.');
+      }
+    });
   }
+}
+
 }

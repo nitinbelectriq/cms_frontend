@@ -68,7 +68,8 @@ export class CreatemanagestationComponent implements OnInit {
     electricityline: ['', Validators.required],
     opentime: ['', Validators.required],
     closetime: [''],
-    status: [true]
+    status: [true],
+    amenities: [[], Validators.required]
   });
 
   cpoList: any[] = [];
@@ -78,6 +79,7 @@ export class CreatemanagestationComponent implements OnInit {
   countries: any[] = [];
   states: any[] = [];
   cities: any[] = [];
+  amenitiesList: any[] = [];
 
   async ngOnInit() {
     const userId = this.authService.getUserId();
@@ -123,6 +125,7 @@ export class CreatemanagestationComponent implements OnInit {
       const electricityLines = await firstValueFrom(this.stationService.getElectricityLineTypes());
       const countries = await firstValueFrom(this.stationService.getCountries());
       const states = await firstValueFrom(this.stationService.getStates());
+      const amenitiesResponse = await firstValueFrom(this.stationService.getAmenities());
 
       this.cpoList = cpos || [];
       this.locationTypes = locationTypes || [];
@@ -130,6 +133,7 @@ export class CreatemanagestationComponent implements OnInit {
       this.electricityLines = electricityLines || [];
       this.countries = countries || [];
       this.states = states || [];
+      this.amenitiesList = amenitiesResponse?.data || [];
     } catch (error) {
       console.error('Error loading dropdowns', error);
     }
@@ -158,7 +162,8 @@ export class CreatemanagestationComponent implements OnInit {
       electricityline: +station.electricity_line_id,
       opentime: station.o_time,
       closetime: station.c_time,
-      status: station.status === 'Y'
+      status: station.status === 'Y',
+      amenities: station.amenities?.map((a: any) => a.id) || []
     });
 
     if (station.state_id) {
@@ -208,7 +213,8 @@ export class CreatemanagestationComponent implements OnInit {
       electricity_line_id: this.form.value.electricityline,
       o_time: this.form.value.opentime,
       c_time: this.form.value.closetime,
-      status: this.form.value.status ? 'Y' : 'N'
+      status: this.form.value.status ? 'Y' : 'N',
+      amenities: this.form.value.amenities
     };
 
     if (this.data?.edit && this.stationId) {
