@@ -183,6 +183,7 @@ export class CreateManageChargerComponent implements OnInit {
   openBulkUpload(): void {
     const dialogRef = this.dialog.open(BulkUploadChargerComponent, {
       width: '600px',
+      height: '70vh',
       disableClose: true,
     });
 

@@ -11,6 +11,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { ConnectorViewDialogComponent } from './view-charger-connector/view-charger-connector.component';
 import { CreateChargerConnectorComponent } from './create-charger-connector/create-charger-connector.component';
 import { AuthService } from '../../services/login.service';
+import { DeleteChargerConectorComponent } from './delete-charger-conector/delete-charger-conector.component';
 interface ConnectorModel {
   id: number;
   vehicleModel: string;
@@ -138,25 +139,51 @@ export class ChargerConnectorComponent implements OnInit {
   }
 
 onDelete(id: number): void {
-  if (!confirm('Are you sure you want to delete this connector mapping?')) return;
+  const dialogRef = this.dialog.open(DeleteChargerConectorComponent,{
+    data: id,
+  })
 
-  const userId = this.authService.getUserId();
+  dialogRef.afterClosed().subscribe(result => {
+    if(result === true){
+      const userId = this.authService.getUserId();
 
-  if (userId === null || userId === undefined) {
-    this.snackBar.open('User not logged in.', 'Close', { duration: 3000 });
-    return;
-  }
-
-  this.connectorService.deleteMapping(id, userId).subscribe({
-    next: () => {
-      this.snackBar.open('Connector mapping deleted successfully.', 'Close', { duration: 3000 });
-      this.loadConnectorData();
-    },
-    error: (err) => {
-      console.error('Delete error:', err);
-      this.snackBar.open('Failed to delete connector mapping.', 'Close', { duration: 3000 });
+      if (userId === null || userId === undefined) {
+        this.snackBar.open('User not logged in.', 'Close', { duration: 3000 });
+        return;
+      }
+    
+      
+      this.connectorService.deleteMapping(id, userId).subscribe({
+        next: () => {
+          this.snackBar.open('Connector mapping deleted successfully.', 'Close', { duration: 3000 });
+          this.loadConnectorData();
+        },
+        error: (err) => {
+          console.error('Delete error:', err);
+          this.snackBar.open('Failed to delete connector mapping.', 'Close', { duration: 3000 });
+        }
+      });
     }
-  });
+  })
+  // if (!confirm('Are you sure you want to delete this connector mapping?')) return;
+
+  // const userId = this.authService.getUserId();
+
+  // if (userId === null || userId === undefined) {
+  //   this.snackBar.open('User not logged in.', 'Close', { duration: 3000 });
+  //   return;
+  // }
+
+  // this.connectorService.deleteMapping(id, userId).subscribe({
+  //   next: () => {
+  //     this.snackBar.open('Connector mapping deleted successfully.', 'Close', { duration: 3000 });
+  //     this.loadConnectorData();
+  //   },
+  //   error: (err) => {
+  //     console.error('Delete error:', err);
+  //     this.snackBar.open('Failed to delete connector mapping.', 'Close', { duration: 3000 });
+  //   }
+  // });
 }
 
 

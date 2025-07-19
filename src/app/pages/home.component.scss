@@ -75,8 +75,12 @@
     height: 100%;
     width: 100%;
     z-index: 0;
+    //background-color: #1bd863;
   }
-
+  ::ng-deep .leaflet-tile {
+    filter: hue-rotate(90deg) saturate(1.4);
+  }
+  
 
   ::ng-deep .custom-label .mat-mdc-text-field-wrapper {
     min-height: 36px !important;

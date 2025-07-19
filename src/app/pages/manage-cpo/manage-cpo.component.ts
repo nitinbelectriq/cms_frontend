@@ -10,6 +10,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { CreateManageCpoComponent } from './create-manage-cpo/create-manage-cpo.component';
 import { ViewManageCpoComponent } from './view-manage-cpo/view-manage-cpo.component';
 import { CpoService } from '../../services/manage-cpo.service';
+import { DeleteManageCpoComponent } from './delete-manage-cpo/delete-manage-cpo.component';
 
 @Component({
   selector: 'app-manage-cpo',
@@ -78,11 +79,23 @@ export class ManageCpoComponent implements OnInit, AfterViewInit {
   }
 
   onDelete(id: number) {
-    if (confirm('Delete this CPO?')) {
-      this.cpoService.deleteCpo(id).subscribe({
-        next: () => this.loadData(),
-        error: err => console.error('Delete error:', err)
-      });
-    }
+    const dialogRef = this.dialog.open(DeleteManageCpoComponent, {
+      data: id,
+    });
+
+    dialogRef.afterClosed().subscribe(result => {
+      if(result === true){
+        this.cpoService.deleteCpo(id).subscribe({
+          next: () => this.loadData(),
+          error: err => console.error('Delete error:', err)
+        })
+      }
+    })
+    // if (confirm('Delete this CPO?')) {
+    //   this.cpoService.deleteCpo(id).subscribe({
+    //     next: () => this.loadData(),
+    //     error: err => console.error('Delete error:', err)
+    //   });
+    // }
   }
 }

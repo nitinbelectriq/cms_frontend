@@ -87,6 +87,7 @@ export class CreateUserComponent implements OnInit {
       this.form.patchValue(this.data);
       this.loadRoles(this.data.client_id); // prefill roles
       this.loadCities(this.data.state_id); // prefill cities
+      
     }
 
     this.form.get('client_id')?.valueChanges.subscribe((clientId) => {
@@ -110,6 +111,7 @@ export class CreateUserComponent implements OnInit {
     this.userService.getStates().subscribe(res => {
       this.states = res || [];
     });
+
   }
 
   loadRoles(clientId: number) {

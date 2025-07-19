@@ -1,11 +1,13 @@
+<div class="header">
 <h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Create' }} Charger</h2>
 
 <!-- Bulk Upload Button -->
-<div style="text-align: right; margin-bottom: 15px;">
-  <button mat-raised-button color="accent" (click)="openBulkUpload()">
+<div style=" margin-bottom: 15px; margin-right: 10px;">
+  <button mat-raised-button class="bulk-btn" color="accent" (click)="openBulkUpload()">
     <mat-icon>cloud_upload</mat-icon>
     Bulk Upload
   </button>
+</div>
 </div>
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">

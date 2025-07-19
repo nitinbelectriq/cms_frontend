@@ -13,6 +13,7 @@ import { UserService, User } from '../../../services/user-management.service';
 import { AuthService } from '../../../services/login.service';
 import { ViewUserComponent } from '../view-user/view-user.component';
 import { CreateUserComponent } from '../create-user/create-user.component';
+import { DeleteUserManagementComponent } from '../delete-user-management/delete-user-management.component';
 
 @Component({
   selector: 'app-manage-user',
@@ -118,9 +119,13 @@ export class ManageUserComponent implements OnInit {
   }
 
 onDelete(id: number): void {
-  if (!confirm('Are you sure you want to delete this user?')) return;
+  const dialogRef = this.dialog.open(DeleteUserManagementComponent,{
+    data: id,
+  });
 
-  const loginUserId = Number(localStorage.getItem('user_id'));
+  dialogRef.afterClosed().subscribe(result =>{
+    if(result === true){
+const loginUserId = Number(localStorage.getItem('user_id'));
 
   this.userService.deleteUser(id, loginUserId).subscribe({
     next: (res) => {
@@ -135,5 +140,10 @@ onDelete(id: number): void {
       this.snackBar.open('Server error', 'Close', { duration: 3000 });
     }
   });
+    }
+  })
+  //if (!confirm('Are you sure you want to delete this user?')) return;
+
+  
 }
 }

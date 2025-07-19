@@ -12,6 +12,7 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { CreateManageChargerComponent } from './create-manage-charger/create-manage-charger.component';
 import { ViewManageChargerComponent } from './view-manage-charger/view-manage-charger.component';
 import { ChargerService, Charger } from '../../services/manage-charger.service';
+import { DeleteManageChargerComponent } from './delete-manage-charger/delete-manage-charger.component';
 
 @Component({
   selector: 'app-manage-chargers',
@@ -94,17 +95,34 @@ export class ManageChargersComponent implements OnInit, AfterViewInit {
   }
 
   onDelete(id: number): void {
-    if (confirm('Are you sure you want to delete this charger?')) {
-      this.chargerService.deleteCharger(id).subscribe({
-        next: (res) => {
-          this.snackBar.open(res.message || 'Charger deleted successfully.', 'Close', { duration: 3000 });
-          this.loadData();
-        },
-        error: (err) => {
-          this.snackBar.open(err?.error?.message || 'Failed to delete charger', 'Close', { duration: 3000 });
-        }
-      });
-    }
+    const dialogRef = this.dialog.open(DeleteManageChargerComponent, {
+      data: id,
+    })
+
+    dialogRef.afterClosed().subscribe(result =>{
+      if(result === true){
+        this.chargerService.deleteCharger(id).subscribe({
+              next: (res) => {
+                this.snackBar.open(res.message || 'Charger deleted successfully.', 'Close', { duration: 3000 });
+                this.loadData();
+              },
+              error: (err) => {
+                this.snackBar.open(err?.error?.message || 'Failed to delete charger', 'Close', { duration: 3000 });
+              }
+            });
+      }
+    })
+    // if (confirm('Are you sure you want to delete this charger?')) {
+    //   this.chargerService.deleteCharger(id).subscribe({
+    //     next: (res) => {
+    //       this.snackBar.open(res.message || 'Charger deleted successfully.', 'Close', { duration: 3000 });
+    //       this.loadData();
+    //     },
+    //     error: (err) => {
+    //       this.snackBar.open(err?.error?.message || 'Failed to delete charger', 'Close', { duration: 3000 });
+    //     }
+    //   });
+    // }
   }
 
   onCreate(): void {

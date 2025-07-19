@@ -1,15 +1,21 @@
-<h2 mat-dialog-title class="dialog-title-container">
-  <span>{{ data ? 'Edit' : 'Create' }} Charger Dispatch</span>
+
+<div class="dialog-title-container">
+
+  <h2 mat-dialog-title >
+  {{ data ? 'Edit' : 'Create' }} Charger Dispatch</h2>
 
   <button
     mat-stroked-button
-    color="accent"
+    class="dispatch-btn"
+   
     (click)="openBulkDispatchDialog()"
-    style="height: 36px"
+   style="margin-right: 10px;"
   >
     Bulk Dispatch
   </button>
-</h2>
+</div>
+
+
 
 <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
   <div class="form-row">

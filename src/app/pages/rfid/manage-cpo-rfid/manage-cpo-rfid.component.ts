@@ -14,6 +14,7 @@ import { ManageRfidService } from '../../../services/cpo-rfid-mapping.service';
 import { AuthService } from '../../../services/login.service';
 import { ViewCpoRfidComponent } from '../manage-cpo-rfid/view-cpo-rfid/view-cpo-rfid.component';
 import { CreateCpoRfidComponent } from '../manage-cpo-rfid/create-cpo-rfid/create-cpo-rfid.component'; // ✅ Correct import
+import { DeleteManageCpoRfidComponent } from './delete-manage-cpo-rfid/delete-manage-cpo-rfid.component';
 
 interface RfidRecord {
   id: number;
@@ -149,33 +150,66 @@ onEdit(id: number) {
 
 
 onDelete(id: number) {
-  if (!id) return;
 
-  const userId = Number(this.currentLoginId);
-
-  if (!userId) {
-    this.snackBar.open('User ID not found. Please login again.', 'Close', { duration: 3000 });
-    return;
-  }
-
-  if (!confirm('Are you sure you want to delete this RFID mapping?')) {
-    return;
-  }
-
-  this.manageRfidService.deleteCpoRfidMapping(id, userId).subscribe({
-    next: (res: any) => {
-      if (res.status === true) {
-        this.snackBar.open('RFID mapping deleted successfully!', 'Close', { duration: 3000 });
-        this.loadData(this.currentLoginId);
-      } else {
-        this.snackBar.open('Delete failed: ' + (res.message || 'Unknown error'), 'Close', { duration: 5000 });
-      }
-    },
-    error: (err) => {
-      console.error('Delete error:', err);
-      this.snackBar.open('Error occurred while deleting RFID mapping.', 'Close', { duration: 3000 });
-    },
+  const dialogRef = this.dialog.open(DeleteManageCpoRfidComponent,{
+    data: id,
   });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if(result=== true){
+      if (!id) return;
+
+      const userId = Number(this.currentLoginId);
+    
+      if (!userId) {
+        this.snackBar.open('User ID not found. Please login again.', 'Close', { duration: 3000 });
+        return;
+      }
+
+
+      this.manageRfidService.deleteCpoRfidMapping(id, userId).subscribe({
+        next: (res: any) => {
+          if (res.status === true) {
+            this.snackBar.open('RFID mapping deleted successfully!', 'Close', { duration: 3000 });
+            this.loadData(this.currentLoginId);
+          } else {
+            this.snackBar.open('Delete failed: ' + (res.message || 'Unknown error'), 'Close', { duration: 5000 });
+          }
+        },
+        error: (err) => {
+          console.error('Delete error:', err);
+          this.snackBar.open('Error occurred while deleting RFID mapping.', 'Close', { duration: 3000 });
+        },
+      });
+    }
+  })
+  // if (!id) return;
+
+  // const userId = Number(this.currentLoginId);
+
+  // if (!userId) {
+  //   this.snackBar.open('User ID not found. Please login again.', 'Close', { duration: 3000 });
+  //   return;
+  // }
+
+  // if (!confirm('Are you sure you want to delete this RFID mapping?')) {
+  //   return;
+  // }
+
+  // this.manageRfidService.deleteCpoRfidMapping(id, userId).subscribe({
+  //   next: (res: any) => {
+  //     if (res.status === true) {
+  //       this.snackBar.open('RFID mapping deleted successfully!', 'Close', { duration: 3000 });
+  //       this.loadData(this.currentLoginId);
+  //     } else {
+  //       this.snackBar.open('Delete failed: ' + (res.message || 'Unknown error'), 'Close', { duration: 5000 });
+  //     }
+  //   },
+  //   error: (err) => {
+  //     console.error('Delete error:', err);
+  //     this.snackBar.open('Error occurred while deleting RFID mapping.', 'Close', { duration: 3000 });
+  //   },
+  // });
 }
 
 

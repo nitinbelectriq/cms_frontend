@@ -191,6 +191,15 @@ export class HomeComponent implements OnInit, AfterViewInit {
       attribution: '© OpenStreetMap contributors'
     }).addTo(this.map);
 
+    
+    // L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+    //   attribution: 'Tiles © Esri — Source: Esri, Garmin, USGS, NASA',
+    //   maxZoom: 19
+    // }).addTo(this.map);
+    
+    
+    
+
     this.renderGroupedChargers();
 
     setTimeout(() => this.map.invalidateSize(), 300);
