@@ -12,6 +12,7 @@ import { ViewRfidDialogComponent, RfidData } from './view-rfid-component/view-co
 import { ManageRfidService } from '../../../services/manage-rfid.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
+import { DeleteManageRfidComponent } from './delete-manage-rfid/delete-manage-rfid.component';
 
 @Component({
   selector: 'app-manage-rfid',
@@ -132,24 +133,54 @@ export class ManageRfidComponent implements OnInit, AfterViewInit {
   }
 
 onDelete(id: number) {
-  const userIdStr = localStorage.getItem('user_id'); // adjust key if different
+  const dialogRef = this.dialog.open(DeleteManageRfidComponent,{
+    data: id,
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if(result === true ){
+
+
+      const userIdStr = localStorage.getItem('user_id'); // adjust key if different
   if (!userIdStr) {
     this.snackBar.open('User not logged in', 'Close', { duration: 3000 });
     return;
   }
   const userId = Number(userIdStr);
-  if (!confirm('Are you sure you want to delete this RFID?')) return;
 
-  this.manageRfidService.deleteRfid(id, userId).subscribe({
-    next: () => {
-      this.snackBar.open('RFID deleted successfully', 'Close', { duration: 3000 });
-      this.loadRfids(); // reload data after delete
-    },
-    error: (err) => {
-      console.error('Delete error:', err);
-      this.snackBar.open('Failed to delete RFID', 'Close', { duration: 3000 });
+      this.manageRfidService.deleteRfid(id, userId).subscribe({
+        next: () => {
+          this.snackBar.open('RFID deleted successfully', 'Close', { duration: 3000 });
+          this.loadRfids(); // reload data after delete
+        },
+        error: (err) => {
+          console.error('Delete error:', err);
+          this.snackBar.open('Failed to delete RFID', 'Close', { duration: 3000 });
+        }
+      });
+
     }
-  });
+  })
+
+
+  // const userIdStr = localStorage.getItem('user_id'); // adjust key if different
+  // if (!userIdStr) {
+  //   this.snackBar.open('User not logged in', 'Close', { duration: 3000 });
+  //   return;
+  // }
+  // const userId = Number(userIdStr);
+  //if (!confirm('Are you sure you want to delete this RFID?')) return;
+
+  // this.manageRfidService.deleteRfid(id, userId).subscribe({
+  //   next: () => {
+  //     this.snackBar.open('RFID deleted successfully', 'Close', { duration: 3000 });
+  //     this.loadRfids(); // reload data after delete
+  //   },
+  //   error: (err) => {
+  //     console.error('Delete error:', err);
+  //     this.snackBar.open('Failed to delete RFID', 'Close', { duration: 3000 });
+  //   }
+  // });
 }
 
 }

@@ -14,6 +14,7 @@ import { CreatedishpatchmanagementComponent } from './createdishpatchmanagement/
 import { ViewdishpatchmanagementComponent } from './viewdishpatchmanagement/viewdishpatchmanagement.component';
 import { DispatchService } from '../../services/dispatch-charger.service';
 import { MatButtonModule } from '@angular/material/button';
+import { DeleteChargerDispatchComponent } from './delete-charger-dispatch/delete-charger-dispatch.component';
 
 interface ChargerData {
   charger_id: number;
@@ -186,19 +187,40 @@ export class DispatchmanagementComponent implements OnInit, AfterViewInit {
   }
 
  onDelete(id: number): void {
-const user_id = Number(localStorage.getItem('user_id'));
-  if (confirm('Are you sure you want to delete this record?')) {
-    this.dispatchService.deleteCharger(id, user_id).subscribe({
-      next: () => {
-        alert('Charger deleted successfully');
-        this.loadData();
-      },
-      error: (err) => {
-        console.error('Error deleting charger:', err);
-        alert('Failed to delete charger');
-      }
-    });
-  }
+
+  const dialogRef = this.dialog.open(DeleteChargerDispatchComponent, {
+    data: id,
+  });
+
+  dialogRef.afterClosed().subscribe(result => {
+    if(result === true){
+      const user_id = Number(localStorage.getItem('user_id'));
+      this.dispatchService.deleteCharger(id, user_id).subscribe({
+        next: () => {
+          alert('Charger deleted successfully');
+          this.loadData();
+        },
+        error: (err) => {
+          console.error('Error deleting charger:', err);
+          alert('Failed to delete charger');
+        }
+      });
+    }
+
+  })
+// const user_id = Number(localStorage.getItem('user_id'));
+  // if (confirm('Are you sure you want to delete this record?')) {
+  //   this.dispatchService.deleteCharger(id, user_id).subscribe({
+  //     next: () => {
+  //       alert('Charger deleted successfully');
+  //       this.loadData();
+  //     },
+  //     error: (err) => {
+  //       console.error('Error deleting charger:', err);
+  //       alert('Failed to delete charger');
+  //     }
+  //   });
+  // }
 }
 
 }

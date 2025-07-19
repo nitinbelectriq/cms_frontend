@@ -1,5 +1,5 @@
 <!-- <mat-card class="user-form-card"> -->
-  <h2 mat-dialog-title>Create User</h2>
+  <h2 mat-dialog-title>{{ isEdit ? 'Edit' : 'Create' }} User</h2>
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
 
     <div>
