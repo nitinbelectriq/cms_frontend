@@ -1,9 +1,9 @@
 <h2 mat-dialog-title>Bulk Charger Dispatch</h2>
 
 <mat-dialog-content>
-  <form [formGroup]="form" (ngSubmit)="submitBulkDispatch()">
+  <form [formGroup]="form" (ngSubmit)="submitBulkDispatch()" class="form-container">
     <!-- Client Dropdown -->
-    <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-form-field appearance="outline" class="custom-label" >
       <mat-label>Client</mat-label>
       <mat-select formControlName="clientName" required>
         <mat-option *ngFor="let client of clients" [value]="client.id">
@@ -17,7 +17,7 @@
     </mat-form-field>
 
     <!-- Dispatch Date -->
-    <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-form-field appearance="outline"  class="custom-label">
       <mat-label>Dispatch Date</mat-label>
       <input
         matInput
@@ -34,26 +34,31 @@
     </mat-form-field>
 
     <!-- Status and Public Toggle -->
-    <div style="display: flex; justify-content: space-between; margin-bottom: 16px;">
-      <mat-slide-toggle formControlName="status" color="primary">
+    <!-- <div style="display: flex; justify-content: space-between; margin-bottom: 16px;"> -->
+      <mat-slide-toggle formControlName="status" >
         Status
       </mat-slide-toggle>
 
-      <mat-slide-toggle formControlName="public" color="primary">
+      <mat-slide-toggle formControlName="public" >
         {{ form.get('public')?.value ? 'Public' : 'Private' }}
       </mat-slide-toggle>
-    </div>
+    <!-- </div> -->
 
     <!-- CSV Upload -->
-    <label style="font-weight: 500;">Upload CSV</label><br />
-    <input type="file" accept=".csv" (change)="onFileSelected($event)" /><br /><br />
+     <div style="color: black;">
+        <label  for="fileInput" style="display: block; font-size: 12px;">Upload CSV</label>
+        <input id="fileInput" type="file" accept=".csv" (change)="onFileSelected($event)" required />
+        <mat-error *ngIf="form.get('file')?.hasError('required')">File is required</mat-error>
+        <br /><br />
+     </div>
+
 
     <!-- Sample CSV Download -->
-    <button mat-stroked-button color="accent" type="button" (click)="downloadSampleCsv()">
+    <button mat-raised-button class="create" color="accent" type="button" (click)="downloadSampleCsv()">
       Download Sample CSV
     </button>
   </form>
-</mat-dialog-content>
+
 
 <mat-dialog-actions align="end" style="margin-top: 20px;">
   <button
@@ -62,7 +67,10 @@
     (click)="submitBulkDispatch()"
     [disabled]="form.invalid || !selectedFile"
   >
-    Submit
+  Upload
   </button>
-  <button mat-raised-button type="button" (click)="onCancel()">Cancel</button>
+  <button mat-raised-button type="button" (click)="onCancel()">
+    <mat-icon>cancel</mat-icon>
+    Cancel
+  </button>
 </mat-dialog-actions>

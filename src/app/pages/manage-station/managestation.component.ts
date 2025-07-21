@@ -17,6 +17,7 @@ import { StationService } from '../../services/manage-station.service';
 
 import { CreatemanagestationComponent } from './createmanagestation/createmanagestation.component';
 import {ViewStationComponent} from './viewmanagestation/viewmanagestation.component';
+import { DeleteManageStationComponent } from './delete-manage-station/delete-manage-station.component';
 @Component({
   selector: 'app-managestation',
   standalone: true,
@@ -159,12 +160,13 @@ onView(element: any) {
 }
 
 onDelete(id: string | number): void {
-  if (!id) return;
-
-  const confirmed = confirm('Are you sure you want to delete this station?');
-  if (!confirmed) return;
-
-  const stationId = typeof id === 'string' ? +id : id;
+ if (!id) return;
+  const dialogRef = this.dialog.open(DeleteManageStationComponent,{
+    data: id,
+  });
+  dialogRef.afterClosed().subscribe(result =>{
+    if(result === true){
+    const stationId = typeof id === 'string' ? +id : id;
 
   this.stationService.deleteStation(stationId).subscribe({
     next: () => {
@@ -182,6 +184,14 @@ onDelete(id: string | number): void {
       });
     }
   });
+    }
+  })
+ 
+
+  // const confirmed = confirm('Are you sure you want to delete this station?');
+  // if (!confirmed) return;
+
+  
 }
 
 }

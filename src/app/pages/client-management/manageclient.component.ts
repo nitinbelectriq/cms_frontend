@@ -11,6 +11,7 @@ import { ClientService } from '../../services/client-management.service';
 import { AuthService } from '../../services/login.service';
 import { CreatemanageclientComponent } from './createmanageclient/createmanageclient.component';
 import { ViewmanageclientComponent } from './viewmanageclient/viewmanageclient.component'; // ✅ Add this
+import { DeleteClientManagementComponent } from './delete-client-management/delete-client-management.component';
 
 @Component({
   selector: 'app-manageclient',
@@ -119,21 +120,42 @@ export class ManageclientComponent implements OnInit, AfterViewInit {
 
 
 onDelete(id: number) {
-  if (confirm('Are you sure you want to delete this client?')) {
-    this.clientService.deleteClient(id).subscribe({
-      next: (res) => {
-        alert('Client deleted successfully');
-        const loginId = this.authService.getUserId();
-        if (loginId) {
-          this.loadClients(loginId); // Refresh list
+  const dialogRef = this.dialog.open(DeleteClientManagementComponent,{
+    data: id,
+  });
+
+  dialogRef.afterClosed().subscribe(result =>{
+    if(result === true){
+      this.clientService.deleteClient(id).subscribe({
+        next: (res) => {
+         // alert('Client deleted successfully');
+          const loginId = this.authService.getUserId();
+          if (loginId) {
+            this.loadClients(loginId); // Refresh list
+          }
+        },
+        error: (error) => {
+          console.error('Error deleting client:', error);
+          alert('Failed to delete the client.');
         }
-      },
-      error: (error) => {
-        console.error('Error deleting client:', error);
-        alert('Failed to delete the client.');
-      }
-    });
-  }
+      })
+    }
+  })
+  // if (confirm('Are you sure you want to delete this client?')) {
+  //   this.clientService.deleteClient(id).subscribe({
+  //     next: (res) => {
+  //       alert('Client deleted successfully');
+  //       const loginId = this.authService.getUserId();
+  //       if (loginId) {
+  //         this.loadClients(loginId); // Refresh list
+  //       }
+  //     },
+  //     error: (error) => {
+  //       console.error('Error deleting client:', error);
+  //       alert('Failed to delete the client.');
+  //     }
+  //   });
+  // }
 }
 
 }
