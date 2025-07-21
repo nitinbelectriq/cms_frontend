@@ -101,10 +101,10 @@
 
   <!-- Status Toggle -->
   <mat-slide-toggle
-    color="primary"
+    class="custom-label"
     [checked]="clientForm.get('status')?.value === 'Y'"
     (change)="onStatusToggle($event)">
-    Status (Active / Inactive)
+    Status 
   </mat-slide-toggle>
 
   <!-- Bank Details Toggle Button -->
@@ -144,7 +144,7 @@
     <button mat-raised-button class="create" color="primary" type="submit" [disabled]="clientForm.invalid">
       {{ isEditMode ? 'Save' : 'Create' }}
     </button>
-    <button mat-raised-button class="cancel" type="button" (click)="onCancel()">
+    <button mat-raised-button  type="button" (click)="onCancel()">
       <mat-icon>cancel</mat-icon> Cancel
     </button>
   </div>
