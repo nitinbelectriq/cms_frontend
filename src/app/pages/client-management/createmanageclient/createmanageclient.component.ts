@@ -1,4 +1,4 @@
-import { Component, OnInit, Inject } from '@angular/core';
+import { Component, OnInit, Inject, inject } from '@angular/core';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule, FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -11,6 +11,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ClientService } from '../../../services/client-management.service';
 import { AuthService } from '../../../services/login.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-createmanageclient',
@@ -26,7 +27,8 @@ import { AuthService } from '../../../services/login.service';
     MatDialogModule,
     MatIconModule,
     MatCheckboxModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatSnackBarModule
   ],
   templateUrl: './createmanageclient.component.html',
   styleUrls: ['./createmanageclient.component.scss']
@@ -38,6 +40,7 @@ export class CreatemanageclientComponent implements OnInit {
   cities: any[] = [];
   isEditMode = false;
   showBankDetails = false;
+  snackbar= inject(MatSnackBar);
 
   constructor(
     private fb: FormBuilder,
@@ -196,15 +199,41 @@ export class CreatemanageclientComponent implements OnInit {
       payload.id = this.data.id;
 
       this.clientService.updateClient(payload).subscribe({
-        next: () => this.dialogRef.close(true),
-        error: (err: any) => console.error('Failed to update client', err)
+        next: (res) =>{
+          if(res.status === true){
+             this.snackbar.open('Client updated successfully.', 'Close', {duration: 3000});
+          this.dialogRef.close(true);
+          }
+          else if(res.status === false){
+            this.snackbar.open(` ${res.message}`, 'Close', {duration: 4000});
+          }
+         
+
+        } ,
+        error: (err: any) =>{
+          console.error('Failed to update client', err);
+          this.snackbar.open(`Failed to create client.Please try again. ${err.message}`, 'Close', {duration: 3000});
+        } 
       });
     } else {
       payload.created_by = userId;
 
       this.clientService.createClient(payload).subscribe({
-        next: () => this.dialogRef.close(true),
-        error: (err: any) => console.error('Failed to create client', err)
+        next: (res) =>{
+          if(res.status==true){
+          console.log("backnd",res);
+          this.snackbar.open(res.message, 'Close', {duration: 3000});
+          this.dialogRef.close(true);
+          } else if( res.status === false){
+            this.snackbar.open(`${res.message}`, 'Close', {duration: 4000});
+
+          }
+        } ,
+        error: (err) =>{ 
+          console.error('Failed to create client', err);
+          this.snackbar.open(`Failed to create client.Please try again. ${err?.message}`,'close', {duration: 3000});
+         
+        } 
       });
     }
   }

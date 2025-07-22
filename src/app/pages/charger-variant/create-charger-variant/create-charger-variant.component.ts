@@ -1,4 +1,4 @@
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, inject, Inject, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, FormArray, ReactiveFormsModule } from '@angular/forms';
 import { MatDialogRef, MAT_DIALOG_DATA, MatDialogModule } from '@angular/material/dialog';
@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 import { ChargerVariantService } from '../../../services/charger-variant.service';
 import { AuthService } from '../../../services/login.service';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-create-charger-variant',
@@ -25,7 +26,8 @@ import { AuthService } from '../../../services/login.service';
     MatCheckboxModule,
     MatButtonModule,
     MatIconModule,
-    MatSlideToggleModule
+    MatSlideToggleModule,
+    MatSnackBarModule
   ],
   templateUrl: './create-charger-variant.component.html',
   styleUrls: ['./create-charger-variant.component.scss']
@@ -44,13 +46,15 @@ export class CreateChargerVariantComponent implements OnInit {
 
   isEditMode = false;
   editId: string | number | null = null;
+   Snackbar = inject(MatSnackBar)
 
   constructor(
     private fb: FormBuilder,
     private dialogRef: MatDialogRef<CreateChargerVariantComponent>,
     private chargerVariantService: ChargerVariantService,
     private authService: AuthService,
-    @Inject(MAT_DIALOG_DATA) public data: any
+    @Inject(MAT_DIALOG_DATA) public data: any,
+   
   ) {}
 
   ngOnInit(): void {
@@ -225,13 +229,30 @@ export class CreateChargerVariantComponent implements OnInit {
     if (this.isEditMode && this.editId !== null) {
       const updatedData = { ...payload, id: this.editId ,modify_by: this.authService.getUserId()};
       this.chargerVariantService.update(updatedData).subscribe({
-        next: () => this.dialogRef.close(true),
-        error: (err) => console.error('Error updating charger variant', err)
+        next: (res) =>{
+          
+          this.Snackbar.open('Charger Variant successfully updated', 'Close', {duration: 3000});
+          //this.dialogRef.close(res);
+          this.dialogRef.close(true);
+        } ,
+        error: (err) =>{
+          console.error('Error updating charger variant', err);
+          this.Snackbar.open(`Failed to update charger. Please try again!. ${err.error.message}`,'Close', {duration: 4000})
+        } 
       });
     } else {
       this.chargerVariantService.create(payload).subscribe({
-        next: () => this.dialogRef.close(true),
-        error: (err) => console.error('Error creating charger variant', err)
+       // next: () => this.dialogRef.close(true),
+       next: (res) =>{
+          
+        this.Snackbar.open('Charger Variant successfully created', 'Close', {duration: 3000});
+        //this.dialogRef.close(res);
+        this.dialogRef.close(true);
+      } ,
+        error: (err) =>{
+          console.error('Error creating charger variant', err);
+          this.Snackbar.open(`Failed to create charger. Please try again!. ${err.error.message}`, 'Close', {duration: 4000})
+        } 
       });
     }
   }

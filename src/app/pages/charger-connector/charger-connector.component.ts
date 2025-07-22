@@ -100,6 +100,7 @@ export class ChargerConnectorComponent implements OnInit {
 
     dialogRef.afterClosed().subscribe(result => {
       if (result) {
+        console.log(result);
         this.snackBar.open('Connector created successfully.', 'Close', { duration: 2000 });
         this.loadConnectorData(); // refresh table
       }

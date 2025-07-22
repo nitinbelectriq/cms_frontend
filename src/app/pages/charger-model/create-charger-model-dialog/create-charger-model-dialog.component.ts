@@ -63,13 +63,16 @@ export class CreateChargerModelDialogComponent {
     this.chargerModelService.create(payload).subscribe({
       next: (res) => {
         this.isLoading = false;
-        this.snackBar.open('Charger Model successfully created', 'Close', { duration: 3000 });
+        console.log(res);
+     
+          this.snackBar.open('Charger Model successfully created', 'Close', { duration: 3000 });
+  
         this.dialogRef.close(res);
       },
       error: (err) => {
         this.isLoading = false;
         console.error('Create Charger Model failed', err);
-        this.snackBar.open('Failed to create charger. Please try again!', 'Close', { duration: 3000 });
+        this.snackBar.open(`Failed to create charger. Please try again!. ${err.error.message}`, 'Close', { duration: 4000 });
       }
     });
   }
