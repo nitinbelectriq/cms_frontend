@@ -145,10 +145,11 @@ export class CreateManageChargerComponent implements OnInit {
 
       this.chargerService.updateCharger(updatePayload).subscribe({
         next: (res: ApiResponse) => {
-          if (res.status) {
+          if (res.status == true) {
             this.snackBar.open('Charger updated successfully!', 'Close', { duration: 3000 });
             this.dialogRef.close(true);
           } else {
+           
             this.snackBar.open(`Update failed: ${res.message}`, 'Close', { duration: 3000 });
           }
         },
@@ -165,11 +166,12 @@ export class CreateManageChargerComponent implements OnInit {
 
       this.chargerService.createCharger(createPayload).subscribe({
         next: (res: ApiResponse) => {
-          if (res.status) {
+          if (res?.data?.status== true) {
+            //console.log(res);
             this.snackBar.open('Charger created successfully!', 'Close', { duration: 3000 });
             this.dialogRef.close(true);
           } else {
-            this.snackBar.open(`Create failed: ${res.message}`, 'Close', { duration: 3000 });
+            this.snackBar.open(`Create failed: ${res.data.message}`, 'Close', { duration: 4000 });
           }
         },
         error: (err) => {

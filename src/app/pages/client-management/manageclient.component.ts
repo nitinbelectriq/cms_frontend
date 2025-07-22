@@ -1,4 +1,4 @@
-import { Component, OnInit, AfterViewInit, ViewChild } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
@@ -12,6 +12,7 @@ import { AuthService } from '../../services/login.service';
 import { CreatemanageclientComponent } from './createmanageclient/createmanageclient.component';
 import { ViewmanageclientComponent } from './viewmanageclient/viewmanageclient.component'; // ✅ Add this
 import { DeleteClientManagementComponent } from './delete-client-management/delete-client-management.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-manageclient',
@@ -24,6 +25,7 @@ import { DeleteClientManagementComponent } from './delete-client-management/dele
     MatButtonModule,
     MatIconModule,
     MatDialogModule,
+    MatSnackBarModule
   ],
   templateUrl: './manageclient.component.html',
   styleUrls: ['./manageclient.component.scss']
@@ -31,6 +33,7 @@ import { DeleteClientManagementComponent } from './delete-client-management/dele
 export class ManageclientComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['clientName', 'contactPerson', 'GSTIN', 'status', 'action'];
   dataSource = new MatTableDataSource<any>([]);
+  snackBar= inject(MatSnackBar);
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -133,10 +136,16 @@ onDelete(id: number) {
           if (loginId) {
             this.loadClients(loginId); // Refresh list
           }
+          this.snackBar.open('Charger Model deleted successfully!', 'Close', {
+            duration: 3000,
+          });
         },
         error: (error) => {
           console.error('Error deleting client:', error);
-          alert('Failed to delete the client.');
+          //alert('Failed to delete the client.');
+          this.snackBar.open('Failed to delete Charger Model!', 'Close', {
+            duration: 3000,
+          });
         }
       })
     }

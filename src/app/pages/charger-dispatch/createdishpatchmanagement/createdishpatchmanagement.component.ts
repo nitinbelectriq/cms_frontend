@@ -178,13 +178,19 @@ export class CreatedishpatchmanagementComponent implements OnInit {
     : this.dispatchService.dispatchChargers(payload);
 
   apiCall.subscribe({
-    next: () => {
-      this.snackBar.open(
+    next: (res) => {
+      if(res.status === true){
+        this.snackBar.open(
         this.isEdit ? 'Dispatch updated successfully!' : 'Dispatch created successfully!',
         'Close',
         { duration: 3000, panelClass: 'success-snackbar' }
       );
       this.dialogRef.close(true);
+      }
+      else{
+        this.snackBar.open(`${res.message}`, 'Close', {duration: 4000});
+      }
+      
     },
     error: (err) => {
       console.error(`${this.isEdit ? 'Update' : 'Create'} failed:`, err);

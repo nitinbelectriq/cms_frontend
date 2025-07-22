@@ -11,6 +11,7 @@ import { CreateManageCpoComponent } from './create-manage-cpo/create-manage-cpo.
 import { ViewManageCpoComponent } from './view-manage-cpo/view-manage-cpo.component';
 import { CpoService } from '../../services/manage-cpo.service';
 import { DeleteManageCpoComponent } from './delete-manage-cpo/delete-manage-cpo.component';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-manage-cpo',
@@ -23,7 +24,8 @@ import { DeleteManageCpoComponent } from './delete-manage-cpo/delete-manage-cpo.
     MatButtonModule,
     MatDialogModule,
     RouterModule,
-    HttpClientModule
+    HttpClientModule,
+    MatSnackBarModule
   ],
   templateUrl: './manage-cpo.component.html',
   styleUrls: ['./manage-cpo.component.scss']
@@ -36,6 +38,7 @@ export class ManageCpoComponent implements OnInit, AfterViewInit {
 
   private dialog = inject(MatDialog);
   private cpoService = inject(CpoService);
+  private snackbar = inject(MatSnackBar);
 
   ngOnInit() {
     this.loadData();
@@ -86,16 +89,21 @@ export class ManageCpoComponent implements OnInit, AfterViewInit {
     dialogRef.afterClosed().subscribe(result => {
       if(result === true){
         this.cpoService.deleteCpo(id).subscribe({
-          next: () => this.loadData(),
+          next: () =>{
+            this.loadData();
+            this.snackbar.open(`Successfully deleted`, 'close', {duration: 3000})
+          } ,
           error: err => console.error('Delete error:', err)
         })
       }
     })
+
     // if (confirm('Delete this CPO?')) {
     //   this.cpoService.deleteCpo(id).subscribe({
     //     next: () => this.loadData(),
     //     error: err => console.error('Delete error:', err)
     //   });
     // }
+    
   }
 }
