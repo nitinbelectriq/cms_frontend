@@ -13,12 +13,18 @@ import { ManageRfidService } from '../../../services/manage-rfid.service';
 import { catchError } from 'rxjs/operators';
 import { of } from 'rxjs';
 import { DeleteManageRfidComponent } from './delete-manage-rfid/delete-manage-rfid.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
 
 @Component({
   selector: 'app-manage-rfid',
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule,
     MatTableModule,
     MatIconModule,
     MatButtonModule,
@@ -32,6 +38,7 @@ import { DeleteManageRfidComponent } from './delete-manage-rfid/delete-manage-rf
 export class ManageRfidComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['rfidNumber', 'expiryDate', 'status', 'action'];
   dataSource = new MatTableDataSource<RfidData>([]);
+  searchText: string = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -49,6 +56,10 @@ export class ManageRfidComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
+  applyFilter() {
+    this.dataSource.filter = this.searchText.trim().toLowerCase();
+  }
+
   loadRfids() {
     this.manageRfidService.getAllRfids().pipe(
       catchError(err => {
@@ -59,6 +70,10 @@ export class ManageRfidComponent implements OnInit, AfterViewInit {
     ).subscribe(response => {
       if (Array.isArray(response)) {
         this.dataSource.data = response;
+        this.dataSource.filterPredicate = (data: RfidData, filter: string) => {
+          const combined = `${data.rf_id_no} ${data.expiry_date} ${data.status}`.toLowerCase();
+          return combined.includes(filter);
+        };
       } else {
         console.error('Unexpected API response format:', response);
       }
@@ -69,10 +84,7 @@ export class ManageRfidComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(RfidFormDialogComponent, {
       width: '88%',
       height: 'fit-content',
-      position: {
-        top: '0',
-        right: '0',
-      },
+      position: { top: '0', right: '0' },
       data: null,
     });
 
@@ -99,10 +111,7 @@ export class ManageRfidComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(RfidFormDialogComponent, {
       width: '88%',
       height: 'fit-content',
-      position: {
-        top: '0',
-        right: '0',
-      },
+      position: { top: '0', right: '0' },
       data: rfid,
     });
 
@@ -132,55 +141,31 @@ export class ManageRfidComponent implements OnInit, AfterViewInit {
     }
   }
 
-onDelete(id: number) {
-  const dialogRef = this.dialog.open(DeleteManageRfidComponent,{
-    data: id,
-  });
+  onDelete(id: number) {
+    const dialogRef = this.dialog.open(DeleteManageRfidComponent, {
+      data: id,
+    });
 
-  dialogRef.afterClosed().subscribe(result => {
-    if(result === true ){
-
-
-      const userIdStr = localStorage.getItem('user_id'); // adjust key if different
-  if (!userIdStr) {
-    this.snackBar.open('User not logged in', 'Close', { duration: 3000 });
-    return;
-  }
-  const userId = Number(userIdStr);
-
-      this.manageRfidService.deleteRfid(id, userId).subscribe({
-        next: () => {
-          this.snackBar.open('RFID deleted successfully', 'Close', { duration: 3000 });
-          this.loadRfids(); // reload data after delete
-        },
-        error: (err) => {
-          console.error('Delete error:', err);
-          this.snackBar.open('Failed to delete RFID', 'Close', { duration: 3000 });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        const userIdStr = localStorage.getItem('user_id');
+        if (!userIdStr) {
+          this.snackBar.open('User not logged in', 'Close', { duration: 3000 });
+          return;
         }
-      });
+        const userId = Number(userIdStr);
 
-    }
-  })
-
-
-  // const userIdStr = localStorage.getItem('user_id'); // adjust key if different
-  // if (!userIdStr) {
-  //   this.snackBar.open('User not logged in', 'Close', { duration: 3000 });
-  //   return;
-  // }
-  // const userId = Number(userIdStr);
-  //if (!confirm('Are you sure you want to delete this RFID?')) return;
-
-  // this.manageRfidService.deleteRfid(id, userId).subscribe({
-  //   next: () => {
-  //     this.snackBar.open('RFID deleted successfully', 'Close', { duration: 3000 });
-  //     this.loadRfids(); // reload data after delete
-  //   },
-  //   error: (err) => {
-  //     console.error('Delete error:', err);
-  //     this.snackBar.open('Failed to delete RFID', 'Close', { duration: 3000 });
-  //   }
-  // });
-}
-
+        this.manageRfidService.deleteRfid(id, userId).subscribe({
+          next: () => {
+            this.snackBar.open('RFID deleted successfully', 'Close', { duration: 3000 });
+            this.loadRfids();
+          },
+          error: (err) => {
+            console.error('Delete error:', err);
+            this.snackBar.open('Failed to delete RFID', 'Close', { duration: 3000 });
+          }
+        });
+      }
+    });
+  }
 }

@@ -1,17 +1,20 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { MatTableModule } from '@angular/material/table';
+import { MatTableModule, MatTableDataSource } from '@angular/material/table';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
-import { MatTableDataSource } from '@angular/material/table';
-import { ConnectorService } from '../../services/charger-connector.service';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+
+import { ConnectorService } from '../../services/charger-connector.service';
 import { ConnectorViewDialogComponent } from './view-charger-connector/view-charger-connector.component';
 import { CreateChargerConnectorComponent } from './create-charger-connector/create-charger-connector.component';
 import { AuthService } from '../../services/login.service';
 import { DeleteChargerConectorComponent } from './delete-charger-conector/delete-charger-conector.component';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+
 interface ConnectorModel {
   id: number;
   vehicleModel: string;
@@ -31,7 +34,9 @@ interface ConnectorModel {
     MatButtonModule,
     MatSnackBarModule,
     MatPaginatorModule,
-    MatDialogModule
+    MatDialogModule,
+     MatFormFieldModule,  
+    MatInputModule 
   ],
   templateUrl: './charger-connector.component.html',
   styleUrls: ['./charger-connector.component.scss']
@@ -47,11 +52,17 @@ export class ChargerConnectorComponent implements OnInit {
     private connectorService: ConnectorService,
     private snackBar: MatSnackBar,
     private dialog: MatDialog,
-     private authService: AuthService
+    private authService: AuthService
   ) {}
 
   ngOnInit(): void {
     this.loadConnectorData();
+
+    // Custom filter predicate for global search across multiple columns
+    this.dataSource.filterPredicate = (data: ConnectorModel, filter: string) => {
+      const dataStr = `${data.vehicleModel} ${data.connectorType} ${data.vehicleType} ${data.status}`.toLowerCase();
+      return dataStr.includes(filter);
+    };
   }
 
   loadConnectorData(): void {
@@ -88,6 +99,11 @@ export class ChargerConnectorComponent implements OnInit {
     }
   }
 
+  applyFilter(event: Event): void {
+    const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
+    this.dataSource.filter = filterValue;
+  }
+
   onCreate(): void {
     const dialogRef = this.dialog.open(CreateChargerConnectorComponent, {
       width: '88%',
@@ -102,7 +118,7 @@ export class ChargerConnectorComponent implements OnInit {
       if (result) {
         console.log(result);
         this.snackBar.open('Connector created successfully.', 'Close', { duration: 2000 });
-        this.loadConnectorData(); // refresh table
+        this.loadConnectorData();
       }
     });
   }
@@ -122,71 +138,48 @@ export class ChargerConnectorComponent implements OnInit {
     if (selected) {
       const dialogRef = this.dialog.open(CreateChargerConnectorComponent, {
         width: '88%',
-      height: 'fit-content',
-      position: {
-        top: '0',
-        right: '0',
-      },
+        height: 'fit-content',
+        position: {
+          top: '0',
+          right: '0',
+        },
         data: selected
       });
 
       dialogRef.afterClosed().subscribe(result => {
         if (result) {
           this.snackBar.open('Connector updated successfully.', 'Close', { duration: 2000 });
-          this.loadConnectorData(); // refresh table
+          this.loadConnectorData();
         }
       });
     }
   }
 
-onDelete(id: number): void {
-  const dialogRef = this.dialog.open(DeleteChargerConectorComponent,{
-    data: id,
-  })
+  onDelete(id: number): void {
+    const dialogRef = this.dialog.open(DeleteChargerConectorComponent, {
+      data: id,
+    });
 
-  dialogRef.afterClosed().subscribe(result => {
-    if(result === true){
-      const userId = this.authService.getUserId();
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        const userId = this.authService.getUserId();
 
-      if (userId === null || userId === undefined) {
-        this.snackBar.open('User not logged in.', 'Close', { duration: 3000 });
-        return;
-      }
-    
-      
-      this.connectorService.deleteMapping(id, userId).subscribe({
-        next: () => {
-          this.snackBar.open('Connector mapping deleted successfully.', 'Close', { duration: 3000 });
-          this.loadConnectorData();
-        },
-        error: (err) => {
-          console.error('Delete error:', err);
-          this.snackBar.open('Failed to delete connector mapping.', 'Close', { duration: 3000 });
+        if (userId === null || userId === undefined) {
+          this.snackBar.open('User not logged in.', 'Close', { duration: 3000 });
+          return;
         }
-      });
-    }
-  })
-  // if (!confirm('Are you sure you want to delete this connector mapping?')) return;
 
-  // const userId = this.authService.getUserId();
-
-  // if (userId === null || userId === undefined) {
-  //   this.snackBar.open('User not logged in.', 'Close', { duration: 3000 });
-  //   return;
-  // }
-
-  // this.connectorService.deleteMapping(id, userId).subscribe({
-  //   next: () => {
-  //     this.snackBar.open('Connector mapping deleted successfully.', 'Close', { duration: 3000 });
-  //     this.loadConnectorData();
-  //   },
-  //   error: (err) => {
-  //     console.error('Delete error:', err);
-  //     this.snackBar.open('Failed to delete connector mapping.', 'Close', { duration: 3000 });
-  //   }
-  // });
-}
-
-
-
+        this.connectorService.deleteMapping(id, userId).subscribe({
+          next: () => {
+            this.snackBar.open('Connector mapping deleted successfully.', 'Close', { duration: 3000 });
+            this.loadConnectorData();
+          },
+          error: (err) => {
+            console.error('Delete error:', err);
+            this.snackBar.open('Failed to delete connector mapping.', 'Close', { duration: 3000 });
+          }
+        });
+      }
+    });
+  }
 }

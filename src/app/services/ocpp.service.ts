@@ -1,10 +1,9 @@
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http'; // <-- Added HttpHeaders import
+import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-// Interfaces unchanged...
-
+// Interfaces
 export interface ConnectorData {
   connector_no: number;
   connector_type_name: string;
@@ -29,6 +28,10 @@ export interface ChargerRaw {
   is_available: number;
   charger_status: string;
   connector_data: ConnectorData[];
+  cpo_id?: string;
+  heartbeat_interval?: string;
+  power?: string;
+  last_ping_datetime?: string;
 }
 
 export interface ChargersResponse {
@@ -41,6 +44,7 @@ export interface ChargersResponse {
 @Injectable({ providedIn: 'root' })
 export class OCPPService {
   private baseUrl = environment.apiBaseUrl;
+  private middleUrl = environment.apiMiddleUrl;
 
   constructor(private http: HttpClient) {}
 
@@ -49,12 +53,46 @@ export class OCPPService {
     return new HttpHeaders().set('Authorization', `Bearer ${token || ''}`);
   }
 
-  getChargersDynamic(loginId: string, payload: { cpo_id: string; station_id: string }): Observable<ChargersResponse> {
+  getChargersDynamic(
+    loginId: string,
+    payload: { cpo_id: string; station_id: string }
+  ): Observable<ChargersResponse> {
     const headers = this.getAuthHeaders();
     return this.http.post<ChargersResponse>(
       `${this.baseUrl}/charger/getChargersDynamicFilterCW/${loginId}`,
       payload,
-      { headers }  // Passing headers in request options
+      { headers }
     );
   }
+
+  getMenus(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get(`${this.baseUrl}/chargerMonitoring/getMenus`, { headers });
+  }
+
+  getAvailabilityTypes(): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get(`${this.baseUrl}/chargerMonitoring/getAvailabilityType`, { headers });
+  }
+
+  getHeartbeat(payload:{charger_id:string}): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.post(`${this.middleUrl}/heartbeat`,payload , { headers });
+  }
+
+  getRFIDsByCpoId(cpoId: string): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get(`${this.baseUrl}/rfid/getRFidsByCpoId/${cpoId}`, { headers });
+  }
+
+  getChargerConnectorStatus(chargerId: string): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.get(`${this.middleUrl}/chargerConnectorStatus/${chargerId}`, { headers });
+  }
+  executeCommand(payload: { serial_no: string; type: string; created_by: string }) {
+  return this.http.post(`${this.baseUrl}/chargerCommand`, payload, {
+    headers: this.getAuthHeaders()
+  });
+}
+
 }
