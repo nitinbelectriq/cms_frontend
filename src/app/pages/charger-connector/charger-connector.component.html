@@ -5,6 +5,16 @@
   </button>
 </div>
 
+<!-- Search Field -->
+<div class="search-container">
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Search</mat-label>
+    <input matInput (keyup)="applyFilter($event)" placeholder="Search connectors..." />
+    <mat-icon matSuffix>search</mat-icon>
+  </mat-form-field>
+</div>
+
+<!-- Data Table -->
 <table mat-table [dataSource]="dataSource" class="mat-elevation-z8 full-width">
 
   <ng-container matColumnDef="vehicleModel">
@@ -48,4 +58,5 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
 </table>
+
 <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>

@@ -34,4 +34,17 @@
 .status-red {
     color: #d62d2d;
   }
-  
+  .header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.full-width {
+  width: 30%;
+}
+
+.search-container {
+  margin-bottom: 15px;
+}

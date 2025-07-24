@@ -5,8 +5,12 @@ import { CommonModule } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
-import { AuthService } from '../../../../services/login.service';
 import { MatIconModule } from '@angular/material/icon';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatDatepickerModule } from '@angular/material/datepicker';
+import { MatNativeDateModule } from '@angular/material/core';
+
+import { AuthService } from '../../../../services/login.service';
 
 export interface RfidData {
   id?: number;
@@ -25,7 +29,10 @@ export interface RfidData {
     MatInputModule,
     MatButtonModule,
     MatSlideToggleModule,
-    MatIconModule
+    MatIconModule,
+    MatFormFieldModule,
+    MatDatepickerModule,
+    MatNativeDateModule
   ],
   templateUrl: './create-component.component.html',
   styleUrls: ['./create-component.component.scss'],
@@ -66,7 +73,7 @@ export class RfidFormDialogComponent implements OnInit {
         ...formValue,
         status: statusValue,
         created_by: userId,
-        modify_by:userId
+        modify_by: userId
       };
 
       this.dialogRef.close(result);

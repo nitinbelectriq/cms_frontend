@@ -1,28 +1,35 @@
 <h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Create' }} RFID</h2>
 
-<form [formGroup]="rfidForm" (ngSubmit)="onSubmit()"  class="form-container">
-  <mat-form-field appearance="outline" class="custom-label">
+<form [formGroup]="rfidForm" (ngSubmit)="onSubmit()" class="form-container">
+
+  <!-- RFID Number Field -->
+  <mat-form-field appearance="outline" class="custom-label full-width">
     <mat-label>RFID Number</mat-label>
     <input matInput formControlName="rf_id_no" />
     <mat-icon matSuffix>pin</mat-icon>
   </mat-form-field>
 
-  <mat-form-field appearance="outline" class="custom-label">
+  <!-- Expiry Date Picker -->
+  <mat-form-field appearance="outline" class="custom-label full-width">
     <mat-label>Expiry Date</mat-label>
-    <input matInput type="date" formControlName="expiry_date" />
-    <mat-icon matSuffix>date_range</mat-icon>
+    <input matInput [matDatepicker]="picker" formControlName="expiry_date" placeholder="Choose a date" />
+    <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+    <mat-datepicker #picker></mat-datepicker>
   </mat-form-field>
 
-  <mat-slide-toggle formControlName="status"  class="toggle-green"> Status
-    <!-- <span class="status" [ngClass]="rfidForm.get('status')?.value ? 'active' : 'inactive'">
-       {{ rfidForm.get('status')?.value ? 'Active' : 'Inactive' }}
-    </span> -->
-   
+  <!-- Status Toggle -->
+  <mat-slide-toggle formControlName="status" class="toggle-green">
+    Status
   </mat-slide-toggle>
 
+  <!-- Action Buttons -->
   <div class="button-row">
-   
-    <button mat-raised-button color="primary" class="create" type="submit" [disabled]="rfidForm.invalid">{{ isEditMode ? 'Save' : 'Create' }}</button>
-     <button mat-raised-button type="button" (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="rfidForm.invalid">
+      {{ isEditMode ? 'Save' : 'Create' }}
+    </button>
+    &nbsp;
+    <button mat-raised-button type="button" (click)="onCancel()">
+      <mat-icon>cancel</mat-icon> Cancel
+    </button>
   </div>
 </form>
