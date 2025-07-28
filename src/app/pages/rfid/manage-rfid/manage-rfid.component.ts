@@ -16,6 +16,7 @@ import { DeleteManageRfidComponent } from './delete-manage-rfid/delete-manage-rf
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-manage-rfid',
@@ -30,7 +31,8 @@ import { FormsModule } from '@angular/forms';
     MatButtonModule,
     MatDialogModule,
     MatPaginatorModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatCardModule
   ],
   templateUrl: './manage-rfid.component.html',
   styleUrls: ['./manage-rfid.component.scss']
@@ -56,8 +58,49 @@ export class ManageRfidComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
+  downloadCSV() {
+  const csvRows = [];
+
+  // Define headers
+  const headers = ['RFID Number', 'Expiry Date', 'Description', ' Name', 'Created Date', 'Status'];
+  csvRows.push(headers.join(','));
+
+  // Format each row of data
+  this.dataSource.data.forEach((row: any) => {
+    const rowData = [
+      `"${row.rf_id_no}"`,
+      `"${row.expiry_date}"`,
+      `"${row.description}"`,
+      `"${row.name}"`,
+      `"${row.created_date}"`,
+      
+      row.status ? 'Active' : 'Inactive'
+    ];
+    csvRows.push(rowData.join(','));
+  });
+
+  // Create CSV blob and download
+  const csvContent = csvRows.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'RFID-data.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+
   applyFilter() {
     this.dataSource.filter = this.searchText.trim().toLowerCase();
+  }
+
+    private mapStatus(statusCode: string): string {
+    switch (statusCode) {
+      case 'Y': return 'Active';
+      case 'N': return 'Inactive';
+      default: return 'Unknown';
+    }
   }
 
   loadRfids() {
@@ -71,7 +114,7 @@ export class ManageRfidComponent implements OnInit, AfterViewInit {
       if (Array.isArray(response)) {
         this.dataSource.data = response;
         this.dataSource.filterPredicate = (data: RfidData, filter: string) => {
-          const combined = `${data.rf_id_no} ${data.expiry_date} ${data.status}`.toLowerCase();
+          const combined = `${data.rf_id_no} ${data.expiry_date} ${this.mapStatus(data.status)}`.toLowerCase();
           return combined.includes(filter);
         };
       } else {

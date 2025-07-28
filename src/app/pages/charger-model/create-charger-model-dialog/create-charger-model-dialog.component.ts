@@ -11,6 +11,13 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ChargerModelService } from '../../../services/charger-model.service';
 import { MatIconModule } from '@angular/material/icon';
 
+export interface ChargerModel{
+  name:string,
+  description: string,
+  status: string
+}
+
+
 @Component({
   selector: 'app-create-charger-model-dialog',
   standalone: true,
@@ -37,7 +44,7 @@ export class CreateChargerModelDialogComponent {
   form: FormGroup = this.fb.group({
     name: ['', Validators.required],
     description: [''],
-    status: [true]  // boolean toggle
+    status: ['']  // boolean toggle
   });
 
   isLoading = false;
@@ -63,13 +70,16 @@ export class CreateChargerModelDialogComponent {
     this.chargerModelService.create(payload).subscribe({
       next: (res) => {
         this.isLoading = false;
-        this.snackBar.open('Charger Model successfully created', 'Close', { duration: 3000 });
+        console.log(res);
+     
+          this.snackBar.open('Charger Model successfully created', 'Close', { duration: 3000 });
+  
         this.dialogRef.close(res);
       },
       error: (err) => {
         this.isLoading = false;
         console.error('Create Charger Model failed', err);
-        this.snackBar.open('Failed to create charger. Please try again!', 'Close', { duration: 3000 });
+        this.snackBar.open(`Failed to create charger. Please try again!. ${err.error.message}`, 'Close', { duration: 4000 });
       }
     });
   }

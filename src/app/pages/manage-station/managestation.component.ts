@@ -1,6 +1,6 @@
 import { CommonModule } from '@angular/common';
 import { Component, ViewChild, OnInit, AfterViewInit, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -18,6 +18,7 @@ import { StationService } from '../../services/manage-station.service';
 import { CreatemanagestationComponent } from './createmanagestation/createmanagestation.component';
 import {ViewStationComponent} from './viewmanagestation/viewmanagestation.component';
 import { DeleteManageStationComponent } from './delete-manage-station/delete-manage-station.component';
+import { MatCardModule } from '@angular/material/card';
 @Component({
   selector: 'app-managestation',
   standalone: true,
@@ -35,7 +36,9 @@ import { DeleteManageStationComponent } from './delete-manage-station/delete-man
     MatPaginatorModule,
     ReactiveFormsModule,
     RouterModule,
-    HttpClientModule
+    HttpClientModule,
+    MatCardModule,
+    FormsModule
   ]
 })
 export class ManagestationComponent implements OnInit, AfterViewInit {
@@ -44,6 +47,7 @@ export class ManagestationComponent implements OnInit, AfterViewInit {
   private dialog = inject(MatDialog);
   private stationService = inject(StationService);
   private authService = inject(AuthService);
+  searchText = '';
 
   filterform: FormGroup = this.fb.group({
     client: [''],
@@ -66,12 +70,58 @@ export class ManagestationComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
+  downloadCSV() {
+  const csvRows = [];
+
+  // Define headers
+  const headers = ['Station Name', 'Contact Person', 'CPO', 'Station Code', 'Charger Count', 'Address', 'Status'];
+  csvRows.push(headers.join(','));
+
+  // Format each row of data
+  this.dataSource.data.forEach((row: any) => {
+    const rowData = [
+      `"${row.stationName}"`,
+      `"${row.contactperson}"`,
+      `"${row.cpo}"`,
+      `"${row.stationcode}"`,
+      `"${row.chargercount}"`,
+      `"${row.address}"`,
+      row.status ? 'Active' : 'Inactive'
+    ];
+    csvRows.push(rowData.join(','));
+  });
+
+  // Create CSV blob and download
+  const csvContent = csvRows.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'station-data.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+
   ngOnInit() {
     this.loadData();
   }
 
   ngAfterViewInit() {
     this.dataSource.paginator = this.paginator;
+  }
+
+  
+    applyFilter() {
+    this.dataSource.filter = this.searchText.trim().toLowerCase();
+  }
+
+    private mapStatus(statusCode: string): string {
+    switch (statusCode) {
+      case 'Y': return 'Active';
+      case 'N': return 'Inactive';
+      default: return 'Unknown';
+    }
   }
 
   loadData() {
@@ -95,6 +145,11 @@ export class ManagestationComponent implements OnInit, AfterViewInit {
         }));
 
         this.dataSource.data = stations;
+        console.log(this.dataSource);
+        this.dataSource.filterPredicate = (data: any, filter: string) => {
+          const combined = `${data.stationName} ${data.contactperson} ${data.cpo} ${data.stationcode}`.toLowerCase();
+          return combined.includes(filter);
+        }
       },
       error: (error) => {
         console.error('Failed to load charging stations', error);

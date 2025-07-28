@@ -10,6 +10,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { CpoService } from '../../../services/manage-cpo.service';
 import { AuthService } from '../../../services/login.service';
 import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 @Component({
   selector: 'app-create-manage-cpo',
@@ -17,7 +18,8 @@ import { MatIconModule } from '@angular/material/icon';
   imports: [
     CommonModule, ReactiveFormsModule, MatDialogModule,
     MatFormFieldModule, MatInputModule, MatSlideToggleModule,
-    MatButtonModule, MatSelectModule, MatIconModule
+    MatButtonModule, MatSelectModule, MatIconModule,
+    MatSnackBarModule
   ],
   templateUrl: './create-manage-cpo.component.html',
   styleUrls: ['./create-manage-cpo.component.scss']
@@ -31,6 +33,7 @@ export class CreateManageCpoComponent implements OnInit {
   private fb = inject(FormBuilder);
   private dialogRef = inject(MatDialogRef<CreateManageCpoComponent>);
   private data = inject(MAT_DIALOG_DATA, { optional: true });
+  private snackbar = inject(MatSnackBar);
 
   ngOnInit(): void {
     const loginId = Number(this.authService.getUserId() ?? 0);
@@ -136,7 +139,11 @@ export class CreateManageCpoComponent implements OnInit {
 
     const apiCall$ = this.data?.id ? this.cpoService.updateCpo(payload) : this.cpoService.createCpo(payload);
     apiCall$.subscribe({
-      next: () => this.dialogRef.close(true),
+      next: (res) =>{
+        console.log(res);
+        this.snackbar.open(`${res.message}`, 'close');
+        this.dialogRef.close(true);
+      } ,
       error: err => console.error('Save error:', err)
     });
   }
