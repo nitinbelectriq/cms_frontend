@@ -3,12 +3,12 @@ mat-card {
   border-radius: 8px;
 }
 
-h2 {
-  margin-bottom: 16px;
-  font-weight: 700;
-  font-size: 28px;
-  color: #222;
-}
+// h2 {
+//   margin-bottom: 16px;
+//   font-weight: 700;
+//   font-size: 28px;
+//   color: #222;
+// }
 
 /* Container for the two clickable headings */
 .sub-headers {
@@ -24,3 +24,73 @@ h2 {
   text-transform: none;
   padding: 8px 16px;
 }
+
+.header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 16px;
+  
+    button {
+      background-color: #119347;
+      color: white;
+  
+      &:hover {
+        background-color: #209311; /* darker blue on hover */
+      }
+    }
+
+ .header-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    .search-field {
+      width: 250px;
+    }
+  }
+  }
+
+    .download-btn {
+  background-color: rgb(84, 152, 253) !important;
+  //color: black !important;
+}
+
+.custom-label {
+   width: 270px;
+  margin-bottom: 0;
+}
+
+.search-container {
+ 
+  ///width: 270px;
+  padding: 5px;
+  height: 50px;
+}
+
+::ng-deep .custom-label .mat-mdc-text-field-wrapper {
+  min-height: 36px !important;
+  padding: 0 !important;
+}
+
+::ng-deep .custom-label .mat-mdc-form-field-infix {
+  padding: 0 8px !important;
+  min-height: 36px !important;
+}
+
+::ng-deep .custom-label input.mat-mdc-input-element {
+  padding: 6px 0 !important;
+  font-size: 12px !important;
+  height: 28px !important;
+  line-height: 28px !important;
+}
+
+::ng-deep .custom-label .mdc-floating-label {
+  font-size: 14px !important;
+  top: 18px !important;
+}
+
+
+
+
+  

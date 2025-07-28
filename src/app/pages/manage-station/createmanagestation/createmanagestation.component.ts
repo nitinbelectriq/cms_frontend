@@ -11,6 +11,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { StationService } from '../../../services/manage-station.service';
 import { AuthService } from '../../../services/login.service';
 import { firstValueFrom } from 'rxjs';
+import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 
 interface DialogData {
   edit?: boolean;
@@ -30,7 +31,8 @@ interface DialogData {
     MatButtonModule,
     MatSlideToggleModule,
     MatIconModule,
-    MatDialogModule
+    MatDialogModule,
+    MatSnackBarModule
   ],
   templateUrl: './createmanagestation.component.html',
   styleUrls: ['./createmanagestation.component.scss']
@@ -40,6 +42,7 @@ export class CreatemanagestationComponent implements OnInit {
   private dialogRef = inject(MatDialogRef<CreatemanagestationComponent>);
   private stationService = inject(StationService);
   private authService = inject(AuthService);
+  private snackBar = inject(MatSnackBar);
 
   public data = inject<DialogData>(MAT_DIALOG_DATA, { optional: true });
 
@@ -222,14 +225,35 @@ export class CreatemanagestationComponent implements OnInit {
       payload.modified_by = userId;
       payload.modified_date = new Date().toISOString();
       this.stationService.updateStation(this.stationId, payload).subscribe({
-        next: res => this.dialogRef.close(res),
+        next: res =>{
+          console.log(res);
+          if(res.status == true){
+            this.snackBar.open('Successfully updated','Close', {duration: 3000});
+          }
+          else{
+            this.snackBar.open(`${res.message}`, 'close', {duration: 4000})
+          }
+          
+          this.dialogRef.close(res);
+        } ,
         error: err => console.error('Update failed:', err)
       });
     } else {
       payload.created_by = userId;
       payload.created_date = new Date().toISOString();
       this.stationService.createStation(payload).subscribe({
-        next: res => this.dialogRef.close(res),
+        next: res =>{
+
+          console.log(res);
+          if(res.status== true){
+            this.snackBar.open('successfully created', 'Close');
+          }
+          else{
+            this.snackBar.open(`${res.message}`, 'Close', {duration: 4000});
+          }
+          
+          this.dialogRef.close(res)
+        } ,
         error: err => console.error('Create failed:', err)
       });
     }

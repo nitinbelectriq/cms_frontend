@@ -13,6 +13,10 @@ import { CreateManageChargerComponent } from './create-manage-charger/create-man
 import { ViewManageChargerComponent } from './view-manage-charger/view-manage-charger.component';
 import { ChargerService, Charger } from '../../services/manage-charger.service';
 import { DeleteManageChargerComponent } from './delete-manage-charger/delete-manage-charger.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-manage-chargers',
@@ -26,7 +30,12 @@ import { DeleteManageChargerComponent } from './delete-manage-charger/delete-man
     RouterModule,
     HttpClientModule,
     MatPaginatorModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatCardModule,
+    MatFormFieldModule,
+    FormsModule,
+    MatInputModule
+
   ],
   templateUrl: './manage-charger.component.html',
   styleUrls: ['./manage-charger.component.scss']
@@ -34,6 +43,7 @@ import { DeleteManageChargerComponent } from './delete-manage-charger/delete-man
 export class ManageChargersComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['clientName', 'name', 'serialNo', 'modelName', 'status', 'action'];
   dataSource = new MatTableDataSource<Charger>([]);
+  searchText = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -51,16 +61,85 @@ export class ManageChargersComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
+       downloadCSV() {
+  const csvRows = [];
+
+  // Define headers
+  const headers = ['Serial No	','Charger Name','Batch id','Batch Name',
+    'Model Name','No. of Guns', 'Client Name',
+    'Version Name','Station Id', 'Station Name', 'City',
+    'State','OTA Config','Periodic Check Ref Time','Periodicity in hours','charger status','When to Upgrade','is_available','Status'];
+  csvRows.push(headers.join(','));
+
+  // Format each row of data
+  this.dataSource.data.forEach((row: any) => {
+    const rowData = [
+      `"${row.serial_no}"`,
+      `"${row.name}"`,
+      `"${row.batch_id}"`,
+       `"${row.charger_batch_name}"`,
+      `"${row.model_name}"`,
+      `"${row.no_of_guns}"`,
+      `"${row.clientName}"`,
+      `"${row.version_name}"`,
+      `"${row.station_id}"`,
+      `"${row.station_name}"`,
+      `"${row.city_name}"`,
+      `"${row.state_name}"`,
+      `"${row.OTA_Config}"`,
+      `"${row.Periodic_Check_Ref_Time}"`,
+      `"${row.Periodicity_in_hours}"`,
+      `"${row.charger_status}"`,
+      `"${row.When_to_Upgrade}"`,
+      row.is_available== '1'? 'YES' : 'NO',
+      row.status == 'Y' ? 'Active' : 'Inactive' 
+    ];
+    csvRows.push(rowData.join(','));
+  });
+
+  // Create CSV blob and download
+  const csvContent = csvRows.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'charger-data.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+
+  applyFilter() {
+    this.dataSource.filter = this.searchText.trim().toLowerCase();
+  }
+
+    private mapStatus(statusCode: string): string {
+    switch (statusCode) {
+      case 'Y': return 'Active';
+      case 'N': return 'Inactive';
+      default: return 'Unknown';
+    }
+  }
+
  loadData(): void {
   this.chargerService.getChargers().subscribe({
     next: (res) => {
+      
       if (res.status && Array.isArray(res.data)) {
         // Set clientName = 'Belectriq' for each item
         const transformedData = res.data.map(item => ({
           ...item,
-          client_name: 'Belectriq'
+          clientName: 'Belectriq'
         }));
         this.dataSource.data = transformedData;
+
+        this.dataSource.filterPredicate = (data: Charger, filter: string) => {
+             const combined = `${data.clientName} ${data.modelName} ${data.id} ${data.name} ${this.mapStatus(data.status)}`.toLowerCase();
+                return combined.includes(filter);
+           };
+        console.log(transformedData);
+
+
       } else {
         this.dataSource.data = [];
         this.snackBar.open('No data found', 'Close', { duration: 3000 });
