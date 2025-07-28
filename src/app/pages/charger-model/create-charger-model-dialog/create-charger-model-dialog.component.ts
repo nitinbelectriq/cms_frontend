@@ -11,6 +11,13 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
 import { ChargerModelService } from '../../../services/charger-model.service';
 import { MatIconModule } from '@angular/material/icon';
 
+export interface ChargerModel{
+  name:string,
+  description: string,
+  status: string
+}
+
+
 @Component({
   selector: 'app-create-charger-model-dialog',
   standalone: true,
@@ -37,7 +44,7 @@ export class CreateChargerModelDialogComponent {
   form: FormGroup = this.fb.group({
     name: ['', Validators.required],
     description: [''],
-    status: [true]  // boolean toggle
+    status: ['']  // boolean toggle
   });
 
   isLoading = false;

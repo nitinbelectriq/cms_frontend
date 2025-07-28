@@ -19,6 +19,10 @@ import {
   ChargersResponse,
 } from '../../../services/ocpp.service';
 import { AuthService } from '../../../services/login.service';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
+import { FormsModule } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-ocpp-operation',
@@ -31,8 +35,13 @@ import { AuthService } from '../../../services/login.service';
     MatPaginatorModule, // ✅ correct module import
     HttpClientModule,
     RouterModule,
+    MatFormFieldModule,
+    MatInputModule,
+    FormsModule,
+    MatIconModule
   ],
   templateUrl: './ocpp-operation.component.html',
+  styleUrls: ['./ocpp-operation.component.scss'],
 })
 export class OcppOperationComponent implements OnInit, AfterViewInit {
   displayedColumns = [
@@ -54,6 +63,7 @@ export class OcppOperationComponent implements OnInit, AfterViewInit {
   private authService = inject(AuthService);
   private ocppService = inject(OCPPService);
   private router = inject(Router);
+  searchText= '';
 
   ngOnInit(): void {
     const loginId = String(this.authService.getUserId() || 0);
@@ -64,7 +74,7 @@ export class OcppOperationComponent implements OnInit, AfterViewInit {
         if (res.status && res.data) {
           this.dataSource.data = res.data.map((item, index) => ({
             serial: index + 1,
-            serial_no: item.serial_no,
+           // serial_no: item.serial_no,
             chargerId: item.serial_no,
             station: item.station_name,
             currentV: item.version_name,
@@ -72,8 +82,13 @@ export class OcppOperationComponent implements OnInit, AfterViewInit {
             address: this.buildAddress(item),
             available: item.is_available === 1 ? 'Yes' : 'No',
             status: item.charger_status || 'Unknown',
-            raw: item,
+            //raw: item,
+            ...item
           }));
+          this.dataSource.filterPredicate= (data: any, filter: string) =>{
+            const combined = `${data.chargerId} ${data.station} ${data.status} ${data.currentV}`.toLowerCase();
+            return combined.includes(filter);
+          }
         } else {
           this.dataSource.data = [];
         }
@@ -86,6 +101,64 @@ export class OcppOperationComponent implements OnInit, AfterViewInit {
 
   ngAfterViewInit(): void {
     this.dataSource.paginator = this.paginator;
+  }
+
+    downloadCSV() {
+  const csvRows = [];
+
+  // Define headers
+  const headers = ['Serial no.','Name','Model Name','Charger Batch Name','Station ID','Station Name','Current Version ID','Version',
+    'No. of Gun','Address','City','Latitude','Longitude','Available','Periodic_Check_Ref_Time','Periodicity_in_hours','Created date','Charger Status','Status'];
+  csvRows.push(headers.join(','));
+
+  // Format each row of data
+  this.dataSource.data.forEach((row: any) => {
+    console.log('row :', row);
+    const rowData = [
+      `"${row.serial_no}"`,
+      `"${row.name}"`,
+      `"${row.model_name}"`,
+      `"${row.charger_batch_name}"`,
+      `"${row.station_id}"`,
+      `"${row.station}"`,
+      `"${row.current_version_id}"`,
+      `"${row.currentV}"`,
+      `"${row.guns}"`,
+      `"${row.address}"`,
+      `"${row.city_name}"`,
+      `"${row.Lat}"`,
+      `"${row.Lng}"`,
+      `"${row.available}"`,
+      `"${row.Periodic_Check_Ref_Time}"`,
+      `"${row.Periodicity_in_hours}"`,
+      `"${row.created_date}"`,
+      `"${row.charger_status}"`,
+      row.status ? 'Active' : 'Inactive'
+    ];
+    csvRows.push(rowData.join(','));
+  });
+
+  // Create CSV blob and download
+  const csvContent = csvRows.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'ocpp-data.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+  applyFilter() {
+    this.dataSource.filter = this.searchText.trim().toLowerCase();
+  }
+
+    private mapStatus(statusCode: string): string {
+    switch (statusCode) {
+      case 'Y': return 'Active';
+      case 'N': return 'Inactive';
+      default: return 'Unknown';
+    }
   }
 
   buildAddress(item: ChargerRaw): string {

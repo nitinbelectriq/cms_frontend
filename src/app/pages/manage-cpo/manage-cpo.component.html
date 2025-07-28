@@ -1,9 +1,27 @@
 
 <div class="header">
     <h2>Manage CPO</h2>
-    <button mat-raised-button color="primary" class="create" (click)="onCreate()">
-      <mat-icon>add</mat-icon> Create
-    </button>
+  <div class="header-right">
+    <mat-card class="search-container">
+      <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Search</mat-label>
+        <input matInput [(ngModel)]="searchText" (input)="applyFilter()" placeholder="Search...">
+        <mat-icon matSuffix>search</mat-icon>
+    </mat-form-field>
+    </mat-card>
+
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+      <button mat-raised-button color="primary" class="download-btn" (click)="downloadCSV()">
+        <mat-icon class="download-icon" style="font-size: 30px; height: 30px; width: 30px;">download_for_offline</mat-icon>
+       Export</button>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+      <button mat-raised-button color="primary" class="create" (click)="onCreate()">
+        <mat-icon>add</mat-icon> Create
+      </button>
+    </div>
+  </div>
   </div>
   
   <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">

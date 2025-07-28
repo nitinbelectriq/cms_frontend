@@ -1,5 +1,5 @@
 import { Component, OnInit, AfterViewInit, ViewChild, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { MatPaginator, MatPaginatorModule } from '@angular/material/paginator';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
@@ -15,6 +15,8 @@ import { ViewdishpatchmanagementComponent } from './viewdishpatchmanagement/view
 import { DispatchService } from '../../services/dispatch-charger.service';
 import { MatButtonModule } from '@angular/material/button';
 import { DeleteChargerDispatchComponent } from './delete-charger-dispatch/delete-charger-dispatch.component';
+import { MatCardModule } from '@angular/material/card';
+import { MatInputModule } from '@angular/material/input';
 
 interface ChargerData {
   charger_id: number;
@@ -89,7 +91,11 @@ interface Cpo {
     MatIconModule,
     MatFormFieldModule,
     MatSelectModule,
-    MatButtonModule
+    MatButtonModule,
+    MatCardModule,
+    FormsModule,
+    MatInputModule,
+    
   ],
   templateUrl: './dispatchmanagement.component.html',
   styleUrls: ['./dispatchmanagement.component.scss']
@@ -98,6 +104,7 @@ export class DispatchmanagementComponent implements OnInit, AfterViewInit {
   filterForm: FormGroup;
   displayedColumns: string[] = ['clientName', 'name', 'serialnumber', 'modelname', 'status', 'action'];
   dataSource = new MatTableDataSource<ChargerDisplay>([]);
+  searchText = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -126,6 +133,67 @@ export class DispatchmanagementComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
+  downloadCSV() {
+  const csvRows = [];
+
+  // Define headers
+  const headers = ['Serial No.','Charger Name', 'Dispatch Date',
+    'Model Name','No. of Guns', 'Client Name',
+    'Version Name','Station Id', 'Station Name', 'City',
+    'State','OTA Config','Periodic Check Ref Time','Periodicity in hours','charger status','When to Upgrade','is_available','Status'];
+  csvRows.push(headers.join(','));
+
+  // Format each row of data
+  this.dataSource.data.forEach((row: any) => {
+    //console.log('row :', row);
+    const rowData = [
+      `"${row.serialnumber}"`,
+      `"${row.name}"`,
+      `"${row.dispatch_date}"`,
+      
+      `"${row.modelname}"`,
+      `"${row.no_of_guns}"`,
+      `"${row.clientName}"`,
+      `"${row.version_name}"`,
+      `"${row.station_id}"`,
+      `"${row.station_name}"`,
+      `"${row.city_name}"`,
+      `"${row.state_name}"`,
+      `"${row.OTA_Config}"`,
+      `"${row.Periodic_Check_Ref_Time}"`,
+      `"${row.Periodicity_in_hours}"`,
+      `"${row.charger_status}"`,
+      `"${row.When_to_Upgrade}"`,
+      row.is_available== '1'? 'YES' : 'NO',
+      row.status == 'Y' ? 'Active' : 'Inactive' 
+    ];
+    csvRows.push(rowData.join(','));
+  });
+
+  // Create CSV blob and download
+  const csvContent = csvRows.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'charger-dispatch-data.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+
+   applyFilter() {
+    this.dataSource.filter = this.searchText.trim().toLowerCase();
+  }
+
+    private mapStatus(statusCode: string): string {
+    switch (statusCode) {
+      case 'Y': return 'Active';
+      case 'N': return 'Inactive';
+      default: return 'Unknown';
+    }
+  }
+
   loadData(): void {
     const loginId = Number(localStorage.getItem('user_id'));
     if (!loginId) {
@@ -143,6 +211,10 @@ export class DispatchmanagementComponent implements OnInit, AfterViewInit {
           modelname: item.model_name
         }));
         this.dataSource.data = mappedData;
+        this.dataSource.filterPredicate = (data: ChargerData, filter: string) => {
+          const combined = `${data.client_name} ${data.model_name} ${data.serial_no} ${data.name}`.toLowerCase();
+          return combined.includes(filter);
+        }
       },
       error: (err) => {
         console.error('Error fetching charger dispatch data:', err);
@@ -208,6 +280,7 @@ export class DispatchmanagementComponent implements OnInit, AfterViewInit {
     }
 
   })
+  
 // const user_id = Number(localStorage.getItem('user_id'));
   // if (confirm('Are you sure you want to delete this record?')) {
   //   this.dispatchService.deleteCharger(id, user_id).subscribe({

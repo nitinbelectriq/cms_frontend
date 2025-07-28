@@ -13,6 +13,10 @@ import { CreatemanageclientComponent } from './createmanageclient/createmanagecl
 import { ViewmanageclientComponent } from './viewmanageclient/viewmanageclient.component'; // ✅ Add this
 import { DeleteClientManagementComponent } from './delete-client-management/delete-client-management.component';
 import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
+import { MatInputModule } from '@angular/material/input';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { FormsModule } from '@angular/forms';
+import { MatCardModule } from '@angular/material/card';
 
 @Component({
   selector: 'app-manageclient',
@@ -25,7 +29,12 @@ import { MatSnackBar, MatSnackBarModule } from '@angular/material/snack-bar';
     MatButtonModule,
     MatIconModule,
     MatDialogModule,
-    MatSnackBarModule
+    MatSnackBarModule,
+    MatInputModule,
+    MatFormFieldModule,
+    FormsModule,
+    MatCardModule
+
   ],
   templateUrl: './manageclient.component.html',
   styleUrls: ['./manageclient.component.scss']
@@ -34,6 +43,7 @@ export class ManageclientComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['clientName', 'contactPerson', 'GSTIN', 'status', 'action'];
   dataSource = new MatTableDataSource<any>([]);
   snackBar= inject(MatSnackBar);
+  searchText= '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
   @ViewChild(MatSort) sort!: MatSort;
@@ -56,10 +66,74 @@ export class ManageclientComponent implements OnInit, AfterViewInit {
     this.dataSource.sort = this.sort;
   }
 
+     downloadCSV() {
+  const csvRows = [];
+
+  // Define headers
+  const headers = [' Name', 'Contact Person Name','Email','Mobile',
+    'Description','GST Number', 
+    'TIN Number', 'City',
+    'State','Address','Created Date','Status'];
+  csvRows.push(headers.join(','));
+
+  // Format each row of data
+  this.dataSource.data.forEach((row: any) => {
+   // console.log('row :', row);
+    const rowData = [
+     
+      `"${row.name}"`,
+      `"${row.cp_name}"`,
+      `"${row.email}"`,
+      `"${row.mobile}"`,
+      `"${row.description}"`,
+      `"${row.gst_no}"`,
+      
+      `"${row.tin_no}"`,
+      
+      `"${row.city_name}"`,
+      `"${row.state_name}"`,
+      
+      `"${row.address1}"`,
+      `"${row.created_date}"`,
+      
+      row.status == 'Y' ? 'Active' : 'Inactive' 
+    ];
+    csvRows.push(rowData.join(','));
+  });
+
+  // Create CSV blob and download
+  const csvContent = csvRows.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'client-data.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+
+
+    applyFilter() {
+    this.dataSource.filter = this.searchText.trim().toLowerCase();
+  }
+
+    private mapStatus(statusCode: string): string {
+    switch (statusCode) {
+      case 'Y': return 'Active';
+      case 'N': return 'Inactive';
+      default: return 'Unknown';
+    }
+  }
+
   loadClients(loginId: number) {
     this.clientService.getClients(loginId).subscribe({
       next: (clients: any[]) => {
         this.dataSource.data = clients;
+        this.dataSource.filterPredicate = (data: any, filter: string) => {
+          const combined = `${data.cp_name} ${data.name} ${data.gst_no} ${this.mapStatus(data.status)}`.toLowerCase();
+          return combined.includes(filter);
+        }
       },
       error: (error: any) => {
         console.error('Failed to load clients', error);

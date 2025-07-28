@@ -15,8 +15,10 @@ import { AuthService } from '../../../services/login.service';
 import { ViewCpoRfidComponent } from '../manage-cpo-rfid/view-cpo-rfid/view-cpo-rfid.component';
 import { CreateCpoRfidComponent } from '../manage-cpo-rfid/create-cpo-rfid/create-cpo-rfid.component'; // ✅ Correct import
 import { DeleteManageCpoRfidComponent } from './delete-manage-cpo-rfid/delete-manage-cpo-rfid.component';
+import { MatCardModule } from '@angular/material/card';
+import { FormsModule } from '@angular/forms';
 
-interface RfidRecord {
+export interface RfidRecord {
   id: number;
   clientName: string;
   cpoName: string;
@@ -41,6 +43,11 @@ interface RfidRecord {
     MatPaginatorModule,
     MatDialogModule,
     MatSnackBarModule,
+    MatCardModule,
+    FormsModule,
+
+    MatInputModule,
+
   ],
   templateUrl: './manage-cpo-rfid.component.html',
   styleUrls: ['./manage-cpo-rfid.component.scss'],
@@ -48,6 +55,8 @@ interface RfidRecord {
 export class ManageCpoRfidComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['clientName', 'cpoName', 'rfidNo', 'status', 'action'];
   dataSource = new MatTableDataSource<RfidRecord>([]);
+
+  searchText = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -72,6 +81,55 @@ export class ManageCpoRfidComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
+  downloadCSV() {
+  const csvRows = [];
+
+  // Define headers
+  const headers = ['RFID Number', ' Name', 'Description','Expiry Date', 'CPO Name', 'Client Name', 'Status'];
+  csvRows.push(headers.join(','));
+
+  // Format each row of data
+  this.dataSource.data.forEach((row: any) => {
+   // console.log('row:',row)
+    const rowData = [
+      `"${row.rfidNo}"`,
+       `"${row.rfid_name}"`,
+      `"${row.description}"`,
+      `"${row.expiryDate}"`,
+     
+      `"${row.cpoName}"`,
+      `"${row.clientName}"`,
+      
+      row.status ? 'Active' : 'Inactive'
+    ];
+    csvRows.push(rowData.join(','));
+  });
+
+  // Create CSV blob and download
+  const csvContent = csvRows.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'CPO-RFID-data.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+
+    applyFilter() {
+    this.dataSource.filter = this.searchText.trim().toLowerCase();
+  }
+
+    private mapStatus(statusCode: string): string {
+    switch (statusCode) {
+      case 'Y': return 'Active';
+      case 'N': return 'Inactive';
+      default: return 'Unknown';
+    }
+  }
+
+
   loadData(login_id: string) {
     this.manageRfidService.getCpoRFidMapping(login_id).subscribe({
       next: (res: any[]) => {
@@ -87,6 +145,10 @@ export class ManageCpoRfidComponent implements OnInit, AfterViewInit {
           rfid_id: item.rf_id,
         }));
         this.dataSource.data = mappedData;
+        this.dataSource.filterPredicate = (data: RfidRecord, filter: string)=> {
+          const combined = `${data.clientName} ${data.cpoName} ${data.rfidNo} ${this.mapStatus(data.status)}`.toLowerCase();
+          return combined.includes(filter);
+        }
       },
       error: (err) => {
         console.error('Error loading data', err);

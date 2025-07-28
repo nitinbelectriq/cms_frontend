@@ -14,6 +14,10 @@ import { CreateChargerModelDialogComponent } from './create-charger-model-dialog
 import { EditChargerModelDialogComponent } from './edit-charger-model-dialog/edit-charger-model-dialog.component';
 import { ViewChargerModelDialogComponent } from './view-charger-model-dialog/view-charger-model-dialog.component';
 import { DeleteChargerModelDialogComponent } from './delete-charger-model-dialog/delete-charger-model-dialog.component';
+import { MatCardModule } from '@angular/material/card';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatInputModule } from '@angular/material/input';
 
 @Component({
   selector: 'app-charger-model',
@@ -27,7 +31,11 @@ import { DeleteChargerModelDialogComponent } from './delete-charger-model-dialog
     MatDialogModule,
     MatSnackBarModule,         // <--- Add here
     RouterModule,
-    HttpClientModule
+    HttpClientModule,
+    MatCardModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatInputModule
   ],
   templateUrl: './charger-model.component.html',
   styleUrls: ['./charger-model.component.scss'],
@@ -35,6 +43,7 @@ import { DeleteChargerModelDialogComponent } from './delete-charger-model-dialog
 export class ChargerModelComponent implements OnInit, AfterViewInit {
   displayedColumns: string[] = ['model', 'description', 'status', 'action'];
   dataSource = new MatTableDataSource<ChargerModel>([]);
+  searchText = '';
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
@@ -52,9 +61,58 @@ export class ChargerModelComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
+   downloadCSV() {
+  const csvRows = [];
+
+  // Define headers
+  const headers = ['Model Name', 'Description', 'Created by', 'Modify Date', 'Modify by' ,'Status'];
+  csvRows.push(headers.join(','));
+
+  // Format each row of data
+  this.dataSource.data.forEach((row: any) => {
+    const rowData = [
+      `"${row.name}"`,
+      `"${row.description}"`,
+      `"${row.createdby}"`,
+      `"${row.modify_date}"`,
+      `"${row.modifyby}"`,
+      row.status ? 'Active' : 'Inactive'
+    ];
+    csvRows.push(rowData.join(','));
+  });
+
+  // Create CSV blob and download
+  const csvContent = csvRows.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'charger-model-data.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+
+   applyFilter() {
+    this.dataSource.filter = this.searchText.trim().toLowerCase();
+  }
+
+    private mapStatus(statusCode: string): string {
+    switch (statusCode) {
+      case 'Y': return 'Active';
+      case 'N': return 'Inactive';
+      default: return 'Unknown';
+    }
+  }
+
   loadData() {
     this.chargerModelService.getAll().subscribe((data) => {
       this.dataSource.data = data;
+      //console.log(data);
+      this.dataSource.filterPredicate = (data: ChargerModel, filter: string) => {
+                const combined = `${data.name} ${data.description} ${(data.status== true ? 'active' : 'inactive')}`.toLowerCase();
+                return combined.includes(filter);
+              };
     });
   }
 

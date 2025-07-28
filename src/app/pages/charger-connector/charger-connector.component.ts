@@ -14,6 +14,7 @@ import { AuthService } from '../../services/login.service';
 import { DeleteChargerConectorComponent } from './delete-charger-conector/delete-charger-conector.component';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
+import { MatCardModule } from '@angular/material/card';
 
 interface ConnectorModel {
   id: number;
@@ -36,7 +37,8 @@ interface ConnectorModel {
     MatPaginatorModule,
     MatDialogModule,
      MatFormFieldModule,  
-    MatInputModule 
+    MatInputModule ,
+    MatCardModule
   ],
   templateUrl: './charger-connector.component.html',
   styleUrls: ['./charger-connector.component.scss']
@@ -103,6 +105,40 @@ export class ChargerConnectorComponent implements OnInit {
     const filterValue = (event.target as HTMLInputElement).value.trim().toLowerCase();
     this.dataSource.filter = filterValue;
   }
+
+  // download data function
+
+     downloadCSV() {
+  const csvRows = [];
+
+  // Define headers
+  const headers = ['Vehicle Model', 'Connector Type	', 'Vehicle Type', 'Status'];
+  csvRows.push(headers.join(','));
+
+  // Format each row of data
+  this.dataSource.data.forEach((row: any) => {
+    const rowData = [
+      `"${row.vehicleModel}"`,
+      `"${row.connectorType}"`,
+      `"${row.vehicleType}"`,
+      `"${row.vehicleType}"`,
+      `"${row.vehicleType}"`,
+      `"${row.vehicleType}"`,
+      row.status 
+    ];
+    csvRows.push(rowData.join(','));
+  });
+
+  // Create CSV blob and download
+  const csvContent = csvRows.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'charger-connector-data.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+}
 
   onCreate(): void {
     const dialogRef = this.dialog.open(CreateChargerConnectorComponent, {

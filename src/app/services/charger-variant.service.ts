@@ -7,9 +7,9 @@ import { map } from 'rxjs/operators';
 
 export interface ChargerVariant {
   id: string | number;
-  variantName: string;
-  chargerType: string;
-  manufacturer: string;
+  name: string;
+  charger_model_type_name: string;
+  manufacturer_name: string;
   status: string;
 }
 
