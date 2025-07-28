@@ -120,6 +120,27 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'manage-role',
+        loadComponent: () =>
+          import('./pages/manage-role/manage-role.component').then(
+            (m) => m.ManageRoleComponent
+          ),
+      },
+      {
+        path: 'manage-user-role',
+        loadComponent: () =>
+          import('./pages/manage-user-role/manage-user-role.component').then(
+            (m) => m.ManageUserRoleComponent
+          ),
+      },
+      {
+        path: 'manage-role-activity',
+        loadComponent: () =>
+          import('./pages/manage-role-activity/manage-role-activity.component').then(
+            (m) => m.ManageRoleActivityComponent
+          ),
+      },
+      {
         path: 'connectors',
         redirectTo: '/home/chargers-connector',
         pathMatch: 'full',
