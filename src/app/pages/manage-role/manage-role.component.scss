@@ -1,0 +1,16 @@
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
+.spacer {
+  flex: 1 1 auto;
+}
+
+.table-container {
+  padding: 16px;
+}
+
+table {
+  width: 100%;
+}
