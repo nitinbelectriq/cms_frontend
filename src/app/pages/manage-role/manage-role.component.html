@@ -1,7 +1,7 @@
-<mat-toolbar color="primary" class="toolbar">
+<mat-toolbar  class="toolbar">
   <span>Manage Role</span>
   <span class="spacer"></span>
-  <button mat-flat-button color="accent" (click)="addRole()">
+  <button mat-flat-button class="create" color="accent" (click)="addRole()">
     <mat-icon>add</mat-icon>
     Add New
   </button>
@@ -44,7 +44,7 @@
     <ng-container matColumnDef="action">
       <th mat-header-cell *matHeaderCellDef> Action </th>
       <td mat-cell *matCellDef="let element">
-        <button mat-icon-button color="primary" matTooltip="Edit">
+        <button mat-icon-button color="primary"  (click)="onEdit(element.id)" matTooltip="Edit">
           <mat-icon>edit</mat-icon>
         </button>
         <button mat-icon-button color="warn" matTooltip="Delete">
