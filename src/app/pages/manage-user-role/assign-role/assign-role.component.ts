@@ -1,52 +1,64 @@
 import { CommonModule } from '@angular/common';
 import { Component, inject } from '@angular/core';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatOptionModule } from '@angular/material/core';
-import { MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
+import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatSlideToggleModule } from '@angular/material/slide-toggle';
 
 @Component({
-  selector: 'app-manage-role-activity',
+  selector: 'app-assign-role',
   standalone: true,
   imports: [
     CommonModule,
-    MatDialogModule,
     MatFormFieldModule,
-    MatSelectModule,
-    MatOptionModule,
-    MatSlideToggleModule,
-    MatButtonModule,
     MatIconModule,
+    MatInputModule,
+    MatOptionModule,
+    MatSelectModule,
     ReactiveFormsModule,
+    FormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatSlideToggleModule
+
 
   ],
-  templateUrl: './manage-role-activity.component.html',
-  styleUrl: './manage-role-activity.component.scss'
+  templateUrl: './assign-role.component.html',
+  styleUrl: './assign-role.component.scss'
 })
-export class ManageRoleActivityComponent {
+export class AssignRoleComponent {
+  private fb= inject(FormBuilder);
+  
+
   clients: any[]=[];
-  list: any[]=[];
-  roles: any[]=[];
-  private fb = inject(FormBuilder);
+  roles: any[]= [];
+  users: any[]= [];
+
+  constructor(
+    private dialogRef: MatDialogRef<AssignRoleComponent>,
+  ){
+
+  }
+
+
   form: FormGroup = this.fb.group({
     client: [null],
+    user: [null],
     role: [null],
-    item: [null],
-    unselectAll: [false],
-    uncollasped: [false],
-
-  })
+  });
 
   onSubmit(){
     //
   }
 
   onCancel(){
-
+    //
+    this.dialogRef.close();
   }
 
 }

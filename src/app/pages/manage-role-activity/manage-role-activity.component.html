@@ -1,1 +1,55 @@
-<p>manage-role-activity works!</p>
+<h2 mat-dialog-title> Manage Role Activity</h2>
+
+
+
+<form [formGroup]="form" (ngSubmit)="onSubmit" class="form-container">
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Client</mat-label>
+        <mat-select formControlName="client" placeholder="Select client">
+            <mat-option *ngFor="let client of clients" [value]="client.id">{{client.name}}</mat-option>
+        </mat-select>
+        <mat-icon matSuffix>person</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label >Role</mat-label>
+        <mat-select formControlName="role" placeholder="Select Role">
+            <mat-option *ngFor="let role of roles" [value]="role.id">
+                {{role.name}}
+            </mat-option>
+        </mat-select>
+        <mat-icon matSuffix>person</mat-icon>
+    </mat-form-field>
+
+    <div class="custom-label">
+
+        <mat-slide-toggle class="togle-btn" formControlName="unselectAll" >
+            UnSelect All
+        </mat-slide-toggle>
+
+        <mat-slide-toggle formControlName="uncollasped">
+            Uncollasped
+        </mat-slide-toggle>
+
+    </div>
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Menu List</mat-label>
+        <mat-select formControlName="item" placeholder="Menu List">
+            <mat-option *ngFor="let item of list" [value]="item.id">
+                {{item.name}}
+            </mat-option>
+        </mat-select>
+        <mat-icon matSuffix>list</mat-icon>
+    </mat-form-field>
+
+    <div class="button-row">
+        <button mat-raised-button color="primary" type="submit" class="create">Save</button>
+        <button mat-raised-button (click)="onCancel()">
+            <mat-icon>cancel</mat-icon>
+            Cancel
+        </button>
+    </div>
+
+    
+
+</form>

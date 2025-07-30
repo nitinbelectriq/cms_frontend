@@ -1,0 +1,47 @@
+<h2 mat-dialog-title>Assign Role </h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Client</mat-label>
+        <mat-select formControlName="client" placeholder="Select Client">
+            <mat-option *ngFor="let client of clients" [value]="client.id">
+                {{client.name}}
+            </mat-option>
+        </mat-select>
+        <mat-icon matSuffix>person</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>User</mat-label>
+        <mat-select formControlName="user" placeholder="Select user">
+            <mat-option *ngFor="let user of users" [value]="user.id">
+                {{user.name}}
+            </mat-option>
+        </mat-select>
+        <mat-icon matSuffix>person</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Role</mat-label>
+        <mat-select formControlName="role" placeholder="select role">
+            <mat-option *ngFor="let role of roles" [value]="role.id">
+                {{role.name}}
+            </mat-option>
+        </mat-select>
+        <mat-icon matSuffix>help</mat-icon>
+    </mat-form-field>
+
+    <div class="custom-label">
+        <mat-slide-toggle  formControlName="status" class="toggle-green togle-btn" >
+            Status
+        </mat-slide-toggle>
+    </div>
+
+    <div class="button-row custom-label">
+        <button mat-raised-button class="create" type="submit">Action</button>
+        <button mat-raised-button (click)="onCancel()">
+            <mat-icon >cancel</mat-icon>
+            Cancel
+        </button>
+    </div>
+</form>
