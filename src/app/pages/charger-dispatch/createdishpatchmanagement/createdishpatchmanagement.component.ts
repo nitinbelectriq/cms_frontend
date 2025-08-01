@@ -9,8 +9,8 @@ import {
 import {
   MatDialogRef,
   MAT_DIALOG_DATA,
-  MatDialogModule,
-  MatDialog
+  MatDialog,
+  MatDialogModule
 } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -75,9 +75,14 @@ export class CreatedishpatchmanagementComponent implements OnInit {
       dispatch_date: [this.data?.dispatch_date ? new Date(this.data.dispatch_date) : '', Validators.required],
       public: [this.data?.is_private === 1 ? false : true],
       status: [this.data?.dispatch_status === 'Y' ? true : false],
-      serialNo: [this.isEdit ? this.data?.charger_id || '' : this.data?.charger_data || [], Validators.required],
-      warranty_start: [null],
-      warranty_end: [null]
+      serialNo: [
+        this.isEdit
+          ? this.data?.charger_id || ''
+          : (Array.isArray(this.data?.charger_data) ? this.data?.charger_data.map((c: any) => c.id) : []),
+        Validators.required
+      ],
+      warranty_start: [this.data?.warranty_start ? new Date(this.data.warranty_start) : null],
+      warranty_end: [this.data?.warranty_end ? new Date(this.data.warranty_end) : null]
     });
 
     this.loadClients();
@@ -86,7 +91,7 @@ export class CreatedishpatchmanagementComponent implements OnInit {
 
   loadClients() {
     this.dispatchService.getClients(this.userId).subscribe({
-      next: (res) => (this.clients = res || []),
+      next: (res) => this.clients = res || [],
       error: (err) => {
         console.error('Failed to load clients', err);
         this.snackBar.open('Failed to load clients', 'Close', {
@@ -99,7 +104,7 @@ export class CreatedishpatchmanagementComponent implements OnInit {
 
   loadChargers() {
     this.dispatchService.getChargers().subscribe({
-      next: (res) => (this.chargers = res?.data || []),
+      next: (res) => this.chargers = res?.data || [],
       error: (err) => {
         console.error('Failed to load chargers', err);
         this.snackBar.open('Failed to load chargers', 'Close', {
@@ -125,81 +130,82 @@ export class CreatedishpatchmanagementComponent implements OnInit {
     this.dialogRef.close();
   }
 
-  onSubmit() {
-  if (!this.form.valid || !this.userId) return;
+  onSubmit(): void {
+    if (!this.form.valid || !this.userId) return;
 
-  const dispatchDate: Date = new Date(this.form.value.dispatch_date);
-  dispatchDate.setHours(0, 0, 0, 0);
-  const formattedDate = formatDate(dispatchDate, 'yyyy-MM-dd HH:mm:ss', 'en-IN');
+    const dispatchDate = new Date(this.form.value.dispatch_date);
+    dispatchDate.setHours(0, 0, 0, 0);
+    const formattedDispatchDate = formatDate(dispatchDate, 'yyyy-MM-dd HH:mm:ss', 'en-IN');
 
-  const warrantyStart = this.form.value.warranty_start
-    ? formatDate(new Date(this.form.value.warranty_start), 'yyyy-MM-dd', 'en-IN')
-    : null;
+    const warrantyStart = this.form.value.warranty_start
+      ? formatDate(new Date(this.form.value.warranty_start), 'yyyy-MM-dd', 'en-IN')
+      : null;
 
-  const warrantyEnd = this.form.value.warranty_end
-    ? formatDate(new Date(this.form.value.warranty_end), 'yyyy-MM-dd', 'en-IN')
-    : null;
+    const warrantyEnd = this.form.value.warranty_end
+      ? formatDate(new Date(this.form.value.warranty_end), 'yyyy-MM-dd', 'en-IN')
+      : null;
 
-  const basePayload = {
-    id: this.data?.id,
-    client_id: this.form.value.clientName,
-    sub_client_id: 0,
-    is_private: this.form.value.public ? 0 : 1,
-    dispatch_status: this.form.value.status ? 'Y' : 'N',
-    dispatch_date: formattedDate,
-    dispatch_by: this.userId,
-    status: this.form.value.status ? 'Y' : 'N',
-    warranty_start: warrantyStart,
-    warranty_end: warrantyEnd,
-    created_by: this.userId,
-    modify_by: this.userId
-  };
-
-  let payload: any;
-
-  if (this.isEdit) {
-    payload = {
-      ...basePayload,
-      charger_id: this.form.value.serialNo
+    const basePayload = {
+      id: this.data?.id || undefined,
+      client_id: this.form.value.clientName,
+      sub_client_id: 0,
+      is_private: this.form.value.public ? 0 : 1,
+      dispatch_status: this.form.value.status ? 'Y' : 'N',
+      dispatch_date: formattedDispatchDate,
+      dispatch_by: this.userId,
+      status: this.form.value.status ? 'Y' : 'N',
+      warranty_start: warrantyStart,
+      warranty_end: warrantyEnd,
+      created_by: this.userId,
+      modify_by: this.userId
     };
-  } else {
-    payload = {
-      ...basePayload,
-      charger_data: this.form.value.serialNo.map((id: number) => ({
-        id,
-        warranty_start: warrantyStart,
-        warranty_end: warrantyEnd
-      }))
-    };
-  }
 
-  const apiCall = this.isEdit
-    ? this.dispatchService.updateClientChargers(payload)
-    : this.dispatchService.dispatchChargers(payload);
+    let payload: any;
 
-  apiCall.subscribe({
-    next: (res) => {
-      if(res.status === true){
-        this.snackBar.open(
-        this.isEdit ? 'Dispatch updated successfully!' : 'Dispatch created successfully!',
-        'Close',
-        { duration: 3000, panelClass: 'success-snackbar' }
-      );
-      this.dialogRef.close(true);
-      }
-      else{
-        this.snackBar.open(`${res.message}`, 'Close', {duration: 4000});
-      }
-      
-    },
-    error: (err) => {
-      console.error(`${this.isEdit ? 'Update' : 'Create'} failed:`, err);
-      this.snackBar.open('Operation failed. Please try again.', 'Close', {
-        duration: 3000,
-        panelClass: 'error-snackbar',
+    if (this.isEdit) {
+      payload = {
+        ...basePayload,
+        charger_id: this.form.value.serialNo
+      };
+    } else {
+      const chargerData = (this.form.value.serialNo || []).map((id: number) => {
+        const selected = this.chargers.find((c) => c.id === id);
+        return {
+          id,
+          serial_no: selected?.serial_no?.trim() || ''
+        };
       });
-    }
-  });
-}
 
+      payload = {
+        ...basePayload,
+        charger_data: chargerData
+      };
+    }
+
+    const apiCall = this.isEdit
+      ? this.dispatchService.updateClientChargers(payload)
+      : this.dispatchService.dispatchChargers(payload);
+
+    apiCall.subscribe({
+      next: (res) => {
+        if (res.status === true) {
+          this.snackBar.open(
+            this.isEdit ? 'Dispatch updated successfully!' : 'Dispatch created successfully!',
+            'Close',
+            { duration: 3000, panelClass: 'success-snackbar' }
+          );
+          this.dialogRef.close(true);
+        } else {
+          this.snackBar.open(`${res.message}`, 'Close', { duration: 4000 });
+        }
+      },
+      error: (err) => {
+        console.error(`${this.isEdit ? 'Update' : 'Create'} failed:`, err);
+        this.snackBar.open('Operation failed. Please try again.', 'Close', {
+          duration: 3000,
+          panelClass: 'error-snackbar'
+        });
+      }
+    });
+  }
 }

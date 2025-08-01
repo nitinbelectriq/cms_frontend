@@ -203,7 +203,7 @@ export class DispatchmanagementComponent implements OnInit, AfterViewInit {
 
     this.dispatchService.getClientChargers(loginId).subscribe({
       next: (res) => {
-        const rawData: ChargerData[] = res?.data || [];
+        const rawData: ChargerData[] = res || [];
         const mappedData: ChargerDisplay[] = rawData.map((item: ChargerData) => ({
           ...item,
           clientName: item.client_name,

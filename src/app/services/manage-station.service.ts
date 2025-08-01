@@ -90,4 +90,22 @@ getAmenities(): Observable<any> {
     );
   }
 
+addCharger(payload: any): Observable<any> {
+    const headers = this.getAuthHeaders();
+    return this.http.post<any>(
+      `${this.baseUrl}/charger/addChargerToStationMultiple`,
+      payload,
+      { headers }
+    );
+  }
+
+getClientChargers(client_id: number): Observable<any> {
+  const headers = this.getAuthHeaders();
+  return this.http.get<any>(
+    `${this.baseUrl}/charger/getClientChargersNotMappedToAnyStation/${client_id}`,
+    { headers }
+  );
 }
+
+}
+

@@ -53,34 +53,42 @@ export class CreateChargerModelDialogComponent {
     this.dialogRef.close();
   }
 
-  onSubmit(): void {
-    if (this.form.invalid) {
-      return;
+ onSubmit(): void {
+  if (this.form.invalid) return;
+
+  this.isLoading = true;
+
+  const formValue = this.form.value;
+  const payload = {
+    ...formValue,
+    status: formValue.status ? 'Y' : 'N'
+  };
+
+  this.chargerModelService.create(payload).subscribe({
+    next: (res) => {
+      this.isLoading = false;
+      this.snackBar.open('Charger Model successfully created', 'Close', { duration: 3000 });
+      this.dialogRef.close(res);
+    },
+    error: (err) => {
+      this.isLoading = false;
+
+      // Extract safe error message
+      const backendMessage = err?.error?.message || 'Unknown error occurred.';
+      const sqlMessage = err?.error?.error?.sqlMessage;
+
+      const fullMessage = sqlMessage
+        ? `Failed to create charger: ${sqlMessage}`
+        : `Failed to create charger: ${backendMessage}`;
+
+      console.error('Create Charger Model failed:', err);
+
+      this.snackBar.open(fullMessage, 'Close', {
+        duration: 6000,
+        panelClass: ['snack-bar-error']
+      });
     }
+  });
+}
 
-    this.isLoading = true;
-
-    // Convert boolean status to 'Y' or 'N' before sending
-    const formValue = this.form.value;
-    const payload = {
-      ...formValue,
-      status: formValue.status ? 'Y' : 'N'
-    };
-
-    this.chargerModelService.create(payload).subscribe({
-      next: (res) => {
-        this.isLoading = false;
-        console.log(res);
-     
-          this.snackBar.open('Charger Model successfully created', 'Close', { duration: 3000 });
-  
-        this.dialogRef.close(res);
-      },
-      error: (err) => {
-        this.isLoading = false;
-        console.error('Create Charger Model failed', err);
-        this.snackBar.open(`Failed to create charger. Please try again!. ${err.error.message}`, 'Close', { duration: 4000 });
-      }
-    });
-  }
 }

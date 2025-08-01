@@ -1,0 +1,69 @@
+<h2 mat-dialog-title>Map Charger to Station</h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" mat-dialog-content>
+
+  <!-- Station Info Fields (Read-only) -->
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Station</mat-label>
+    <input matInput [value]="data?.name" readonly />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>CPO</mat-label>
+    <input matInput [value]="data?.cpo_name" readonly />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Address 1</mat-label>
+    <input matInput [value]="data?.address1" readonly />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Address 2</mat-label>
+    <input matInput [value]="data?.address2" readonly />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>City</mat-label>
+    <input matInput [value]="data?.city_name" readonly />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>State</mat-label>
+    <input matInput [value]="data?.state_name" readonly />
+  </mat-form-field>
+
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Country</mat-label>
+    <input matInput [value]="data?.country_name" readonly />
+  </mat-form-field>
+
+  <!-- Status Toggle -->
+  <mat-slide-toggle formControlName="status" color="primary" class="full-width" style="margin: 16px 0;">
+    Active / Inactive
+  </mat-slide-toggle>
+
+  <!-- Serial Numbers Dropdown -->
+  <mat-form-field appearance="outline" class="full-width">
+    <mat-label>Select Chargers</mat-label>
+    <mat-select
+      formControlName="selectedChargers"
+      multiple
+      required
+      [disabled]="isLoading || chargerOptions.length === 0"
+    >
+      <mat-option *ngFor="let charger of chargerOptions" [value]="charger">
+        {{ charger.charger_display_id || charger.serial_no }}
+      </mat-option>
+    </mat-select>
+  </mat-form-field>
+
+  <!-- Action Buttons -->
+  <div mat-dialog-actions align="end">
+    <button mat-button type="button" (click)="onCancel()">Cancel</button>
+    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || isLoading">
+      {{ isLoading ? 'Saving...' : 'Save' }}
+    </button>
+  </div>
+
+</form>
