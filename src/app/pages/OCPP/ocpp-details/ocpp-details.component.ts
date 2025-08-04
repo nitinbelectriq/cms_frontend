@@ -7,6 +7,14 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { HttpClientModule } from '@angular/common/http';
 import { OCPPService } from '../../../services/ocpp.service';
+import { MatSelectModule } from '@angular/material/select';
+import { MatOptionModule } from '@angular/material/core';
+import { FormsModule } from '@angular/forms';
+import { MatFormFieldModule } from '@angular/material/form-field';
+import { MatTableModule } from '@angular/material/table';
+import { MatInputModule } from '@angular/material/input';
+import { MatCheckboxModule } from '@angular/material/checkbox';
+import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
 
 @Component({
   standalone: true,
@@ -17,17 +25,70 @@ import { OCPPService } from '../../../services/ocpp.service';
     MatButtonModule,
     MatIconModule,
     MatTooltipModule,
-    HttpClientModule
+    HttpClientModule,
+    MatSelectModule,
+    MatOptionModule,
+    FormsModule,
+    MatFormFieldModule,
+    MatTableModule,
+    MatInputModule,
+    MatCheckboxModule,
+    MatRadioModule,
+    MatRadioButton
+    
   ],
   providers: [DatePipe],
   templateUrl: './ocpp-details.component.html',
   styleUrls: ['./ocpp-details.component.scss']
 })
 export class ChargerDetailComponent implements OnInit {
+  displayedColumns: string[] = ['action', 'request', 'response',  'request_date',];
+  dataSource = [
+  {
+    action: 'Remote Start',
+    request: JSON.stringify({ connectorId: 1, idTag: 'USER123' }),
+    response: JSON.stringify({ status: 'Accepted', message: 'Charging started' }),
+    request_date: '2025-07-31 10:25:43'
+  },
+  {
+    action: 'Remote Stop',
+    request: JSON.stringify({ transactionId: 101 }),
+    response: JSON.stringify({ status: 'Accepted', message: 'Charging stopped successfully' }),
+    request_date: '2025-07-31 10:30:11'
+  },
+  {
+    action: 'Set Configuration',
+    request: JSON.stringify({ key: 'ConnectionTimeOut', value: '30' }),
+    response: JSON.stringify({ status: 'Accepted' }),
+    request_date: '2025-07-31 11:02:55'
+  },
+  {
+    action: 'Unlock Connector',
+    request: JSON.stringify({ connectorId: 2 }),
+    response: JSON.stringify({ status: 'Rejected', message: 'Connector already unlocked' }),
+    request_date: '2025-07-31 11:15:20'
+  },
+  {
+    action: 'Clear Cache',
+    request: JSON.stringify({}),
+    response: JSON.stringify({ status: 'Accepted' }),
+    request_date: '2025-07-31 11:35:05'
+  }
+];
+
+
   chargerId = '';
   charger: any;
   showActions = false;
   showSettings = false;
+  //
+  list: any[]=[];
+  item={};
+  id_of_active_transaction='';
+  current_active_tranjection= '';
+  resetbtn= false;
+
+  //
   selectedAction: string | null = null;
 
   menus: any[] = [];
@@ -103,6 +164,33 @@ export class ChargerDetailComponent implements OnInit {
     this.showActions = false;
   }
 
+  //
+
+// Global selected task from the shared panel
+selectedTask: string | null = null;
+
+
+performTask(connectorNo: number, task: string) {
+  console.log(`Performing ${task} on connector ${connectorNo}`);
+  // Add API call or business logic here
+}
+
+
+
+  //
+
+  // expanding the connector
+  expandedConnectors: Set<number> = new Set();
+
+toggleExpand(connectorNo: number) {
+  if (this.expandedConnectors.has(connectorNo)) {
+    this.expandedConnectors.delete(connectorNo);
+  } else {
+    this.expandedConnectors.add(connectorNo);
+  }
+}
+
+
   performCommand(command: string): void {
     console.log(`Executing ${command}...`);
   }
@@ -116,6 +204,7 @@ export class ChargerDetailComponent implements OnInit {
   }
 
   reset() {
+    this.resetbtn= !this.resetbtn;
     this.performCommand('Reset');
   }
 
