@@ -7,54 +7,81 @@
   </button>
 </mat-toolbar>
 
+<div style="padding: 16px;">
+  <mat-form-field appearance="outline" style="width: 100%;">
+    <mat-label>Search Roles</mat-label>
+    <input
+      matInput
+      [(ngModel)]="filterValue"
+      (keyup)="applyFilter()"
+      placeholder="Search by name, client, code..."
+    />
+    <button
+      *ngIf="filterValue"
+      matSuffix
+      mat-icon-button
+      aria-label="Clear"
+      (click)="filterValue=''; applyFilter()"
+    >
+      <mat-icon>close</mat-icon>
+    </button>
+  </mat-form-field>
+</div>
+
 <div class="table-container">
-  <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+  <table mat-table [dataSource]="dataSource" matSort class="mat-elevation-z8">
 
     <!-- Role Name Column -->
     <ng-container matColumnDef="roleName">
-      <th mat-header-cell *matHeaderCellDef> Role Name </th>
-      <td mat-cell *matCellDef="let element"> {{element.roleName}} </td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Role Name </th>
+      <td mat-cell *matCellDef="let element"> {{ element.roleName }} </td>
     </ng-container>
 
     <!-- Client Column -->
     <ng-container matColumnDef="client">
-      <th mat-header-cell *matHeaderCellDef> Client </th>
-      <td mat-cell *matCellDef="let element"> {{element.client}} </td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Client </th>
+      <td mat-cell *matCellDef="let element"> {{ element.client }} </td>
     </ng-container>
 
     <!-- Code Column -->
     <ng-container matColumnDef="code">
-      <th mat-header-cell *matHeaderCellDef> Code </th>
-      <td mat-cell *matCellDef="let element"> {{element.code}} </td>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header> Code </th>
+      <td mat-cell *matCellDef="let element"> {{ element.code }} </td>
     </ng-container>
 
     <!-- Description Column -->
     <ng-container matColumnDef="description">
       <th mat-header-cell *matHeaderCellDef> Description </th>
-      <td mat-cell *matCellDef="let element"> {{element.description}} </td>
+      <td mat-cell *matCellDef="let element"> {{ element.description }} </td>
     </ng-container>
 
     <!-- Status Column -->
     <ng-container matColumnDef="status">
       <th mat-header-cell *matHeaderCellDef> Status </th>
-      <td mat-cell *matCellDef="let element"> {{element.status}} </td>
+      <td mat-cell *matCellDef="let element"> {{ element.status }} </td>
     </ng-container>
 
-    <!-- Action Column -->
-    <ng-container matColumnDef="action">
-      <th mat-header-cell *matHeaderCellDef> Action </th>
-      <td mat-cell *matCellDef="let element">
-        <button mat-icon-button color="primary" class="btn-edit"  (click)="onEdit(element.id)" matTooltip="Edit">
-          <mat-icon>edit</mat-icon>
-        </button>
-        <button mat-icon-button color="warn" matTooltip="Delete">
-          <mat-icon>delete</mat-icon>
-        </button>
-      </td>
-    </ng-container>
+   <!-- Action Column -->
+<ng-container matColumnDef="action">
+  <th mat-header-cell *matHeaderCellDef> Action </th>
+  <td mat-cell *matCellDef="let element">
+    <button mat-icon-button color="primary" matTooltip="View" (click)="viewRole(element)">
+      <mat-icon>visibility</mat-icon>
+    </button>
+    <button mat-icon-button color="accent" matTooltip="Edit" (click)="editRole(element)">
+      <mat-icon>edit</mat-icon>
+    </button>
+    <button mat-icon-button color="warn" matTooltip="Delete" (click)="deleteRole(element)">
+      <mat-icon>delete</mat-icon>
+    </button>
+  </td>
+</ng-container>
+
 
     <!-- Header & Row Definitions -->
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
   </table>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
 </div>

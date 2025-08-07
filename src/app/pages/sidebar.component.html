@@ -40,6 +40,17 @@
           <a mat-list-item routerLink="/home/cpo-rfid-mapping" class="nested-link">CPO RFID Mapping</a>
         </div>
       </div>
+    <!-- Client Management -->
+  <div mat-list-item (click)="toggleSection('client')" class="parent-item">
+        <mat-icon>business</mat-icon>
+        <span>Client Management</span>
+        <mat-icon class="expand-icon">
+          {{ isSectionOpen['client'] ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
+      </div>
+      <div *ngIf="isSectionOpen['client']" class="nested-links">
+        <a mat-list-item routerLink="/home/client-management" class="nested-link">Manage Client</a>
+      </div>
 
       <!-- Dispatch Management -->
       <div mat-list-item (click)="toggleSection('dispatch')" class="parent-item">
@@ -53,17 +64,8 @@
         <a mat-list-item routerLink="/home/charger-dispatch" class="nested-link">Charger Dispatch</a>
       </div>
 
-      <!-- Client Management -->
-      <div mat-list-item (click)="toggleSection('client')" class="parent-item">
-        <mat-icon>business</mat-icon>
-        <span>Client Management</span>
-        <mat-icon class="expand-icon">
-          {{ isSectionOpen['client'] ? 'expand_less' : 'expand_more' }}
-        </mat-icon>
-      </div>
-      <div *ngIf="isSectionOpen['client']" class="nested-links">
-        <a mat-list-item routerLink="/home/client-management" class="nested-link">Manage Client</a>
-      </div>
+  
+    
 
       <!-- CPO Management -->
       <div mat-list-item (click)="toggleSection('cpo')" class="parent-item">

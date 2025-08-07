@@ -12,13 +12,16 @@ import { MatTableDataSource, MatTableModule } from '@angular/material/table';
 import { RouterModule } from '@angular/router';
 import { HttpClientModule } from '@angular/common/http';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatTooltipModule } from '@angular/material/tooltip';
 import { AuthService } from '../../services/login.service';
 import { StationService } from '../../services/manage-station.service';
 
 import { CreatemanagestationComponent } from './createmanagestation/createmanagestation.component';
-import {ViewStationComponent} from './viewmanagestation/viewmanagestation.component';
+import { ViewStationComponent } from './viewmanagestation/viewmanagestation.component';
 import { DeleteManageStationComponent } from './delete-manage-station/delete-manage-station.component';
 import { MatCardModule } from '@angular/material/card';
+import { ChargerStationMappingComponent } from '../manage-station/charger-station-mapping/charger-station-mapping.component'; // adjust path if needed
+
 @Component({
   selector: 'app-managestation',
   standalone: true,
@@ -38,7 +41,8 @@ import { MatCardModule } from '@angular/material/card';
     RouterModule,
     HttpClientModule,
     MatCardModule,
-    FormsModule
+    FormsModule,
+    MatTooltipModule
   ]
 })
 export class ManagestationComponent implements OnInit, AfterViewInit {
@@ -70,39 +74,6 @@ export class ManagestationComponent implements OnInit, AfterViewInit {
 
   @ViewChild(MatPaginator) paginator!: MatPaginator;
 
-  downloadCSV() {
-  const csvRows = [];
-
-  // Define headers
-  const headers = ['Station Name', 'Contact Person', 'CPO', 'Station Code', 'Charger Count', 'Address', 'Status'];
-  csvRows.push(headers.join(','));
-
-  // Format each row of data
-  this.dataSource.data.forEach((row: any) => {
-    const rowData = [
-      `"${row.stationName}"`,
-      `"${row.contactperson}"`,
-      `"${row.cpo}"`,
-      `"${row.stationcode}"`,
-      `"${row.chargercount}"`,
-      `"${row.address}"`,
-      row.status ? 'Active' : 'Inactive'
-    ];
-    csvRows.push(rowData.join(','));
-  });
-
-  // Create CSV blob and download
-  const csvContent = csvRows.join('\n');
-  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = 'station-data.csv';
-  a.click();
-  URL.revokeObjectURL(url);
-}
-
-
   ngOnInit() {
     this.loadData();
   }
@@ -111,12 +82,11 @@ export class ManagestationComponent implements OnInit, AfterViewInit {
     this.dataSource.paginator = this.paginator;
   }
 
-  
-    applyFilter() {
+  applyFilter() {
     this.dataSource.filter = this.searchText.trim().toLowerCase();
   }
 
-    private mapStatus(statusCode: string): string {
+  private mapStatus(statusCode: string): string {
     switch (statusCode) {
       case 'Y': return 'Active';
       case 'N': return 'Inactive';
@@ -145,11 +115,10 @@ export class ManagestationComponent implements OnInit, AfterViewInit {
         }));
 
         this.dataSource.data = stations;
-        console.log(this.dataSource);
         this.dataSource.filterPredicate = (data: any, filter: string) => {
           const combined = `${data.stationName} ${data.contactperson} ${data.cpo} ${data.stationcode}`.toLowerCase();
           return combined.includes(filter);
-        }
+        };
       },
       error: (error) => {
         console.error('Failed to load charging stations', error);
@@ -157,14 +126,39 @@ export class ManagestationComponent implements OnInit, AfterViewInit {
     });
   }
 
+  downloadCSV() {
+    const csvRows = [];
+    const headers = ['Station Name', 'Contact Person', 'CPO', 'Station Code', 'Charger Count', 'Address', 'Status'];
+    csvRows.push(headers.join(','));
+
+    this.dataSource.data.forEach((row: any) => {
+      const rowData = [
+        `"${row.stationName}"`,
+        `"${row.contactperson}"`,
+        `"${row.cpo}"`,
+        `"${row.stationcode}"`,
+        `"${row.chargercount}"`,
+        `"${row.address}"`,
+        row.status ? 'Active' : 'Inactive'
+      ];
+      csvRows.push(rowData.join(','));
+    });
+
+    const csvContent = csvRows.join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'station-data.csv';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
   onCreate() {
     const dialogRef = this.dialog.open(CreatemanagestationComponent, {
       height: '100vh',
       width: '92vw',
-      position: {
-        top: '0',
-        right: '0',
-      },
+      position: { top: '0', right: '0' },
       data: { edit: false }
     });
 
@@ -190,63 +184,74 @@ export class ManagestationComponent implements OnInit, AfterViewInit {
     const dialogRef = this.dialog.open(CreatemanagestationComponent, {
       height: '100vh',
       width: '92vw',
-      position: {
-        top: '0',
-        right: '0',
-      },
-      data: {
-        edit: true,
-        station: element.raw
-      }
+      position: { top: '0', right: '0' },
+      data: { edit: true, station: element.raw }
     });
 
     dialogRef.afterClosed().subscribe(result => {
-      if (result) {
-        this.loadData();
+      if (result) this.loadData();
+    });
+  }
+
+  onView(element: any) {
+    this.dialog.open(ViewStationComponent, {
+      width: '600px',
+      data: element.raw
+    });
+  }
+
+  onDelete(id: string | number): void {
+    if (!id) return;
+    const dialogRef = this.dialog.open(DeleteManageStationComponent, { data: id });
+    dialogRef.afterClosed().subscribe(result => {
+      if (result === true) {
+        const stationId = typeof id === 'string' ? +id : id;
+        this.stationService.deleteStation(stationId).subscribe({
+          next: () => {
+            this.snackBar.open('Station deleted successfully.', 'Close', {
+              duration: 3000,
+              panelClass: ['snack-bar-success']
+            });
+            this.loadData();
+          },
+          error: (err) => {
+            console.error('Failed to delete station:', err);
+            this.snackBar.open('Failed to delete station. Please try again.', 'Close', {
+              duration: 3000,
+              panelClass: ['snack-bar-error']
+            });
+          }
+        });
       }
     });
   }
 
-onView(element: any) {
-  this.dialog.open(ViewStationComponent, {
-    width: '600px',
-    data: element.raw
+onAddCharger(station: any) {
+    if (!station.client_id) {
+    this.snackBar.open('Client ID not found for fetching serial numbers', 'Close', { duration: 3000 });
+    return;
+  }
+  this.dialog.open(ChargerStationMappingComponent, {
+    width: window.innerWidth < 850 ? '90vw' : '800px',
+    maxHeight: '90vh',
+    position: { top: '10px' },  // only top, no left
+    data: {
+      name: station.name,
+      code: station.code,
+      address1: station.address1 || '',
+      address2: station.address2 || '',
+      city_name: station.city_name || '',
+      state_name: station.state_name || '',
+      country_name: station.country_name || '',
+      PIN: station.PIN || '',
+      cpo_name: station.cpo_name,
+      client_id:station.client_id,
+      status:station.status,
+      id:station.id
+    }
   });
 }
 
-onDelete(id: string | number): void {
- if (!id) return;
-  const dialogRef = this.dialog.open(DeleteManageStationComponent,{
-    data: id,
-  });
-  dialogRef.afterClosed().subscribe(result =>{
-    if(result === true){
-    const stationId = typeof id === 'string' ? +id : id;
 
-  this.stationService.deleteStation(stationId).subscribe({
-    next: () => {
-      this.snackBar.open('Station deleted successfully.', 'Close', {
-        duration: 3000,
-        panelClass: ['snack-bar-success']
-      });
-      this.loadData(); // Reload data after delete
-    },
-    error: (err) => {
-      console.error('Failed to delete station:', err);
-      this.snackBar.open('Failed to delete station. Please try again.', 'Close', {
-        duration: 3000,
-        panelClass: ['snack-bar-error']
-      });
-    }
-  });
-    }
-  })
- 
-
-  // const confirmed = confirm('Are you sure you want to delete this station?');
-  // if (!confirmed) return;
-
-  
-}
 
 }

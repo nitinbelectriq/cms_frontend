@@ -4,7 +4,7 @@
   <h2 mat-dialog-title >
   {{ data ? 'Edit' : 'Create' }} Charger Dispatch</h2>
 
-  <button
+  <!-- <button
     mat-stroked-button
     class="dispatch-btn"
    
@@ -12,7 +12,7 @@
    style="margin-right: 10px;"
   >
     Bulk Dispatch
-  </button>
+  </button> -->
 </div>
 
 
@@ -56,11 +56,11 @@
   <div class="form-row">
     <mat-slide-toggle formControlName="status" class="toggle-green ">Status</mat-slide-toggle>
 
-    <mat-slide-toggle formControlName="public" class="toggle-green ">
+    <!-- <mat-slide-toggle formControlName="public" class="toggle-green ">
       <span class="status" [ngClass]="form.get('public')?.value ? 'Public' : 'Private'">
         {{ form.get('public')?.value ? 'Public' : 'Private' }}
       </span>
-    </mat-slide-toggle>
+    </mat-slide-toggle> -->
   </div>
 
 

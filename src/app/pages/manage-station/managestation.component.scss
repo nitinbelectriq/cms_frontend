@@ -102,4 +102,13 @@
 
 
 
-  
+  .add-charger-btn {
+  margin-left: 4px;
+  color: #4caf50; // Green accent color
+  transition: transform 0.2s ease;
+
+  &:hover {
+    transform: scale(1.2);
+    background-color: rgba(76, 175, 80, 0.1); // Slight green bg on hover
+  }
+}
