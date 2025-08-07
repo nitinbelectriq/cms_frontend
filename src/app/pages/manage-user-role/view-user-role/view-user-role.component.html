@@ -1,0 +1,11 @@
+<h2>User Role Details</h2>
+
+<div>
+  <p><strong>Name:</strong> {{ data.role.f_name }} {{ data.role.l_name }}</p>
+  <p><strong>Client:</strong> {{ data.role.client_name }}</p>
+  <p><strong>Role Code:</strong> {{ data.role.role_code }}</p>
+  <p><strong>Role Name:</strong> {{ data.role.role_name }}</p>
+  <p><strong>Status:</strong> {{ data.role.map_status === 'Y' ? 'Active' : 'Inactive' }}</p>
+</div>
+
+<button mat-button mat-dialog-close>Close</button>
