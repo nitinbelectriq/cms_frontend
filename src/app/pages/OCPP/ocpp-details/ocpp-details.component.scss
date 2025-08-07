@@ -11,7 +11,7 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 15px;
+    padding: 12px;
     background: #f5f5f5;
     border-radius: 4px;
   }
@@ -53,7 +53,7 @@
     width: max-content;
     position: relative;
     top: 0px;
-    right: 50px;
+    right: 111px;
     z-index: 1000;
   }
   
@@ -138,67 +138,3 @@
   .mat-icon.mat-primary {
   color: #4caf50 !important; /* Green color */
 }
-
-.create{
-    background-color: #119347 !important;
-  }
-
-  .action-btn{
-    //color: white;
-    background-color: black !important;
-  }
-
- .custom-label{
-    width: 30%;
-     height: 40px;
-    // margin-bottom: 1px;
-    
-  }
-
-//
-
-  ::ng-deep .custom-label .mat-mdc-text-field-wrapper {
-    min-height: 36px !important;
-    padding: 0 !important;
-  }
-  
-  ::ng-deep .custom-label .mat-mdc-form-field-infix {
-    padding: 0 8px !important;
-    min-height: 36px !important;
-  }
-  
-  ::ng-deep .custom-label input.mat-mdc-input-element {
-    padding: 6px 0 !important;
-    font-size: 12px !important;
-    height: 28px !important;
-    line-height: 28px !important;
-  }
-  
-  ::ng-deep .custom-label .mdc-floating-label {
-    font-size: 14px !important;
-    top: 18px !important;
-  }
-
-  ::ng-deep .custom-label .mat-mdc-select {
-    font-size: 14px !important;
-  }
-
-
-  .table-container {
- // width: 100%;         /* fixed width */
-  max-height: 400px;        /* fixed height */
-  overflow: auto;       /* scroll if content exceeds */
-  //border: 1px solid #ccc;
-}
-
-
-// remote stop
-
-.remote-stop{
-  display: flex;
-  flex-direction: row;
-  gap: 10px;
-}
-
-
-  
