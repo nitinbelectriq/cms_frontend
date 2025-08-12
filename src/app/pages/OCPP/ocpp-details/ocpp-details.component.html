@@ -38,7 +38,7 @@
             <div>
               <button mat-raised-button class="action-btn" color="warn" (click)="reset()">Reset <mat-icon matSuffix>expand_more</mat-icon></button>
               <mat-card *ngIf="resetbtn" style="position: absolute;">
-                        <button mat-stroked-button color="warn" (click)="selectedTask = 'Hard Reset'">Hard Reset</button>
+                        <button mat-stroked-button color="warn" (click)="hardReset()">Hard Reset</button>
                         <button mat-stroked-button color="accent" (click)="selectedTask = 'Soft Reset'">Soft Reset</button>
               </mat-card>
             </div>
@@ -114,7 +114,7 @@
           <div style="display: flex; flex-direction: column;">
             <mat-radio-group aria-label="Select an option">
               <mat-label>Choose Id Tag Type</mat-label>
-              <mat-radio-button value="1">RFID</mat-radio-button>
+              <mat-radio-button class="radio-btn" value="1">RFID</mat-radio-button>
               
             </mat-radio-group>
             
@@ -153,43 +153,75 @@
      
       <div *ngSwitchCase="'Manage Configuration'">
         <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
-          <div>
-            <span>Get selected Configuaration</span>
+          <div class="manage-config">
+            <button mat-raised-button class="manage-config-btn" color="primary">Get selected Configuaration</button>
+            <!-- <span></span> -->
           </div>
 
-          <div>
-            <span>Get All Configuaration</span>
+          <div  class="manage-config">
+             <button mat-raised-button class="manage-config-btn" color="primary">Get All Configuaration</button>
+            <!-- <span>Get All Configuaration</span> -->
           </div>
 
-          <div>
-            <span>Change Custom Configuaration</span>
+          <div class="manage-config">
+            <button mat-raised-button class="manage-config-btn" color="primary">Change Custom Configuaration</button>
+            <!-- <span>Change Custom Configuaration</span> -->
           </div>
 
         </div>
 
-          <table mat-table>
-            <ng-container >
-              <th>Select</th>
-              <td>
-                <mat-checkbox  value="" color="primary">Checkbox label</mat-checkbox>
-              </td>
-            </ng-container>
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
-            <ng-container >
-              <th>Key</th>
-              <td></td>
-            </ng-container>
+             <!-- Select Column -->
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>Select</th>
+                <td mat-cell *matCellDef="let element">
+                  <mat-checkbox color="primary"></mat-checkbox>
+                </td>
+              </ng-container>
 
-            <ng-container >
-              <th>Value</th>
-            </ng-container>
+              <!-- Key Column -->
+              <ng-container matColumnDef="key">
+                <th mat-header-cell *matHeaderCellDef>Key</th>
+                <td mat-cell *matCellDef="let element">{{ element.key }}</td>
+              </ng-container>
 
-            <ng-container >
-              <th>Action</th>
-            </ng-container>
-          </table>
+              <!-- Value Column -->
+              <ng-container matColumnDef="value">
+                <th mat-header-cell *matHeaderCellDef>Value</th>
+                <td mat-cell *matCellDef="let element">{{ element.value }}</td>
+              </ng-container>
+
+              <!-- Action Column -->
+              <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef>Action</th>
+                <td mat-cell *matCellDef="let element">
+                  <button mat-raised-button style="width: 20px; height: 25px;" class="manage-config-btn" color="primary">Change</button>
+                </td>
+              </ng-container>
+
+              <!-- Header and Row Declarations -->
+              <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns1;"></tr>
+
+</table>
+
         
       </div>
+      
+      <div *ngSwitchCase="'Change Availability'">
+        <div>
+          <mat-form-field appearance="outline" class="custom-label">
+            <mat-select [(ngModel)]="binding" placeholder="Select The Id">
+              <mat-option *ngFor="let item of list">
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+        </div>
+
+      </div>
+
+      
       <div *ngSwitchDefault>output2</div>
     
 

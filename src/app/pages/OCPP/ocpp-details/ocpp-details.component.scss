@@ -121,7 +121,7 @@
     padding: 20px;
     border-left: 1px solid #ccc;
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
-    height: 70%;
+    height: 50%;
     overflow-y: auto;
     scrollbar-width: none;
     margin-left: 10px;
@@ -202,3 +202,62 @@
 
 
   
+.mat-mdc-slide-toggle.mat-accent , mat-mdc-radio-button {
+   
+    --mdc-switch-selected-focus-state-layer-color: #25d81b;
+    --mdc-switch-selected-handle-color: #1bd83b;
+    --mdc-switch-selected-hover-state-layer-color: #1bd834;
+    --mdc-switch-selected-pressed-state-layer-color: #36d81b;
+    --mdc-switch-selected-focus-handle-color: #0e8813;
+    --mdc-switch-selected-hover-handle-color: #0e881e;
+    --mdc-switch-selected-pressed-handle-color: #0e8818;
+    --mdc-switch-selected-focus-track-color: #62f075;
+    --mdc-switch-selected-hover-track-color: #62f07b;
+    --mdc-switch-selected-pressed-track-color: #6af062;
+    --mdc-switch-selected-track-color: #05911d;
+  }
+
+
+//   button cancel and create
+.radio-btn{
+  color: #25d81b !important;
+}
+
+::ng-deep .mat-radio-button .mat-radio-inner-circle {
+  background-color: green !important;
+}
+
+::ng-deep .mat-radio-button .mat-radio-outer-circle {
+  border-color: green !important;
+}
+
+::ng-deep .mat-radio-button.mat-radio-checked .mat-radio-ripple .mat-ripple-element {
+  background-color: rgba(0, 128, 0, 0.2) !important;
+}
+
+
+.mat-mdc-radio-button.mat-accent {
+  --mdc-radio-selected-focus-icon-color: #25d81b;
+  --mdc-radio-selected-hover-icon-color: #1bd83b;
+  --mdc-radio-selected-icon-color: #05911d;
+  --mdc-radio-selected-pressed-icon-color: #0e8813;
+
+  --mdc-radio-selected-focus-state-layer-color: #25d81b;
+  --mdc-radio-selected-hover-state-layer-color: #1bd83b;
+  --mdc-radio-selected-pressed-state-layer-color: #0e8813;
+}
+
+.manage-config{
+  //background-color: #08520a;
+  color: white;
+  padding: 5px;
+}
+.manage-config-btn {
+  background-color: #08520a !important;
+  text-align: center !important;
+  font-size: 12px;
+}
+
+.manage-config-btn:focus{
+  background-color: rgb(140, 140, 170) !important;
+}

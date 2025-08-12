@@ -1,8 +1,17 @@
 .toolbar {
   display: flex;
   justify-content: space-between;
-}
 
+      .header-right {
+    display: flex;
+    gap: 12px;
+    align-items: center;
+
+    .search-field {
+      width: 250px;
+    }
+  }
+}
 .spacer {
   flex: 1 1 auto;
 }
@@ -22,3 +31,54 @@ table {
 .btn-edit, .btn-view{
     color: #119347 !important;
   }
+
+
+
+      .download-btn {
+  background-color: rgb(84, 152, 253) !important;
+  //color: black !important;
+}
+
+.status-green {
+    color:#119347;
+  }
+
+.status-red {
+    color: #d62d2d;
+  }
+  
+
+  
+.custom-label {
+   width: 270px;
+  margin-bottom: 0;
+}
+
+.search-container {
+  margin-bottom: 10px;
+  width: fit-content;
+  padding: 5px;
+  height: 50px;
+}
+
+::ng-deep .custom-label .mat-mdc-text-field-wrapper {
+  min-height: 36px !important;
+  padding: 0 !important;
+}
+
+::ng-deep .custom-label .mat-mdc-form-field-infix {
+  padding: 0 8px !important;
+  min-height: 36px !important;
+}
+
+::ng-deep .custom-label input.mat-mdc-input-element {
+  padding: 6px 0 !important;
+  font-size: 12px !important;
+  height: 28px !important;
+  line-height: 28px !important;
+}
+
+::ng-deep .custom-label .mdc-floating-label {
+  font-size: 14px !important;
+  top: 18px !important;
+}

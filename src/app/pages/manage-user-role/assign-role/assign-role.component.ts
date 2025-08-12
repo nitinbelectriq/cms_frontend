@@ -41,9 +41,7 @@ export class AssignRoleComponent {
 
   constructor(
     private dialogRef: MatDialogRef<AssignRoleComponent>,
-  ){
-
-  }
+  ){}
 
 
   form: FormGroup = this.fb.group({

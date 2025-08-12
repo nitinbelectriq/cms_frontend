@@ -12,6 +12,7 @@ import { HttpClientModule } from '@angular/common/http';
 import { StationService } from '../../../services/manage-station.service';
 import { AuthService } from '../../../services/login.service';
 import { Inject } from '@angular/core';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
   selector: 'app-charger-station-mapping',
@@ -26,7 +27,8 @@ import { Inject } from '@angular/core';
     MatDialogModule,
     MatSnackBarModule,
     MatSlideToggleModule,
-    HttpClientModule
+    HttpClientModule,
+    MatIconModule
   ],
   templateUrl: './charger-station-mapping.component.html',
   styleUrls: ['./charger-station-mapping.component.scss']

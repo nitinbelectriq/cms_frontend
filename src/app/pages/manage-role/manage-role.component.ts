@@ -17,6 +17,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 // Custom
 import { RoleService } from '../../services/manage-role.service';
 import { ViewRoleComponent } from '../manage-role/view-role/view-role.component'; // adjust path as needed
+import { MatCardModule } from '@angular/material/card';
 
 interface RoleViewModel {
   roleName: string;
@@ -43,7 +44,8 @@ interface RoleViewModel {
     MatTooltipModule,
     MatFormFieldModule,
     MatInputModule,
-    MatDialogModule
+    MatDialogModule,
+    MatCardModule
   ]
 })
 export class ManageRoleComponent implements OnInit, AfterViewInit {
@@ -120,4 +122,32 @@ deleteRole(row: RoleViewModel) {
     // TODO: call delete API and refresh table data
   }
 }
+
+
+  downloadCSV(){
+    const csvRows= [];
+    const headers= [ 'Role Name', 'Client Name', 'Code', 'Description', 'Status'];
+    csvRows.push(headers.join(','));
+
+    this.dataSource.data.forEach((rows:any)=>{
+      const rowdata= [
+        `"${rows.roleName}"`,
+        `"${rows.client}"`,
+        `"${rows.code}"`,
+        `"${rows.description}"`,
+        `"${rows.status}"`
+      ];
+      csvRows.push(rowdata.join(','));
+    });
+    // Create CSV blob and download
+  const csvContent = csvRows.join('\n');
+  const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'role-data.csv';
+  a.click();
+  URL.revokeObjectURL(url);
+
+  }
 }

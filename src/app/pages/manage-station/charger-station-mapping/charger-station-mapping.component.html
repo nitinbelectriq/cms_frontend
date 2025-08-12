@@ -1,6 +1,6 @@
 <h2 mat-dialog-title>Map Charger to Station</h2>
 
-<form [formGroup]="form" (ngSubmit)="onSubmit()" mat-dialog-content>
+<form [formGroup]="form" (ngSubmit)="onSubmit()" mat-dialog-content class="form-container">
 
   <!-- Station Info Fields (Read-only) -->
   <mat-form-field appearance="outline" class="full-width">
@@ -38,11 +38,7 @@
     <input matInput [value]="data?.country_name" readonly />
   </mat-form-field>
 
-  <!-- Status Toggle -->
-  <mat-slide-toggle formControlName="status" color="primary" class="full-width" style="margin: 16px 0;">
-    Active / Inactive
-  </mat-slide-toggle>
-
+ 
   <!-- Serial Numbers Dropdown -->
   <mat-form-field appearance="outline" class="full-width">
     <mat-label>Select Chargers</mat-label>
@@ -56,13 +52,22 @@
         {{ charger.charger_display_id || charger.serial_no }}
       </mat-option>
     </mat-select>
-  </mat-form-field>
+  </mat-form-field> 
+  
+  
+  <!-- Status Toggle -->
+  <mat-slide-toggle formControlName="status"  class="full-width" >
+    Active / Inactive
+  </mat-slide-toggle>
+
 
   <!-- Action Buttons -->
-  <div mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="onCancel()">Cancel</button>
-    <button mat-raised-button color="primary" type="submit" [disabled]="form.invalid || isLoading">
-      {{ isLoading ? 'Saving...' : 'Save' }}
+  <div  class="button-row custom-label">
+    <button mat-raised-button type="button" (click)="onCancel()">Cancel
+      <mat-icon>cancel</mat-icon>
+    </button>
+    <button mat-raised-button color="primary" class="create" type="submit" [disabled]="form.invalid || isLoading">
+      {{ isLoading ? 'Saving...' : 'Save' }} 
     </button>
   </div>
 
