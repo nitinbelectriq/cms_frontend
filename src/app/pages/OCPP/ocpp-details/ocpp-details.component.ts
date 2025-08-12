@@ -43,6 +43,8 @@ import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
 })
 export class ChargerDetailComponent implements OnInit {
   displayedColumns: string[] = ['action', 'request', 'response',  'request_date',];
+  displayedColumns1: string[] = ['select', 'key', 'value', 'action'];
+
   dataSource = [
   {
     action: 'Remote Start',
@@ -87,6 +89,7 @@ export class ChargerDetailComponent implements OnInit {
   id_of_active_transaction='';
   current_active_tranjection= '';
   resetbtn= false;
+  binding='';
 
   //
   selectedAction: string | null = null;
@@ -102,6 +105,7 @@ export class ChargerDetailComponent implements OnInit {
   private ocppService = inject(OCPPService);
   private router = inject(Router);
   private datePipe = inject(DatePipe);
+  
 
   ngOnInit(): void {
     this.chargerId = this.route.snapshot.paramMap.get('id') || '';
@@ -157,6 +161,7 @@ export class ChargerDetailComponent implements OnInit {
   toggleActions(): void {
     this.showActions = !this.showActions;
     this.showSettings = false;
+    this.resetbtn= false;
   }
 
   toggleSettings(): void {
@@ -197,16 +202,170 @@ toggleExpand(connectorNo: number) {
 
   getLocalListVersion() {
     this.performCommand('Get Local List Version');
+    this.ocppService.getlocallistversion().subscribe((res)=>{
+
+    });
   }
 
+  // clearCache() {
+  //   this.performCommand('Clear Cache');
+  //   this.ocppService.clearCache({command: 'CLEAR_CACHE', charger_id: this.charger.serial_no, 
+  //     charger_sr_no: this.chargerId , connector: this.charger.connector_no}).subscribe((res)=>{
+  //       console.log('this is clear cache result :', res);
+  //     })
+  // }
+
   clearCache() {
-    this.performCommand('Clear Cache');
-  }
+  const payload = {
+    command: 'CLEAR_CACHE',
+    charger_id: this.charger.charger_id,
+    charger_sr_no: this.chargerId,
+    connector: this.charger?.ConnectorData?.connector_no || 1,
+  };
+
+  console.log('Sending clear cache payload:', payload);
+  console.log('Charger object:', this.charger);
+
+
+  this.performCommand('Clear Cache');
+  this.ocppService.clearCache(payload).subscribe({
+    next: (res) => {
+      console.log('Clear cache response:', res);
+    },
+    error: (err) => {
+      console.error('Clear cache error:', err);
+    }
+  });
+}
+
 
   reset() {
     this.resetbtn= !this.resetbtn;
-    this.performCommand('Reset');
+   // this.performCommand('Reset');
+
+    
   }
+  hardReset(){
+    //
+    this.ocppService.resetHard({command: 'RESET_HARD', charger_id: this.charger.serial_no,
+      charger_sr_no: this.chargerId , connector: this.charger.connector_no
+     }).subscribe((res)=>{
+      console.log(res);
+     })
+  }
+
+  startChargingStation(){
+    this.ocppService.startChargingStation({}).subscribe((res)=>{
+
+    });
+  }
+
+  stopChargingStation(){
+    this.ocppService.stopChargingStation({}).subscribe();
+  }
+
+  changeAvailability(){
+    this.ocppService.changeAvailability({}).subscribe((res)=>{
+
+    });
+  }
+
+  unlockConnector(){
+    this.ocppService.unlockConnector({}).subscribe((res)=>{
+
+    });
+  }
+
+  dataTransfer(){
+    this.ocppService.dataTransfer({}).subscribe((res)=>{
+
+    });
+  }
+
+  getAvailabilityType(){
+    this.ocppService.getAvailabilityTypes().subscribe((res)=>{
+
+    });
+  }
+
+  getdiagnostics(){
+    this.ocppService.getdiagnostics({}).subscribe();
+  }
+
+  getUpdateFirmware(){
+    this.ocppService.getUpdateFirmware({}).subscribe();
+  }
+
+  getDataTriggerMessage(){
+    this.ocppService.getDataTriggerMessage({}).subscribe();
+  }
+
+  getChangeConfiguration(){
+    this.ocppService.getChangeConfiguration({}).subscribe();
+  }
+
+  getReserveNow(){
+    this.ocppService.getReserveNow({}).subscribe();
+  }
+
+  getActiveChargingStationsWithChargersAndConnectorsCW(){
+     const loginId = localStorage.getItem('user_id') || '';
+    this.ocppService.getActiveChargingStationsWithChargersAndConnectorsCW(loginId).subscribe((res)=>{
+
+    });
+  }
+
+  getActiveChargingStationsCW(){
+    const loginId = localStorage.getItem('user_id') || '';
+    this.ocppService.getActiveChargingStationsCW(loginId).subscribe((res)=>{
+
+    });
+  }
+
+  getAllChargingStationsWithChargersAndConnectorsCW(){
+    const userId = localStorage.getItem('user_id') || '';
+    this.ocppService.getAllChargingStationsWithChargersAndConnectorsCW(userId).subscribe((res) =>{
+
+    });
+  }
+
+  getConfiguration(){
+    this.ocppService.getConfiguration({}).subscribe();
+  }
+
+  getStatus(){
+    this.ocppService.getStatus({}).subscribe((res) =>{
+
+    });
+  }
+
+  getChargerConfigurationKeys(){
+    this.ocppService.getChargerConfigurationKeys().subscribe((res)=>{
+
+    })
+  }
+
+  getChargingStationsByUserRoleAndLatLong(){
+     const userId = localStorage.getItem('user_id') || '';
+    this.ocppService.getChargingStationsByUserRoleAndLatLong(userId, {}).subscribe((res) =>{
+
+    });
+  }
+
+  getchargerConnectorStatus(){
+    this.ocppService.getChargerConnectorStatus(this.charger.charger_id).subscribe(()=>{
+
+    });
+  }
+
+  getChargingStationsByUserRoleAndLatLongUW(){
+     const userId = localStorage.getItem('user_id') || '';
+    this.ocppService.getChargingStationsByUserRoleAndLatLongUW(userId, {}).subscribe(() => {
+
+    });
+  }
+
+
 
   goBackToLogs(): void {
     this.router.navigate(['/home/ocpp-diagnostic']);
