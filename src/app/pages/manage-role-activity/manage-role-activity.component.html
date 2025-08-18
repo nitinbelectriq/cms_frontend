@@ -1,58 +1,39 @@
 <h2 mat-dialog-title> Manage Role Activity</h2>
 
-
 <mat-card>
-
-
-<form [formGroup]="form" (ngSubmit)="onSubmit" class="form-container">
-    <mat-form-field appearance="outline" class="custom-label">
-        <mat-label>Client</mat-label>
-        <mat-select formControlName="client" placeholder="Select client">
-            <mat-option *ngFor="let client of clients" [value]="client.id">{{client.name}}</mat-option>
-        </mat-select>
-        <mat-icon matSuffix>person</mat-icon>
-    </mat-form-field>
+  <form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
 
     <mat-form-field appearance="outline" class="custom-label">
-        <mat-label >Role</mat-label>
-        <mat-select formControlName="role" placeholder="Select Role">
-            <mat-option *ngFor="let role of roles" [value]="role.id">
-                {{role.name}}
-            </mat-option>
-        </mat-select>
-        <mat-icon matSuffix>person</mat-icon>
+      <mat-label>Client</mat-label>
+      <mat-select formControlName="client" (selectionChange)="onClientChange($event.value)" placeholder="Select client" [disabled]="loadingClients">
+        <mat-option *ngFor="let client of clients" [value]="client.client_id">{{client.name}}</mat-option>
+      </mat-select>
+      <mat-icon matSuffix>person</mat-icon>
     </mat-form-field>
 
-    <div class="custom-label">
-
-        <mat-slide-toggle class="togle-btn" formControlName="unselectAll" >
-            UnSelect All
-        </mat-slide-toggle>
-
-        <mat-slide-toggle formControlName="uncollasped">
-            Uncollasped
-        </mat-slide-toggle>
-
-    </div>
-    <mat-form-field appearance="outline" class="custom-label">
-        <mat-label>Menu List</mat-label>
-        <mat-select formControlName="item" placeholder="Menu List">
-            <mat-option *ngFor="let item of list" [value]="item.id">
-                {{item.name}}
-            </mat-option>
-        </mat-select>
-        <mat-icon matSuffix>list</mat-icon>
+    <mat-form-field appearance="fill" class="full-width">
+      <mat-label>Select Role</mat-label>
+      <mat-select formControlName="role" (selectionChange)="onRoleChange($event.value)" [disabled]="!roles.length || loadingRoles">
+        <mat-option *ngFor="let role of roles" [value]="role.id">
+          {{ role.name }}
+        </mat-option>
+      </mat-select>
     </mat-form-field>
 
-    <div class="button-row">
-        <button mat-raised-button color="primary" type="submit" class="create">Save</button>
-        <button mat-raised-button (click)="onCancel()">
-            <mat-icon>cancel</mat-icon>
-            Cancel
-        </button>
+    <div *ngIf="list.length > 0" class="menu-tree-container">
+      <app-menu-item
+        *ngFor="let menuItem of list"
+        [node]="menuItem"
+        (toggleCheckbox)="onMenuItemToggle($event)"
+        (toggleExpand)="onMenuItemExpandToggle($event)"
+      >
+      </app-menu-item>
     </div>
 
-    
+    <div class="button-row" style="margin-top: 24px;">
+      <button mat-raised-button color="primary" type="submit">Save</button>
+      <button mat-raised-button type="button" (click)="onCancel()">Cancel</button>
+    </div>
 
-</form>
+  </form>
 </mat-card>

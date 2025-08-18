@@ -6,7 +6,6 @@ import { environment } from '../../environments/environment';
 export interface Client {
   client_id: number;
   name: string;
-  // other fields as needed
 }
 
 export interface Role {
@@ -44,7 +43,7 @@ export interface ApiResponse<T> {
 }
 
 @Injectable({
-  providedIn: 'root'
+  providedIn: 'root',
 })
 export class roleActivity {
   private baseUrl = environment.apiBaseUrl;
@@ -56,28 +55,39 @@ export class roleActivity {
     return new HttpHeaders().set('Authorization', `Bearer ${token || ''}`);
   }
 
-
-getActiveClientsCW(userId: number): Observable<Client[]> {
-  const headers = this.getAuthHeaders();
-  return this.http.get<Client[]>(`${this.baseUrl}/client/getActiveClientsCW/${userId}`, { headers });
-}
-
-
-
+  getActiveClientsCW(userId: number): Observable<Client[]> {
+    const headers = this.getAuthHeaders();
+    return this.http.get<Client[]>(`${this.baseUrl}/client/getActiveClientsCW/${userId}`, { headers });
+  }
 
   getActiveRolesByClientId(projectId: number, clientId: number): Observable<ApiResponse<Role[]>> {
     const headers = this.getAuthHeaders();
-    return this.http.get<ApiResponse<Role[]>>(`${this.baseUrl}/role/getActiveRolesByClientId/${projectId}/${clientId}`, { headers });
+    return this.http.get<ApiResponse<Role[]>>(
+      `${this.baseUrl}/role/getActiveRolesByClientId/${projectId}/${clientId}`,
+      { headers }
+    );
   }
 
   getMenusByClientIdWithRole(projectId: number, clientId: number, roleId: number): Observable<ApiResponse<MenuItem[]>> {
     const headers = this.getAuthHeaders();
-    return this.http.get<ApiResponse<MenuItem[]>>(`${this.baseUrl}/menu/getMenusByClientIdWithAlreadyMappedToRole/${projectId}/${clientId}/${roleId}`, { headers });
+    return this.http.get<ApiResponse<MenuItem[]>>(
+      `${this.baseUrl}/menu/getMenusByClientIdWithAlreadyMappedToRole/${projectId}/${clientId}/${roleId}`,
+      { headers }
+    );
   }
 
-  saveRoleMenus(projectId: number, clientId: number, roleId: number, menuIds: number[]): Observable<ApiResponse<any>> {
+  // Updated to accept full payload object
+  saveRoleMenus(payload: {
+    client_id: number;
+    role_id: number;
+    menus: any[]; // menu objects with all required fields
+    created_by: number;
+    modify_by: number;
+    created_date: string;
+    modify_date: string;
+    status: string;
+  }): Observable<ApiResponse<any>> {
     const headers = this.getAuthHeaders();
-    const body = { projectId, clientId, roleId, menuIds };
-    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/menu/roleMenuMapping`,body,{headers})
+    return this.http.post<ApiResponse<any>>(`${this.baseUrl}/menu/roleMenuMapping`, payload, { headers });
   }
 }
