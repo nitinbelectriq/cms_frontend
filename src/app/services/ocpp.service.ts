@@ -3,7 +3,6 @@ import { HttpClient, HttpHeaders } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { environment } from '../../environments/environment';
 
-// Interfaces
 export interface ConnectorData {
   connector_no: number;
   connector_type_name: string;
@@ -22,9 +21,9 @@ export interface ChargerRaw {
   address1: string;
   address2: string;
   landmark: string;
-  city_name: string | null;
-  state_name: string | null;
-  country_name: string | null;
+  city_name?: string | null;
+  state_name?: string | null;
+  country_name?: string | null;
   is_available: number;
   charger_status: string;
   connector_data: ConnectorData[];
@@ -53,182 +52,129 @@ export class OCPPService {
     return new HttpHeaders().set('Authorization', `Bearer ${token || ''}`);
   }
 
-  getChargersDynamic(
-    loginId: string,
-    payload: { cpo_id: string; station_id: string }
-  ): Observable<ChargersResponse> {
-    const headers = this.getAuthHeaders();
+  getChargersDynamic(loginId: string, payload: any): Observable<ChargersResponse> {
     return this.http.post<ChargersResponse>(
       `${this.baseUrl}/charger/getChargersDynamicFilterCW/${loginId}`,
       payload,
-      { headers }
+      { headers: this.getAuthHeaders() }
     );
   }
 
   getMenus(): Observable<any> {
-    const headers = this.getAuthHeaders();
-    return this.http.get(`${this.baseUrl}/chargerMonitoring/getMenus`, { headers });
+    return this.http.get(`${this.baseUrl}/chargerMonitoring/getMenus`, { headers: this.getAuthHeaders() });
   }
 
   getAvailabilityTypes(): Observable<any> {
-    const headers = this.getAuthHeaders();
-    return this.http.get(`${this.baseUrl}/chargerMonitoring/getAvailabilityType`, { headers });
+    return this.http.get(`${this.baseUrl}/chargerMonitoring/getAvailabilityType`, { headers: this.getAuthHeaders() });
   }
 
-  getHeartbeat(payload:{charger_id:string}): Observable<any> {
-    const headers = this.getAuthHeaders();
-    return this.http.post(`${this.middleUrl}/heartbeat`,payload , { headers });
+  getHeartbeat(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/heartbeat`, payload, { headers: this.getAuthHeaders() });
   }
 
   getRFIDsByCpoId(cpoId: string): Observable<any> {
-    const headers = this.getAuthHeaders();
-    return this.http.get(`${this.baseUrl}/rfid/getRFidsByCpoId/${cpoId}`, { headers });
+    return this.http.get(`${this.baseUrl}/rfid/getRFidsByCpoId/${cpoId}`, { headers: this.getAuthHeaders() });
   }
 
   getChargerConnectorStatus(chargerId: string): Observable<any> {
-    const headers = this.getAuthHeaders();
-    return this.http.get(`${this.middleUrl}/chargerConnectorStatus/${chargerId}`, { headers });
+    return this.http.get(`${this.middleUrl}/chargerConnectorStatus/${chargerId}`, { headers: this.getAuthHeaders() });
   }
-  executeCommand(payload:{ serial_no: string; type: string; created_by: string }) {
-  return this.http.post(`${this.baseUrl}/chargerCommand`, payload, {
-    headers: this.getAuthHeaders()
-  });
-}
 
-  clearCache( payload: {command: string; charger_id: string; charger_sr_no: string; connector: number}){
-    return this.http.post(`${this.middleUrl}/clearcache`, payload, {
+  executeCommand(payload: any): Observable<any> {
+    return this.http.post(`${this.baseUrl}/chargerCommand`, payload, { headers: this.getAuthHeaders() });
+  }
+
+  clearCache(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/clearcache`, payload, { headers: this.getAuthHeaders() });
+  }
+
+  resetHard(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/reset`, payload, { headers: this.getAuthHeaders() });
+  }
+
+  getlocallistversion(): Observable<any> {
+    return this.http.get(`${this.middleUrl}/getlocallistversion`, { headers: this.getAuthHeaders() });
+  }
+
+  startChargingStation(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/remoteTransaction`, payload, { headers: this.getAuthHeaders() });
+  }
+
+  stopChargingStation(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/remoteTransaction`, payload, { headers: this.getAuthHeaders() });
+  }
+
+  changeAvailability(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/change_availability`, payload, { headers: this.getAuthHeaders() });
+  }
+
+  unlockConnector(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/unlockconnector`, payload, { headers: this.getAuthHeaders() });
+  }
+
+  dataTransfer(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/dataTransfer`, payload, { headers: this.getAuthHeaders() });
+  }
+
+  getdiagnostics(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/getdiagnostics`, payload, { headers: this.getAuthHeaders() });
+  }
+
+  getUpdateFirmware(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/updatefirmware`, payload, { headers: this.getAuthHeaders() });
+  }
+
+  getDataTriggerMessage(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/triggermessage`, payload, { headers: this.getAuthHeaders() });
+  }
+
+  getChangeConfiguration(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/changeconfiguration`, payload, { headers: this.getAuthHeaders() });
+  }
+
+  getReserveNow(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/reservenow`, payload, { headers: this.getAuthHeaders() });
+  }
+
+  getActiveChargingStationsWithChargersAndConnectorsCW(loginId: string): Observable<any> {
+    return this.http.get(`${this.middleUrl}/getActiveChargingStationsWithChargersAndConnectorsCW/${loginId}`, {
       headers: this.getAuthHeaders()
     });
   }
 
-  resetHard(payload: {command: string; charger_id: string; charger_sr_no: string; connector: number }){
-    return this.http.post(`${this.middleUrl}/reset`, payload, {
+  getActiveChargingStationsCW(loginId: string): Observable<any> {
+    return this.http.get(`${this.middleUrl}/getActiveChargingStationsCW/${loginId}`, {
       headers: this.getAuthHeaders()
     });
   }
 
-  getlocallistversion(): Observable<any>{
-    return this.http.get(`${this.middleUrl}/getlocallistversion`,{
+  getAllChargingStationsWithChargersAndConnectorsCW(userId: string): Observable<any> {
+    return this.http.get(`${this.middleUrl}/getAllChargingStationsWithChargersAndConnectorsCW/${userId}`, {
       headers: this.getAuthHeaders()
     });
   }
 
-  //
+  getConfiguration(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/getConfiguration`, payload, { headers: this.getAuthHeaders() });
+  }
 
-  startChargingStation(payload:{}){
-    return this.http.post(`${this.middleUrl}/remoteTransaction`, payload, {
+  getStatus(payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/status`, payload, { headers: this.getAuthHeaders() });
+  }
+
+  getChargerConfigurationKeys(): Observable<any> {
+    return this.http.get(`${this.baseUrl}/master/getChargerConfigurationKeys`, { headers: this.getAuthHeaders() });
+  }
+
+  getChargingStationsByUserRoleAndLatLong(userId: string, payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/getChargingStationsByUserRoleAndLatLong/${userId}`, payload, {
       headers: this.getAuthHeaders()
     });
   }
 
-  stopChargingStation(payload : {}){
-    const headers= this.getAuthHeaders();
-    return this.http.post(`${this.middleUrl}/remoteTransaction`, payload, {
-      headers
-    });
-  }
-
-  changeAvailability(payload : {}) {
-    return this.http.post(`${this.middleUrl}/change_availability`, payload, {
+  getChargingStationsByUserRoleAndLatLongUW(userId: string, payload: any): Observable<any> {
+    return this.http.post(`${this.middleUrl}/getChargingStationsByUserRoleAndLatLongUW/${userId}`, payload, {
       headers: this.getAuthHeaders()
     });
   }
-
-  unlockConnector(payload : {}) {
-    return this.http.post(`${this.middleUrl}/unlockconnector`, payload , {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-  dataTransfer(payload : {}) {
-    return this.http.post(`${this.middleUrl}/dataTransfer`, payload, {
-      headers: this.getAuthHeaders()
-    })
-  }
-
-  getdiagnostics(payload: {}){
-    return this.http.post(`${this.middleUrl}/getdiagnostics`, payload , {
-      headers : this.getAuthHeaders()
-    });
-  }
-
-  getUpdateFirmware(payload: {}){
-    return this.http.post(`${this.middleUrl}/updatefirmware`, payload, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-  getDataTriggerMessage(payload : {}){
-    return this.http.post(`${this.middleUrl}/triggermessage`, payload, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-  getChangeConfiguration( payload: {}){
-    return this.http.post(`${this.middleUrl}/changeconfiguration`, payload , {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-  getReserveNow(payload: {}){
-    return this.http.post(`${this.middleUrl}/reservenow`, payload , {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-  getActiveChargingStationsWithChargersAndConnectorsCW(loginId: string){
-    return this.http.get(`${this.middleUrl}/getActiveChargingStationsWithChargersAndConnectorsCW/${loginId}`);
-  }
-
-   getActiveChargingStationsCW(loginId: string){
-    return this.http.get(`${this.middleUrl}/getActiveChargingStationsCW/${loginId}`);
-  }
-
-   getAllChargingStationsWithChargersAndConnectorsCW(user_id:string){
-    return this.http.get(`${this.middleUrl}/getAllChargingStationsWithChargersAndConnectorsCW/${user_id}`);
-  }
-
-  getConfiguration(payload : {}){
-    return this.http.post(`${this.middleUrl}/getConfiguration`,payload, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-
-    getStatus(payload: {}){
-    return this.http.post(`${this.middleUrl}/status`,payload, {
-      headers: this.getAuthHeaders()
-    });
-
-
-  }
-
-   getChargerConfigurationKeys(){
-    return this.http.get(`${this.baseUrl}/master/getChargerConfigurationKeys`);
-  }
-
-   getMultipleChargerSerial(){
-    let data =[ {id : 1,serial_no:'ktech_1'},
-      {id : 2,serial_no:'ktech_2'},
-      {id : 3,serial_no:'ktech_3'},
-    ]
-    return data;
-  }
-
-   getChargingStationsByUserRoleAndLatLong(userId: string, payload: {}){
-    return this.http.post(`${this.middleUrl}/getChargingStationsByUserRoleAndLatLong/${userId}`,payload, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-  getChargingStationsByUserRoleAndLatLongUW(userId: string , payload: {}){
-    return this.http.post(`${this.middleUrl}/getChargingStationsByUserRoleAndLatLongUW/${userId}`,payload, {
-      headers: this.getAuthHeaders()
-    });
-  }
-
-
-
-
-
 }

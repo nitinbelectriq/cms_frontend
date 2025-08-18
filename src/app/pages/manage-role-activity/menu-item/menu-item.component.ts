@@ -1,20 +1,11 @@
+import { Component, Input, Output, EventEmitter } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { Component, EventEmitter, Input, Output } from '@angular/core';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatIconModule } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
 import { FormsModule } from '@angular/forms';
 
-export interface MenuItem {
-  rm_map_id: number;
-  menu_id: number;
-  title: string;
-  client_id: number;
-  parent_id: number | null;
-  children?: MenuItem[];
-  isAssigned?: boolean;
-  expanded?: boolean;
-}
+import { MenuItem } from '../../../services/role-activity.service';
 
 @Component({
   selector: 'app-menu-item',

@@ -1,4 +1,4 @@
-<div style="margin-left: 24px;">
+<div style="margin-left: 24px; display: flex; align-items: center; gap: 8px;">
   <mat-checkbox [(ngModel)]="node.isAssigned" (change)="onCheckboxChange()">
     {{ node.title }}
   </mat-checkbox>
@@ -6,20 +6,20 @@
   <button
     *ngIf="node.children && node.children.length > 0"
     mat-icon-button
+    type="button"      
     (click)="onToggleExpand()"
     aria-label="Toggle expand"
   >
     <mat-icon>{{ node.expanded ? 'expand_less' : 'expand_more' }}</mat-icon>
   </button>
+</div>
 
-  <div *ngIf="node.expanded">
-    <ng-container *ngFor="let child of node.children">
-      <app-menu-item
-        [node]="child"
-        (toggleCheckbox)="toggleCheckbox.emit($event)"
-        (toggleExpand)="toggleExpand.emit($event)"
-      >
-      </app-menu-item>
-    </ng-container>
-  </div>
+<div *ngIf="node.expanded" style="margin-left: 24px;">
+  <app-menu-item
+    *ngFor="let child of node.children"
+    [node]="child"
+    (toggleCheckbox)="toggleCheckbox.emit($event)"
+    (toggleExpand)="toggleExpand.emit($event)"
+  >
+  </app-menu-item>
 </div>
