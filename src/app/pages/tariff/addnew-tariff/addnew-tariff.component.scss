@@ -1,0 +1,153 @@
+
+.form-container {
+  margin: 10px;
+  display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
+  gap: 5px;
+  justify-content: center;
+  //width: 100%;
+  //max-width: 1000px;   // increase max width to widen form
+  //max-height: 600px;   // limit height so scrollbar appears if needed
+  padding: 30px;       // increase padding for better spacing
+  box-sizing: border-box;
+  overflow-y: auto;    // enable vertical scroll when overflow
+  background: #fff;    // optional, good for clarity
+  border: 1px solid #ccc; // optional border for clarity
+  border-radius: 4px;  // optional rounded corners
+  scrollbar-width: none;
+}
+
+.form-container::-webkit-scrollbar {
+    display: none;
+}
+
+.form-row {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    width: 90%;
+}
+.form-row-between {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+    max-width: 32%;
+}
+.custom-l{
+    width: 45%;
+}
+.custom-label{
+    width: 90%;
+  }
+
+  .form-c{
+    border: 1px solid #ccc;
+    height: 34px;
+    border-radius: 5px;
+  }
+ 
+  .button-row {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    margin-top: 16px;
+  }
+  
+  .cancel{
+    background-color: rgb(255, 51, 0);
+  }
+  
+  .create{
+    background-color: #119347;
+  }
+
+
+  .status.active {
+    color: green;
+    // font-weight: bold;
+  }
+  
+  .status.inactive {
+    color: red;
+    font-weight: bold;
+  }
+
+  .radio-btn{
+margin-left: 10px;
+
+  }
+
+  
+.mat-mdc-radio-button.mat-accent {
+  --mdc-radio-selected-focus-icon-color: #25d81b;
+  --mdc-radio-selected-hover-icon-color: #1bd83b;
+  --mdc-radio-selected-icon-color: #16ca34;
+  --mdc-radio-selected-pressed-icon-color: #0ce913;
+
+  --mdc-radio-selected-focus-state-layer-color: #25d81b;
+  --mdc-radio-selected-hover-state-layer-color: #1bd83b;
+  --mdc-radio-selected-pressed-state-layer-color: #0fe216;
+}
+
+
+//   
+
+
+  //      
+
+  ::ng-deep .custom-label .mat-mdc-text-field-wrapper {
+    min-height: 36px !important;
+    padding: 0 !important;
+  }
+  
+  ::ng-deep .custom-label .mat-mdc-form-field-infix {
+    padding: 0 8px !important;
+    min-height: 36px !important;
+  }
+  
+  ::ng-deep .custom-label input.mat-mdc-input-element {
+    padding: 6px 0 !important;
+    font-size: 14px !important;
+    height: 28px !important;
+    line-height: 28px !important;
+  }
+  
+  ::ng-deep .custom-label .mdc-floating-label {
+    font-size: 14px !important;
+    top: 18px !important;
+  }
+  
+
+
+
+
+//      
+
+::ng-deep .custom-l .mat-mdc-text-field-wrapper {
+    min-height: 36px !important;
+    padding: 0 !important;
+  }
+  
+  ::ng-deep .custom-l .mat-mdc-form-field-infix {
+    padding: 0 8px !important;
+    min-height: 36px !important;
+  }
+  
+  ::ng-deep .custom-l input.mat-mdc-input-element {
+    padding: 6px 0 !important;
+    font-size: 12px !important;
+    height: 28px !important;
+    line-height: 28px !important;
+  }
+  
+  ::ng-deep .custom-l .mdc-floating-label {
+    font-size: 14px !important;
+    top: 18px !important;
+  }
+  
+
+
+
+
+  

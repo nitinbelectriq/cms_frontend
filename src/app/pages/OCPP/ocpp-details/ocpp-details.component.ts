@@ -245,6 +245,7 @@ toggleExpand(connectorNo: number) {
 
     
   }
+
   hardReset(){
     //
     this.ocppService.resetHard({command: 'RESET_HARD', charger_id: this.charger.serial_no,
@@ -252,6 +253,14 @@ toggleExpand(connectorNo: number) {
      }).subscribe((res)=>{
       console.log(res);
      })
+  }
+  softReset(){
+    console.log('charger :', this.charger)
+    this.ocppService.resetHard({command: 'RESET_SOFT', charger_id: this.charger.serial_no,
+      charger_sr_no: this.chargerId , connector: this.charger?.connector_data[0]?.connector_no}).subscribe((res) => {
+        
+      });
+
   }
 
   startChargingStation(){

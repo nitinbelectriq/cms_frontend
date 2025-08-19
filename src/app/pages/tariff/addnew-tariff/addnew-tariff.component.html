@@ -1,0 +1,115 @@
+
+<h2 mat-dialog-title>{{ isEditMode ? 'Edit' : 'Create' }} New Tariff </h2>
+
+<form [formGroup]="form" (ngSubmit)="onSubmit()" class="form-container">
+    <mat-form-field appearance="outline" class="custom-l">
+        <mat-label>Type</mat-label>
+        <mat-select [(ngModel)]="types" placeholder="">
+            <mat-option [value]="type.id" *ngFor="let type of types"></mat-option>
+        </mat-select>
+          <mat-icon matSuffix>help</mat-icon>
+
+    </mat-form-field>
+
+    <div class="custom-l form-c">
+        <mat-radio-group [(ngModel)]="applicableTo" class="radio-btn">
+             <mat-label>ApplicableTo</mat-label>
+            <mat-radio-button class="radio-btn" value="">All fleets</mat-radio-button>
+            <mat-radio-button class="radio-btn" value="">Selected Fleets</mat-radio-button>
+        </mat-radio-group>
+    </div>
+
+  
+    
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>
+            Name
+        </mat-label>
+        
+            <input matInput formControlName="name"
+                   type="text"
+                   required
+                   placeholder="Enter Name">
+            <mat-icon matSuffix>code</mat-icon>
+       
+    </mat-form-field>
+   <div class="form-row">
+    <!-- <div class="form-container"> -->
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Costing Type</mat-label>
+       
+            <input matInput formControlName="costingType"
+                   type="text"
+                   required
+                   placeholder="Enter Name">
+                   <mat-icon matSuffix>paid</mat-icon>
+       
+    </mat-form-field>
+
+    
+            <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Charging Fee</mat-label>
+       
+            <input matInput formControlName="chargingFee"
+                   type="text"
+                   required
+                   placeholder="Enter Fee">
+                     <mat-icon matSuffix>paid</mat-icon>
+       
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Charging fee Unit</mat-label>
+       
+            <input matInput formControlName="name"
+                   type="text"
+                   required
+                   placeholder="Enter unit">
+       
+    </mat-form-field>
+    <!-- </div> -->
+
+    </div>
+    <div class="form-row">
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Idle fee</mat-label>
+       
+            <input matInput formControlName="idleFee"
+                   type="text"
+                   required
+                   placeholder="Enter fee">
+                     <mat-icon matSuffix>paid</mat-icon>
+       
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>State Tax</mat-label>
+        <input matInput formControlName="stateTax" type="text" placeholder="Enter Description">
+        <mat-icon matSuffix>description</mat-icon>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Weight</mat-label>
+       
+            <input matInput formControlName="weight"
+                   type="text"
+                   required
+                   placeholder="Enter Weight">
+                     <mat-icon matSuffix>help</mat-icon>
+       
+    </mat-form-field>
+   
+
+    </div>
+
+    <div class="button-row custom-label">
+    
+    <button mat-raised-button class="create" color="primary" type="submit" [disabled]="form.invalid">
+            {{ isEditMode ? 'Save' : 'Create' }}
+    </button>
+    <button mat-raised-button type="button" (click)="onCancel()"><mat-icon>cancel</mat-icon>Cancel</button>
+  </div>
+
+</form>

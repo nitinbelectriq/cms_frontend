@@ -118,6 +118,18 @@
         <a mat-list-item routerLink="/home/manage-role-activity" class="nested-link">Manage Role Activity</a>
       </div>
 
+      <!-- OCPP Operations -->
+      <div mat-list-item (click)="toggleSection('tariff')" class="parent-item">
+        <mat-icon>receipt</mat-icon>
+        <span> Tariffs</span>
+        <mat-icon class="expand-icon">
+          {{ isSectionOpen['tariff'] ? 'expand_less' : 'expand_more' }}
+        </mat-icon>
+      </div>
+      <div *ngIf="isSectionOpen['tariff']" class="nested-links">
+        <a mat-list-item routerLink="/home/tariff" class="nested-link"> Tariffs</a>
+      </div>
+
       <mat-divider></mat-divider>
       <mat-divider></mat-divider>
 

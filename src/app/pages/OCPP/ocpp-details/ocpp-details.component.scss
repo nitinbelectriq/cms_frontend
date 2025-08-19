@@ -121,7 +121,7 @@
     padding: 20px;
     border-left: 1px solid #ccc;
     box-shadow: -2px 0 8px rgba(0, 0, 0, 0.1);
-    height: 50%;
+    height: 330px;
     overflow-y: auto;
     scrollbar-width: none;
     margin-left: 10px;
@@ -260,4 +260,11 @@
 
 .manage-config-btn:focus{
   background-color: rgb(140, 140, 170) !important;
+}
+
+
+.tbl-mng-config{
+  height: 316px;
+  overflow-y: auto;
+
 }

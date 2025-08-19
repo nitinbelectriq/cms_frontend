@@ -141,10 +141,18 @@ export const routes: Routes = [
           ),
       },
       {
+        path: 'tariff',
+        loadComponent: () =>
+          import('./pages/tariff/tariff.component').then(
+            (m)=> m.TariffComponent
+          ),
+      },
+      {
         path: 'connectors',
         redirectTo: '/home/chargers-connector',
         pathMatch: 'full',
       },
+
     ],
   },
   { path: '', redirectTo: 'login', pathMatch: 'full' },
