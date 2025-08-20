@@ -15,6 +15,7 @@ import { MatTableModule } from '@angular/material/table';
 import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Component({
   standalone: true,
@@ -35,64 +36,62 @@ import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
     MatCheckboxModule,
     MatRadioModule,
     MatRadioButton
-    
   ],
   providers: [DatePipe],
   templateUrl: './ocpp-details.component.html',
   styleUrls: ['./ocpp-details.component.scss']
 })
 export class ChargerDetailComponent implements OnInit {
-  displayedColumns: string[] = ['action', 'request', 'response',  'request_date',];
+  displayedColumns: string[] = ['action', 'request', 'response', 'request_date'];
   displayedColumns1: string[] = ['select', 'key', 'value', 'action'];
 
   dataSource = [
-  {
-    action: 'Remote Start',
-    request: JSON.stringify({ connectorId: 1, idTag: 'USER123' }),
-    response: JSON.stringify({ status: 'Accepted', message: 'Charging started' }),
-    request_date: '2025-07-31 10:25:43'
-  },
-  {
-    action: 'Remote Stop',
-    request: JSON.stringify({ transactionId: 101 }),
-    response: JSON.stringify({ status: 'Accepted', message: 'Charging stopped successfully' }),
-    request_date: '2025-07-31 10:30:11'
-  },
-  {
-    action: 'Set Configuration',
-    request: JSON.stringify({ key: 'ConnectionTimeOut', value: '30' }),
-    response: JSON.stringify({ status: 'Accepted' }),
-    request_date: '2025-07-31 11:02:55'
-  },
-  {
-    action: 'Unlock Connector',
-    request: JSON.stringify({ connectorId: 2 }),
-    response: JSON.stringify({ status: 'Rejected', message: 'Connector already unlocked' }),
-    request_date: '2025-07-31 11:15:20'
-  },
-  {
-    action: 'Clear Cache',
-    request: JSON.stringify({}),
-    response: JSON.stringify({ status: 'Accepted' }),
-    request_date: '2025-07-31 11:35:05'
-  }
-];
-
+    {
+      action: 'Remote Start',
+      request: JSON.stringify({ connectorId: 1, idTag: 'USER123' }),
+      response: JSON.stringify({ status: 'Accepted', message: 'Charging started' }),
+      request_date: '2025-07-31 10:25:43'
+    },
+    {
+      action: 'Remote Stop',
+      request: JSON.stringify({ transactionId: 101 }),
+      response: JSON.stringify({ status: 'Accepted', message: 'Charging stopped successfully' }),
+      request_date: '2025-07-31 10:30:11'
+    },
+    {
+      action: 'Set Configuration',
+      request: JSON.stringify({ key: 'ConnectionTimeOut', value: '30' }),
+      response: JSON.stringify({ status: 'Accepted' }),
+      request_date: '2025-07-31 11:02:55'
+    },
+    {
+      action: 'Unlock Connector',
+      request: JSON.stringify({ connectorId: 2 }),
+      response: JSON.stringify({ status: 'Rejected', message: 'Connector already unlocked' }),
+      request_date: '2025-07-31 11:15:20'
+    },
+    {
+      action: 'Clear Cache',
+      request: JSON.stringify({}),
+      response: JSON.stringify({ status: 'Accepted' }),
+      request_date: '2025-07-31 11:35:05'
+    }
+  ];
 
   chargerId = '';
   charger: any;
   showActions = false;
   showSettings = false;
-  //
-  list: any[]=[];
-  item={};
-  id_of_active_transaction='';
-  current_active_tranjection= '';
-  resetbtn= false;
-  binding='';
 
-  //
+  list: any[] = [];
+  item = {};
+  id_of_active_transaction = '';
+  current_active_tranjection = '';
+  resetbtn = false;
+  binding = '';
+
   selectedAction: string | null = null;
+  selectedTask: string | null = null;
 
   menus: any[] = [];
   availabilityTypes: any[] = [];
@@ -101,11 +100,13 @@ export class ChargerDetailComponent implements OnInit {
   rfidList: any[] = [];
   connectorStatus: any;
 
+  expandedConnectors: Set<number> = new Set();
+
   private route = inject(ActivatedRoute);
   private ocppService = inject(OCPPService);
   private router = inject(Router);
   private datePipe = inject(DatePipe);
-  
+  private snackBar = inject(MatSnackBar);
 
   ngOnInit(): void {
     this.chargerId = this.route.snapshot.paramMap.get('id') || '';
@@ -126,22 +127,28 @@ export class ChargerDetailComponent implements OnInit {
     const serialNo = this.charger.serial_no;
     const cpoId = this.charger.cpo_id || '1';
 
-    this.ocppService.getMenus().subscribe((res) => {
-      this.menus = res?.data || [];
+    // Fetch menus dynamically
+    this.ocppService.getMenus().subscribe((res: any) => {
+      console.log('Menus API response:', res[0].name); // Debug: check response
+      this.menus = (res || []).map((item: any) => ({
+        id: item.id,
+        name: item.name,
+        description: item.description
+      }));
     });
 
     this.ocppService.getAvailabilityTypes().subscribe((res) => {
       this.availabilityTypes = res?.data || [];
     });
 
-    this.ocppService.getHeartbeat({ charger_id: this.charger.serial_no }).subscribe((res) => {
+    this.ocppService.getHeartbeat({ charger_id: serialNo }).subscribe((res: any) => {
       this.heartbeatData = res.data;
       this.heartbeatData.formattedDate = this.datePipe.transform(
         res.data.last_ping_datetime,
         'dd-MM-yyyy, h:mm:ss a',
         'Asia/Kolkata'
       );
-      this.chargerStatus = res;
+      this.chargerStatus = res?.message;
     });
 
     this.ocppService.getRFIDsByCpoId(cpoId).subscribe((res) => {
@@ -150,8 +157,6 @@ export class ChargerDetailComponent implements OnInit {
 
     this.ocppService.getChargerConnectorStatus(serialNo).subscribe((res) => {
       this.connectorStatus = res;
-      // Update charger.connector_data with connector status if needed
-      // Assuming you want to overwrite or augment charger.connector_data
       if (res?.data) {
         this.charger.connector_data = res.data;
       }
@@ -161,85 +166,103 @@ export class ChargerDetailComponent implements OnInit {
   toggleActions(): void {
     this.showActions = !this.showActions;
     this.showSettings = false;
-    this.resetbtn= false;
+    this.resetbtn = false;
   }
 
   toggleSettings(): void {
     this.showSettings = !this.showSettings;
     this.showActions = false;
+
+    if (this.showSettings) {
+      this.ocppService.getMenus().subscribe((res: any) => {
+        console.log('Menus API response:', res[0].name); 
+        this.menus = (res || []).map((item: any) => ({
+          id: item.id,
+          name: item.name,
+          description: item.description
+        }));
+      });
+    }
   }
 
-  //
-
-// Global selected task from the shared panel
-selectedTask: string | null = null;
-
-
-performTask(connectorNo: number, task: string) {
-  console.log(`Performing ${task} on connector ${connectorNo}`);
-  // Add API call or business logic here
-}
-
-
-
-  //
-
-  // expanding the connector
-  expandedConnectors: Set<number> = new Set();
-
-toggleExpand(connectorNo: number) {
-  if (this.expandedConnectors.has(connectorNo)) {
-    this.expandedConnectors.delete(connectorNo);
-  } else {
-    this.expandedConnectors.add(connectorNo);
+  toggleExpand(connectorNo: number) {
+    if (this.expandedConnectors.has(connectorNo)) {
+      this.expandedConnectors.delete(connectorNo);
+    } else {
+      this.expandedConnectors.add(connectorNo);
+    }
   }
-}
 
+  onMenuClick(menu: any) {
+    if (menu.name === 'Unlock Connector') {
+      this.unlockConnector();
+    } else {
+      this.selectedTask = menu.name;
+    }
+  }
+
+  performTask(connectorNo: number, task: string) {
+    console.log(`Performing ${task} on connector ${connectorNo}`);
+  }
 
   performCommand(command: string): void {
     console.log(`Executing ${command}...`);
   }
 
-  getLocalListVersion() {
-    this.performCommand('Get Local List Version');
-    this.ocppService.getlocallistversion().subscribe((res)=>{
+  getLocalListVersion(connectorNo: number = 1) {
+    if (!this.charger) return;
+    const payload = {
+      command: 'GET_LOCAL_LIST_VERSION',
+      charger_id: this.charger.serial_no,
+      charger_sr_no: this.chargerId,
+      connector: connectorNo
+    };
 
+    this.ocppService.getLocalListVersion(payload).subscribe({
+      next: (res: any) => {
+        this.snackBar.open(res?.message, 'Close', {
+          duration: 3000,
+          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+        });
+      },
+      error: (err: any) => {
+        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+          duration: 3000,
+          panelClass: ['snackbar-error']
+        });
+      }
     });
   }
 
-  // clearCache() {
-  //   this.performCommand('Clear Cache');
-  //   this.ocppService.clearCache({command: 'CLEAR_CACHE', charger_id: this.charger.serial_no, 
-  //     charger_sr_no: this.chargerId , connector: this.charger.connector_no}).subscribe((res)=>{
-  //       console.log('this is clear cache result :', res);
-  //     })
-  // }
-
   clearCache() {
-  const payload = {
-    command: 'CLEAR_CACHE',
-    charger_id: this.charger.charger_id,
-    charger_sr_no: this.chargerId,
-    connector: this.charger?.ConnectorData?.connector_no || 1,
-  };
+    if (!this.charger) return;
+    const payload = {
+      command: 'CLEAR_CACHE',
+      charger_id: this.charger.charger_id,
+      charger_sr_no: this.chargerId,
+      connector: this.charger?.ConnectorData?.connector_no || 1
+    };
 
-  console.log('Sending clear cache payload:', payload);
-  console.log('Charger object:', this.charger);
+    this.performCommand('Clear Cache');
 
-
-  this.performCommand('Clear Cache');
-  this.ocppService.clearCache(payload).subscribe({
-    next: (res) => {
-      console.log('Clear cache response:', res);
-    },
-    error: (err) => {
-      console.error('Clear cache error:', err);
-    }
-  });
-}
-
+    this.ocppService.clearCache(payload).subscribe({
+      next: (res: any) => {
+        this.snackBar.open(res?.message, 'Close', {
+          duration: 3000,
+          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+        });
+      },
+      error: (err: any) => {
+        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+          duration: 3000,
+          panelClass: ['snackbar-error']
+        });
+      }
+    });
+  }
 
   reset() {
+<<<<<<< Updated upstream
     this.resetbtn= !this.resetbtn;
    // this.performCommand('Reset');
 
@@ -253,6 +276,9 @@ toggleExpand(connectorNo: number) {
      }).subscribe((res)=>{
       console.log(res);
      })
+=======
+    this.resetbtn = !this.resetbtn;
+>>>>>>> Stashed changes
   }
   softReset(){
     console.log('charger :', this.charger)
@@ -263,136 +289,97 @@ toggleExpand(connectorNo: number) {
 
   }
 
-  startChargingStation(){
-    this.ocppService.startChargingStation({}).subscribe((res)=>{
+  hardReset() {
+    if (!this.charger) return;
+    const payload = {
+      command: 'RESET_HARD',
+      charger_id: this.charger.serial_no,
+      charger_sr_no: this.chargerId
+    };
 
+    this.ocppService.resetHard(payload).subscribe({
+      next: (res: any) => {
+        this.snackBar.open(res?.message, 'Close', {
+          duration: 3000,
+          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+        });
+      },
+      error: (err: any) => {
+        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+          duration: 3000,
+          panelClass: ['snackbar-error']
+        });
+      }
     });
   }
 
-  stopChargingStation(){
-    this.ocppService.stopChargingStation({}).subscribe();
-  }
+  softReset() {
+    if (!this.charger) return;
+    const payload = {
+      command: 'RESET_SOFT',
+      charger_id: this.charger.serial_no,
+      charger_sr_no: this.chargerId
+    };
 
-  changeAvailability(){
-    this.ocppService.changeAvailability({}).subscribe((res)=>{
-
+    this.ocppService.resetSoft(payload).subscribe({
+      next: (res: any) => {
+        this.snackBar.open(res?.message, 'Close', {
+          duration: 3000,
+          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+        });
+      },
+      error: (err: any) => {
+        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+          duration: 3000,
+          panelClass: ['snackbar-error']
+        });
+      }
     });
   }
 
-  unlockConnector(){
-    this.ocppService.unlockConnector({}).subscribe((res)=>{
+  unlockConnector() {
+    if (!this.charger) return;
+    const payload = {
+      command: 'UNLOCK_CONNECTOR',
+      charger_id: this.charger.charger_id,
+      charger_sr_no: this.chargerId,
+      connector: this.charger?.ConnectorData?.connector_no || 1
+    };
 
+    console.log('Unlock Connector payload:', payload);
+
+    this.ocppService.unlockConnector(payload).subscribe({
+      next: (res: any) => {
+        this.snackBar.open(res?.message, 'Close', {
+          duration: 3000,
+          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+        });
+      },
+      error: (err: any) => {
+        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+          duration: 3000,
+          panelClass: ['snackbar-error']
+        });
+      }
     });
   }
-
-  dataTransfer(){
-    this.ocppService.dataTransfer({}).subscribe((res)=>{
-
-    });
-  }
-
-  getAvailabilityType(){
-    this.ocppService.getAvailabilityTypes().subscribe((res)=>{
-
-    });
-  }
-
-  getdiagnostics(){
-    this.ocppService.getdiagnostics({}).subscribe();
-  }
-
-  getUpdateFirmware(){
-    this.ocppService.getUpdateFirmware({}).subscribe();
-  }
-
-  getDataTriggerMessage(){
-    this.ocppService.getDataTriggerMessage({}).subscribe();
-  }
-
-  getChangeConfiguration(){
-    this.ocppService.getChangeConfiguration({}).subscribe();
-  }
-
-  getReserveNow(){
-    this.ocppService.getReserveNow({}).subscribe();
-  }
-
-  getActiveChargingStationsWithChargersAndConnectorsCW(){
-     const loginId = localStorage.getItem('user_id') || '';
-    this.ocppService.getActiveChargingStationsWithChargersAndConnectorsCW(loginId).subscribe((res)=>{
-
-    });
-  }
-
-  getActiveChargingStationsCW(){
-    const loginId = localStorage.getItem('user_id') || '';
-    this.ocppService.getActiveChargingStationsCW(loginId).subscribe((res)=>{
-
-    });
-  }
-
-  getAllChargingStationsWithChargersAndConnectorsCW(){
-    const userId = localStorage.getItem('user_id') || '';
-    this.ocppService.getAllChargingStationsWithChargersAndConnectorsCW(userId).subscribe((res) =>{
-
-    });
-  }
-
-  getConfiguration(){
-    this.ocppService.getConfiguration({}).subscribe();
-  }
-
-  getStatus(){
-    this.ocppService.getStatus({}).subscribe((res) =>{
-
-    });
-  }
-
-  getChargerConfigurationKeys(){
-    this.ocppService.getChargerConfigurationKeys().subscribe((res)=>{
-
-    })
-  }
-
-  getChargingStationsByUserRoleAndLatLong(){
-     const userId = localStorage.getItem('user_id') || '';
-    this.ocppService.getChargingStationsByUserRoleAndLatLong(userId, {}).subscribe((res) =>{
-
-    });
-  }
-
-  getchargerConnectorStatus(){
-    this.ocppService.getChargerConnectorStatus(this.charger.charger_id).subscribe(()=>{
-
-    });
-  }
-
-  getChargingStationsByUserRoleAndLatLongUW(){
-     const userId = localStorage.getItem('user_id') || '';
-    this.ocppService.getChargingStationsByUserRoleAndLatLongUW(userId, {}).subscribe(() => {
-
-    });
-  }
-
-
 
   goBackToLogs(): void {
     this.router.navigate(['/home/ocpp-diagnostic']);
   }
 
-  // Map connector status to Angular Material color
   getConnectorIconColor(status: string): string {
     if (!status) return 'default';
     switch (status.toLowerCase()) {
       case 'charging':
-        return 'primary'; // blue or any primary color
+        return 'primary';
       case 'available':
-        return 'accent';  // usually pink-ish
+        return 'accent';
       case 'faulted':
       case 'unavailable':
-        return 'warn';    // red
+        return 'warn';
       case 'offline':
-        return 'default'; // grey or default
+        return 'default';
       default:
         return 'default';
     }
