@@ -34,6 +34,7 @@ export class SidebarComponent implements OnInit {
     station: false,
     ocpp: false,
     user: false,
+    tariff: false,
   };
 
   constructor(private router: Router, private authService: AuthService) {}

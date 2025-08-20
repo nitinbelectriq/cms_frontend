@@ -39,7 +39,7 @@
               <button mat-raised-button class="action-btn" color="warn" (click)="reset()">Reset <mat-icon matSuffix>expand_more</mat-icon></button>
               <mat-card *ngIf="resetbtn" style="position: absolute;">
                         <button mat-stroked-button color="warn" (click)="hardReset()">Hard Reset</button>
-                        <button mat-stroked-button color="accent" (click)="selectedTask = 'Soft Reset'">Soft Reset</button>
+                        <button mat-stroked-button color="accent" (click)="softReset()">Soft Reset</button>
               </mat-card>
             </div>
             
@@ -170,6 +170,10 @@
 
         </div>
 
+        <div class="tbl-mng-config">
+          
+        
+
           <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
 
              <!-- Select Column -->
@@ -204,7 +208,8 @@
               <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
               <tr mat-row *matRowDef="let row; columns: displayedColumns1;"></tr>
 
-</table>
+          </table>
+        </div>
 
         
       </div>

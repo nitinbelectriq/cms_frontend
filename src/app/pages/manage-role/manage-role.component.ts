@@ -18,6 +18,7 @@ import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { RoleService } from '../../services/manage-role.service';
 import { ViewRoleComponent } from '../manage-role/view-role/view-role.component'; // adjust path as needed
 import { MatCardModule } from '@angular/material/card';
+import { AddNewRoleComponent } from './add-new-role/add-new-role.component';
 
 interface RoleViewModel {
   roleName: string;
@@ -101,7 +102,16 @@ export class ManageRoleComponent implements OnInit, AfterViewInit {
   }
 
   addRole(): void {
-    alert('Add new role clicked!');
+    //alert('Add new role clicked!');
+    this.dialog.open(AddNewRoleComponent,{
+      width: '80%',
+      height: 'fit-content',
+      position: {
+        top: '0',
+        right: '0',
+      }
+
+    });
   }
 
   viewRole(row: RoleViewModel): void {
