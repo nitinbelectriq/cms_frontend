@@ -88,13 +88,25 @@ export class OCPPService {
     return this.http.post(`${this.middleUrl}/clearcache`, payload, { headers: this.getAuthHeaders() });
   }
 
-  resetHard(payload: any): Observable<any> {
+ resetHard(payload: any): Observable<any> {
+    // backend decides based on command in payload
     return this.http.post(`${this.middleUrl}/reset`, payload, { headers: this.getAuthHeaders() });
   }
 
-  getlocallistversion(): Observable<any> {
-    return this.http.get(`${this.middleUrl}/getlocallistversion`, { headers: this.getAuthHeaders() });
+  /** Soft Reset */
+  resetSoft(payload: any): Observable<any> {
+    // backend decides based on command in payload
+    return this.http.post(`${this.middleUrl}/reset`, payload, { headers: this.getAuthHeaders() });
   }
+
+getLocalListVersion(payload: any): Observable<any> {
+  return this.http.post(
+    `${this.middleUrl}/getlocallistversion`,
+    payload, // <-- send payload here
+    { headers: this.getAuthHeaders() }
+  );
+}
+
 
   startChargingStation(payload: any): Observable<any> {
     return this.http.post(`${this.middleUrl}/remoteTransaction`, payload, { headers: this.getAuthHeaders() });
