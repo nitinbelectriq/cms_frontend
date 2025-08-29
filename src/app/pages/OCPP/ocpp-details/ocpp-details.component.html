@@ -138,23 +138,28 @@
         </div>
     </div>
 
+    <!-- <div>
+      <div >
+        <div align="end" style="right:0; font-size: small; display: flex; justify-content: flex-end;">
+          <mat-card  style=" width: fit-content; padding: 8px; display: flex; flex-direction: column; gap: 4px;">
+             
+            <button mat-stroked-button class="btn-trigger" >METER VALUES </button>
+            <button mat-stroked-button class="btn-trigger"> BOOT NOTIFICATION </button>
+            <button mat-stroked-button class="btn-trigger">STATUS NOTIFICATION  </button>
+            <button mat-stroked-button class="btn-trigger"> DIAGNOSTICSSTATUS NOTIFICATION</button>
+            <button mat-stroked-button class="btn-trigger"> HEART BEAT</button>
+            <button mat-stroked-button  class="btn-trigger"> FIRMWARESTATUS NOTIFICATION</button>
+            
 
-
-    <div *ngSwitchCase="'Trigger Message'">
-      <div>
-            <mat-form-field appearance="outline" class="custom-label">
-              <mat-select placeholder="Trigger message">
-                <mat-option value="">Meter Values</mat-option>
-                <mat-option value="">Boot Notification</mat-option>
-                <mat-option value=""> Status Notification </mat-option>
-                <mat-option value=""> DIAGNOSTICS Status Notification </mat-option>
-                <mat-option value=""> HEART BEAT </mat-option>
-                <mat-option value=""> Firmware Status Notification </mat-option>
-              </mat-select>
-            </mat-form-field>
-      
+          </mat-card>
+        </div>
       </div>
-    </div>
+      
+    
+      <div>
+
+      </div>
+    </div> -->
 
      
       <div *ngSwitchCase="'Manage Configurations'">
@@ -241,6 +246,21 @@
       
       <button mat-raised-button (click)="performTask(conn.connector_no, selectedTask)">Execute</button>
     </div> -->
+    <div *ngSwitchCase="'Trigger Message'">
+      <div>
+            <mat-form-field appearance="outline" class="custom-label">
+              <mat-select placeholder="Trigger message">
+                <mat-option value="">Meter Values</mat-option>
+                <mat-option value="">Boot Notification</mat-option>
+                <mat-option value=""> Status Notification </mat-option>
+                <mat-option value=""> DIAGNOSTICS Status Notification </mat-option>
+                <mat-option value=""> HEART BEAT </mat-option>
+                <mat-option value=""> Firmware Status Notification </mat-option>
+              </mat-select>
+            </mat-form-field>
+      
+      </div>
+    </div>
 
   </ng-container>
 </div>
