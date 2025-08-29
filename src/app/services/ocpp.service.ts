@@ -189,4 +189,12 @@ getLocalListVersion(payload: any): Observable<any> {
       headers: this.getAuthHeaders()
     });
   }
+
+  getTriggermessage(loginId: string, payload: any): Observable<any>{
+    return this.http.post(`http://13.235.0.53:4800/charger/${loginId}`, payload, {
+      headers: this.getAuthHeaders()
+    });
+  }
+
+  
 }
