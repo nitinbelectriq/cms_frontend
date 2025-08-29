@@ -195,9 +195,26 @@ export class ChargerDetailComponent implements OnInit {
 
   onMenuClick(menu: any) {
     if (menu.name === 'Unlock Connector') {
-      this.unlockConnector();
-    } else {
       this.selectedTask = menu.name;
+      //this.unlockConnector();
+    }
+    else if(menu.name === 'Remote Start'){
+      this.selectedTask= menu.name;
+     // this.remoteStart();
+    }
+    else if(menu.name === 'Remote Stop'){
+      this.selectedTask=menu.name;
+
+      //this.remoteStop();
+    }
+    else if(menu.name === 'Manage Configurations'){
+      this.selectedTask = menu.name;
+    }
+    else if(menu.name=== 'Trigger Message'){
+      this.selectedTask = menu.name;
+    }
+     else {
+      //this.selectedTask = menu.name;
     }
   }
 
@@ -262,32 +279,9 @@ export class ChargerDetailComponent implements OnInit {
   }
 
   reset() {
-<<<<<<< Updated upstream
-    this.resetbtn= !this.resetbtn;
-   // this.performCommand('Reset');
-
-    
-  }
-
-  hardReset(){
-    //
-    this.ocppService.resetHard({command: 'RESET_HARD', charger_id: this.charger.serial_no,
-      charger_sr_no: this.chargerId , connector: this.charger.connector_no
-     }).subscribe((res)=>{
-      console.log(res);
-     })
-=======
     this.resetbtn = !this.resetbtn;
->>>>>>> Stashed changes
   }
-  softReset(){
-    console.log('charger :', this.charger)
-    this.ocppService.resetHard({command: 'RESET_SOFT', charger_id: this.charger.serial_no,
-      charger_sr_no: this.chargerId , connector: this.charger?.connector_data[0]?.connector_no}).subscribe((res) => {
-        
-      });
 
-  }
 
   hardReset() {
     if (!this.charger) return;
@@ -383,5 +377,112 @@ export class ChargerDetailComponent implements OnInit {
       default:
         return 'default';
     }
+  }
+
+  remoteStart(){
+    if (!this.charger) return;
+    const payload = {
+ 
+      command: "START_CHARGING",
+      charger_id: this.charger.charger_id,
+      charger_sr_no: this.charger.serial_no,
+      connector: 1,
+      id_tag: "20211227173626",
+      id_tag_type: "tagType",
+      user_id: 63,
+      command_source: "web",
+      device_id: null,
+      app_version: null,
+      os_version: null,
+      station_id: 1,
+      mobile_no: null,
+      vehicle_id: null,
+      vehicle_number: null
+    }
+
+    console.log('this payload :', payload);
+    this.ocppService.startChargingStation(payload).subscribe({
+      next: (res: any) =>{
+        this.snackBar.open(res?.message, 'Close', {
+          duration: 3000,
+          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+      });
+    },
+      error: (err: any) => {
+        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+          duration: 3000,
+          panelClass: ['snackbar-error']
+        });
+      }
+    });
+  }
+
+  remoteStop(){
+      if (!this.charger) return;
+    const payload = {
+ 
+      command: "STOP_CHARGING",
+      charger_id: this.charger.charger_id,
+      charger_sr_no: this.charger.serial_no,
+      connector: 1,
+      id_tag: "20211227173626",
+      id_tag_type: "tagType",
+      user_id: 63,
+      command_source: "web",
+      device_id: null,
+      app_version: null,
+      os_version: null,
+      station_id: 1,
+      mobile_no: null,
+      vehicle_id: null,
+      vehicle_number: null
+    }
+
+    console.log('this payload :', payload);
+    this.ocppService.stopChargingStation(payload).subscribe({
+      next: (res: any) =>{
+        this.snackBar.open(res?.message, 'Close', {
+          duration: 3000,
+          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+      });
+    },
+      error: (err: any) => {
+        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+          duration: 3000,
+          panelClass: ['snackbar-error']
+        });
+      }
+    });
+
+  }
+
+  getTriggerMessage(){
+    if(!this.charger){
+      return ;
+    }
+
+    const payload= {
+      charger_id: this.chargerId,
+      f_date : this.charger,
+      t_date : this.charger,
+      connector: '',
+    }
+     const loginId = localStorage.getItem('user_id') || '';
+
+    this.ocppService.getTriggermessage(loginId,payload).subscribe({
+      next: (res: any) =>{
+        this.snackBar.open(res?.message, 'Close', {
+          duration: 3000,
+          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+      });
+    },
+      error: (err: any) => {
+        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+          duration: 3000,
+          panelClass: ['snackbar-error']
+        });
+      }
+
+    })
   }
 }

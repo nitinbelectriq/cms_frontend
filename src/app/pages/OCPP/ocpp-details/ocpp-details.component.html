@@ -37,14 +37,6 @@
           <div class="settings-action" style="display: flex; gap: 8px;">
             <button mat-raised-button class="action-btn" color="primary" (click)="clearCache()">Clear Cache</button>
             <div>
-<<<<<<< Updated upstream
-              <button mat-raised-button class="action-btn" color="warn" (click)="reset()">Reset <mat-icon matSuffix>expand_more</mat-icon></button>
-              <mat-card *ngIf="resetbtn" style="position: absolute;">
-                        <button mat-stroked-button color="warn" (click)="hardReset()">Hard Reset</button>
-                        <button mat-stroked-button color="accent" (click)="softReset()">Soft Reset</button>
-              </mat-card>
-            </div>
-=======
   <button mat-raised-button class="action-btn" color="warn" (click)="reset()">
     Reset <mat-icon matSuffix>expand_more</mat-icon>
   </button>
@@ -55,7 +47,6 @@
   </mat-card>
 </div>
 
->>>>>>> Stashed changes
             
             
             <button mat-raised-button class="action-btn" color="accent" (click)="getLocalListVersion()">Get Local List Version</button>
@@ -147,8 +138,26 @@
         </div>
     </div>
 
+
+
+    <div *ngSwitchCase="'Trigger Message'">
+      <div>
+            <mat-form-field appearance="outline" class="custom-label">
+              <mat-select placeholder="Trigger message">
+                <mat-option value="">Meter Values</mat-option>
+                <mat-option value="">Boot Notification</mat-option>
+                <mat-option value=""> Status Notification </mat-option>
+                <mat-option value=""> DIAGNOSTICS Status Notification </mat-option>
+                <mat-option value=""> HEART BEAT </mat-option>
+                <mat-option value=""> Firmware Status Notification </mat-option>
+              </mat-select>
+            </mat-form-field>
+      
+      </div>
+    </div>
+
      
-      <div *ngSwitchCase="'Manage Configuration'">
+      <div *ngSwitchCase="'Manage Configurations'">
         <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
           <div class="manage-config">
             <button mat-raised-button class="manage-config-btn" color="primary">Get selected Configuaration</button>
@@ -224,14 +233,14 @@
       </div>
 
       
-      <div *ngSwitchDefault>output2</div>
+      <!-- <div *ngSwitchDefault>output2</div> -->
     
 
     <!-- Other tasks -->
-    <div *ngSwitchDefault>
+    <!-- <div *ngSwitchDefault>
       
       <button mat-raised-button (click)="performTask(conn.connector_no, selectedTask)">Execute</button>
-    </div>
+    </div> -->
 
   </ng-container>
 </div>
