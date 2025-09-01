@@ -153,6 +153,11 @@ getLocalListVersion(payload: any): Observable<any> {
       headers: this.getAuthHeaders()
     });
   }
+   getActiveTransactionId(charger_id: string,connector:number): Observable<any> {
+    return this.http.get(`${this.middleUrl}/getActiveTransactionId/${charger_id}/${connector}`, {
+      headers: this.getAuthHeaders()
+    });
+  }
 
   getActiveChargingStationsCW(loginId: string): Observable<any> {
     return this.http.get(`${this.middleUrl}/getActiveChargingStationsCW/${loginId}`, {
@@ -195,6 +200,22 @@ getLocalListVersion(payload: any): Observable<any> {
       headers: this.getAuthHeaders()
     });
   }
+
+// inside OCPPService
+getOcppLogs(chargerId: string, loginId: string, fromDate: string = '', toDate: string = '') {
+  const payload = {
+    charger_id: chargerId,
+    f_date: fromDate,
+    t_date: toDate
+  };
+
+  return this.http.post(
+    `${this.middleUrl}/charger/${loginId}`,
+    payload,
+    { headers: this.getAuthHeaders() }
+  );
+}
+
 
   
 }
