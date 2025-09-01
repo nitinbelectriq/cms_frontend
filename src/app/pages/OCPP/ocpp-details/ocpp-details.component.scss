@@ -186,7 +186,7 @@
 
   .table-container {
  // width: 100%;         /* fixed width */
-  max-height: 400px;        /* fixed height */
+ // max-height: 400px;        /* fixed height */
   overflow: auto;       /* scroll if content exceeds */
   //border: 1px solid #ccc;
 }
@@ -272,3 +272,51 @@
 .btn-trigger{
   font-size: 12px !important;
 }
+
+
+
+.table-container {
+  width: 100%;
+  overflow-x: auto;   /* scroll horizontally if needed */
+  border-radius: 12px;
+}
+
+.mat-table-custom {
+  width: 100%;
+  border-collapse: collapse;
+  table-layout: fixed; /* enforce column widths */
+}
+
+/* Header styling */
+.mat-header-cell {
+  background: #1976d2;
+  color: #fff;
+  font-weight: 600;
+  text-align: left;
+  padding: 12px;
+  white-space: nowrap; /* keep header on one line */
+}
+
+/* Cell styling */
+.mat-cell {
+  padding: 12px;
+  border-bottom: 1px solid #e0e0e0;
+  overflow: hidden;
+  text-overflow: ellipsis; /* show "..." if too long */
+  white-space: nowrap;     /* keep text on one line */
+}
+
+/* Let request/response wrap instead of overflow */
+.mat-column-request,
+.mat-column-response {
+  white-space: normal !important;  /* allow wrapping */
+  word-wrap: break-word;
+  word-break: break-word;
+}
+
+/* Hover effect */
+.mat-row:hover {
+  background: #f5f9ff;
+  transition: 0.3s;
+}
+

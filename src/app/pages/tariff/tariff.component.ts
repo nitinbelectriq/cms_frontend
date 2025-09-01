@@ -70,6 +70,21 @@ export class TariffComponent {
     onDelete(id: number){
 
     }
+
+    downloadCSV(){
+      const csvRows= [];
+      const headers = ['Name', 'Type', 'Cost Type', 'Charging Fee', 'Parking Fee', 'Applicable To'];
+      csvRows.push(headers.join(','));
+        // Create CSV blob and download
+  // const csvContent = csvRows.join('\n');
+  // const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+  // const url = URL.createObjectURL(blob);
+  // const a = document.createElement('a');
+  // a.href = url;
+  // a.download = 'ocpp-data.csv';
+  // a.click();
+  // URL.revokeObjectURL(url);
+    }
   
 
 }

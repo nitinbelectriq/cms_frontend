@@ -230,8 +230,5 @@ getOcppLogs(
 
 
 
-
-
-
   
 }

@@ -257,17 +257,24 @@
     <div *ngSwitchCase="'Trigger Message'">
       <div>
             <mat-form-field appearance="outline" class="custom-label">
-              <mat-select placeholder="Trigger message">
-                <mat-option value="">Meter Values</mat-option>
-                <mat-option value="">Boot Notification</mat-option>
-                <mat-option value=""> Status Notification </mat-option>
-                <mat-option value=""> DIAGNOSTICS Status Notification </mat-option>
-                <mat-option value=""> HEART BEAT </mat-option>
-                <mat-option value=""> Firmware Status Notification </mat-option>
+              <mat-select placeholder="Trigger message" [(value)]="selectTrigger">
+                <mat-option value="MeterValues">Meter Values</mat-option>
+                <mat-option value="BootNotification">Boot Notification</mat-option>
+                <mat-option value="StatusNotification"> Status Notification </mat-option>
+                <mat-option value="DiagnosticsStatusNotification"> DIAGNOSTICS Status Notification </mat-option>
+                <mat-option value="Heartbeat"> HEART BEAT </mat-option>
+                <mat-option value="FirmwareStatusNotification"> Firmware Status Notification </mat-option>
               </mat-select>
             </mat-form-field>
       
       </div>
+          <div style="gap: 10px;" align="end">
+            <button mat-raised-button (click)="performTriggerTask(conn.connector_no, selectTrigger)" 
+              style="margin-right: 10px;" class="create">
+              Perform
+            </button>
+            <button mat-raised-button>Cancel</button>
+          </div>
     </div>
 
   </ng-container>
@@ -306,7 +313,7 @@
     </div>
   
 </mat-card>
-
+<!-- 
 <table mat-table [dataSource]="dataSourceLogs" class="mat-elevation-z8">
 
   <ng-container matColumnDef="action">
@@ -332,4 +339,43 @@
   <tr mat-header-row *matHeaderRowDef="displayedColumnsLogs"></tr>
   <tr mat-row *matRowDef="let row; columns: displayedColumnsLogs;"></tr>
 </table>
+ -->
+<div class="table-container mat-elevation-z8">
+  <table mat-table [dataSource]="dataSourceLogs" class="mat-table-custom">
 
+    <!-- Action Column -->
+    <ng-container matColumnDef="action">
+      <th mat-header-cell *matHeaderCellDef> Action </th>
+      <td mat-cell *matCellDef="let element" data-label="Action">
+        {{ element.action }}
+      </td>
+    </ng-container>
+
+    <!-- Request Column -->
+    <ng-container matColumnDef="request">
+      <th mat-header-cell *matHeaderCellDef> Request </th>
+      <td mat-cell *matCellDef="let element" data-label="Request">
+        {{ element.request }}
+      </td>
+    </ng-container>
+
+    <!-- Response Column -->
+    <ng-container matColumnDef="response">
+      <th mat-header-cell *matHeaderCellDef> Response </th>
+      <td mat-cell *matCellDef="let element" data-label="Response">
+        {{ element.response }}
+      </td>
+    </ng-container>
+
+    <!-- Request Date Column -->
+    <ng-container matColumnDef="request_date">
+      <th mat-header-cell *matHeaderCellDef> Request Date </th>
+      <td mat-cell *matCellDef="let element" data-label="Request Date">
+        {{ element.request_date }}
+      </td>
+    </ng-container>
+
+    <tr mat-header-row *matHeaderRowDef="displayedColumnsLogs"></tr>
+    <tr mat-row *matRowDef="let row; columns: displayedColumnsLogs;"></tr>
+  </table>
+</div>

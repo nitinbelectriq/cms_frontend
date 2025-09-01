@@ -65,6 +65,7 @@ export class ChargerDetailComponent implements OnInit {
   selectedTask: string | null = null;
 idTagType: string | null = null;       // for radio button
 selectedRfid: string | null = null; // will hold the rf_id_no
+selectTrigger='';
 
 
   menus: any[] = [];
@@ -669,4 +670,102 @@ performTask(connectorNo: any, task: string) {
 
     })
   }
+
+  performTriggerTask(connectorNo: number, trigger: string) {
+  switch (trigger) {
+    case 'MeterValues':
+      {
+      const payload= {
+          command: "METER_VALUES",
+          charger_id: this.chargerId,
+          charger_sr_no: this.charger.serial_no,
+          connector: 1
+      }
+      this.ocppService.getTriggermessage(this.loginId, payload).subscribe(res => {
+        console.log('Meter Values response:', res);
+      });
+      break;
+    }
+
+    case 'BootNotification':
+      { 
+        const payload= {
+          command: "BOOT_NOTIFICATION",
+          charger_id: this.chargerId,
+          charger_sr_no: this.charger.serial_no,
+          connector: 1
+        }
+       this.ocppService.getTriggermessage(this.loginId, payload).subscribe(res => {
+        console.log('Boot Notification response:', res);
+      });
+      break;
+    }
+
+    case 'StatusNotification': 
+    {
+      const payload = {
+          command: "STATUS_NOTIFICATION",
+          charger_id: this.chargerId,
+          charger_sr_no: this.charger.serial_no,
+          connector: 1
+      }
+        this.ocppService.getTriggermessage(this.loginId, payload).subscribe(res => {
+        console.log('Status Notification response:', res);
+      });
+      break;
+    }
+    
+
+    case 'DiagnosticsStatusNotification':
+      {
+        const payload={
+           command: "DIAGNOSTICSSTATUS_NOTIFICATION",
+          charger_id: this.chargerId,
+          charger_sr_no: this.charger.serial_no,
+          connector: 1
+        }
+         this.ocppService.getTriggermessage(this.loginId, payload).subscribe(res => {
+           console.log('Diagnostics Status Notification response:', res);
+           });
+        break;
+      }
+     
+
+    case 'Heartbeat':
+      {
+        const payload={
+           command: "HEART_BEAT",
+          charger_id: this.chargerId,
+          charger_sr_no: this.charger.serial_no,
+          connector: 1
+        }
+       this.ocppService.getTriggermessage(this.loginId, payload).subscribe(res => {
+        console.log('Heartbeat response:', res);
+      });
+      break;
+      }
+      
+
+    case 'FirmwareStatusNotification':
+      {
+          const payload={
+           command: "FIRMWARESTATUS_NOTIFICATION",
+          charger_id: this.chargerId,
+          charger_sr_no: this.charger.serial_no,
+          connector: 1
+        }
+       this.ocppService.getTriggermessage(this.loginId, payload).subscribe(res => {
+        console.log('Firmware Status Notification response:', res);
+      });
+      break;
+      }
+      
+
+    default:
+      console.warn('No trigger selected');
+  }
+}
+
+
+
 }
