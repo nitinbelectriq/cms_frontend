@@ -99,32 +99,41 @@ connectors: any[] = [];
 loadOcppLogs() {
   if (!this.charger) return;
 
-  // Calculate current time and 1 hour ago
-  const toDate = new Date();
-  const fromDate = new Date(toDate.getTime() - 60 * 60 * 1000); // 1 hour ago
+ const toDate = new Date();
+const fromDate = new Date(toDate);
+fromDate.setDate(toDate.getDate() - 1);
 
-  const fromDateStr = this.datePipe.transform(fromDate, 'yyyy-MM-dd HH:mm:ss', 'Asia/Kolkata')!;
-  const toDateStr = this.datePipe.transform(toDate, 'yyyy-MM-dd HH:mm:ss', 'Asia/Kolkata')!;
+// Only date (yyyy-MM-dd)
+const fromDateStr = this.datePipe.transform(fromDate, 'yyyy-MM-dd', 'Asia/Kolkata')!;
+const toDateStr = this.datePipe.transform(toDate, 'yyyy-MM-dd', 'Asia/Kolkata')!;
 
-  this.ocppService.getOcppLogs(this.charger.serial_no, this.loginId, fromDateStr, toDateStr)
-    .subscribe({
-      next: (res: any) => {
-        this.dataSourceLogs = res?.data || [];
-        this.dataSourceLogs = this.dataSourceLogs.map((log: any) => ({
-          ...log,
-          request: JSON.stringify(log.request || {}),
-          response: JSON.stringify(log.response || {})
-        }));
-      },
-      error: (err: any) => {
-        this.snackBar.open('Error fetching OCPP logs', 'Close', { duration: 3000 });
-        console.error(err);
-      }
-    });
+console.log('📅 Date Range:', fromDateStr, '→', toDateStr);
+
+this.ocppService.getOcppLogs(
+  this.charger.serial_no,
+  this.loginId,
+  fromDateStr,
+  toDateStr
+).subscribe({
+  next: (res: any) => {
+    console.log('✅ OCPP Logs Response:', res);
+
+    // If API returns array directly, use it
+    this.dataSourceLogs = Array.isArray(res) ? res : (res?.data || []);
+
+    this.dataSourceLogs = this.dataSourceLogs.map((log: any) => ({
+      ...log,
+      request: JSON.stringify(log.request || log.charger_request || {}),
+      response: JSON.stringify(log.response || log.charger_response || {})
+    }));
+  },
+  error: (err: any) => {
+    console.error('❌ OCPP Logs API Error:', err);
+    this.snackBar.open('Error fetching OCPP logs', 'Close', { duration: 3000 });
+  }
+});
+
 }
-
-
-
 
   loadAdditionalData() {
     const serialNo = this.charger.serial_no;
