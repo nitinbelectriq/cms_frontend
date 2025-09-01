@@ -42,41 +42,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
   styleUrls: ['./ocpp-details.component.scss']
 })
 export class ChargerDetailComponent implements OnInit {
-  displayedColumns: string[] = ['action', 'request', 'response', 'request_date'];
+ displayedColumnsLogs: string[] = ['action', 'request', 'response', 'request_date'];
   displayedColumns1: string[] = ['select', 'key', 'value', 'action'];
 
-  dataSource = [
-    {
-      action: 'Remote Start',
-      request: JSON.stringify({ connectorId: 1, idTag: 'USER123' }),
-      response: JSON.stringify({ status: 'Accepted', message: 'Charging started' }),
-      request_date: '2025-07-31 10:25:43'
-    },
-    {
-      action: 'Remote Stop',
-      request: JSON.stringify({ transactionId: 101 }),
-      response: JSON.stringify({ status: 'Accepted', message: 'Charging stopped successfully' }),
-      request_date: '2025-07-31 10:30:11'
-    },
-    {
-      action: 'Set Configuration',
-      request: JSON.stringify({ key: 'ConnectionTimeOut', value: '30' }),
-      response: JSON.stringify({ status: 'Accepted' }),
-      request_date: '2025-07-31 11:02:55'
-    },
-    {
-      action: 'Unlock Connector',
-      request: JSON.stringify({ connectorId: 2 }),
-      response: JSON.stringify({ status: 'Rejected', message: 'Connector already unlocked' }),
-      request_date: '2025-07-31 11:15:20'
-    },
-    {
-      action: 'Clear Cache',
-      request: JSON.stringify({}),
-      response: JSON.stringify({ status: 'Accepted' }),
-      request_date: '2025-07-31 11:35:05'
-    }
-  ];
+  dataSourceLogs: any[] = [];
+  dataSource: any[] = [];
+
 
   chargerId = '';
   charger: any;
@@ -110,7 +81,7 @@ loginId: string = '';
   private router = inject(Router);
   private datePipe = inject(DatePipe);
   private snackBar = inject(MatSnackBar);
-
+connectors: any[] = [];
   ngOnInit(): void {
     this.chargerId = this.route.snapshot.paramMap.get('id') || '';
     const loginId = localStorage.getItem('user_id') || '';
@@ -119,12 +90,41 @@ loginId: string = '';
     this.ocppService.getChargersDynamic(loginId, payload).subscribe((res) => {
       const found = res.data.find((item) => item.serial_no === this.chargerId);
       this.charger = found;
-
-      if (this.charger) {
-        this.loadAdditionalData();
-      }
+       if (this.charger) {
+      this.connectors = this.charger.connector_data || [];
+      this.loadAdditionalData();
+    }
     });
   }
+loadOcppLogs() {
+  if (!this.charger) return;
+
+  // Calculate current time and 1 hour ago
+  const toDate = new Date();
+  const fromDate = new Date(toDate.getTime() - 60 * 60 * 1000); // 1 hour ago
+
+  const fromDateStr = this.datePipe.transform(fromDate, 'yyyy-MM-dd HH:mm:ss', 'Asia/Kolkata')!;
+  const toDateStr = this.datePipe.transform(toDate, 'yyyy-MM-dd HH:mm:ss', 'Asia/Kolkata')!;
+
+  this.ocppService.getOcppLogs(this.charger.serial_no, this.loginId, fromDateStr, toDateStr)
+    .subscribe({
+      next: (res: any) => {
+        this.dataSourceLogs = res?.data || [];
+        this.dataSourceLogs = this.dataSourceLogs.map((log: any) => ({
+          ...log,
+          request: JSON.stringify(log.request || {}),
+          response: JSON.stringify(log.response || {})
+        }));
+      },
+      error: (err: any) => {
+        this.snackBar.open('Error fetching OCPP logs', 'Close', { duration: 3000 });
+        console.error(err);
+      }
+    });
+}
+
+
+
 
   loadAdditionalData() {
     const serialNo = this.charger.serial_no;
@@ -168,6 +168,7 @@ this.ocppService.getRFIDsByCpoId(cpoId).subscribe((res) => {
         this.charger.connector_data = res.data;
       }
     });
+    this.loadOcppLogs();
   }
 
   toggleActions(): void {
@@ -205,52 +206,92 @@ this.ocppService.getRFIDsByCpoId(cpoId).subscribe((res) => {
     }
   }
 }
+fetchActiveTransaction(connectorNo: number) {
+  if (!this.charger) return;
 
-  onMenuClick(menu: any) {
-    if (menu.name === 'Unlock Connector') {
-      this.selectedTask = menu.name;
-      //this.unlockConnector();
-    }
-    else if(menu.name === 'Remote Start'){
-      this.selectedTask= menu.name;
-     // this.remoteStart();
-    }
-    else if(menu.name === 'Remote Stop'){
-      this.selectedTask=menu.name;
+  const chargerId = this.charger.serial_no;
 
-      //this.remoteStop();
+  this.ocppService.getActiveTransactionId(chargerId, connectorNo).subscribe({
+    next: (res: any) => {
+      if (res) {
+        this.current_active_tranjection = res.data;
+      } else {
+        this.current_active_tranjection = '';
+        this.snackBar.open('No active transaction found', 'Close', { duration: 3000 });
+      }
+    },
+    error: (err: any) => {
+      this.snackBar.open('Error fetching active transaction', 'Close', { duration: 3000 });
+      console.error(err);
     }
-    else if(menu.name === 'Manage Configurations'){
-      this.selectedTask = menu.name;
+  });
+}
+
+
+  onMenuClick(menu: any, connectorNo?: number) {
+  if (menu.name === 'Unlock Connector') {
+    this.selectedTask = menu.name;
+  }
+  else if (menu.name === 'Remote Start') {
+    this.selectedTask = menu.name;
+  }
+  else if (menu.name === 'Remote Stop') {
+    this.selectedTask = menu.name;
+    if (connectorNo) {
+      this.fetchActiveTransaction(connectorNo);
     }
-    else if(menu.name=== 'Trigger Message'){
-      this.selectedTask = menu.name;
-    }
+  }
+  else if (menu.name === 'Manage Configurations') {
+    this.selectedTask = menu.name;
+  }
+  else if (menu.name === 'Trigger Message') {
+    this.selectedTask = menu.name;
+  }
      else {
       //this.selectedTask = menu.name;
     }
   }
 
 performTask(connectorNo: any, task: string) {
+  if (!this.charger) return;
+
   // Prevent Remote Start if no RFID is selected
   if (task === 'Remote Start' && !this.selectedRfid) {
     this.snackBar.open('Please select an RFID before performing Remote Start', 'Close', { duration: 3000 });
     return;
   }
 
-  let payload: any = {
-    connector: connectorNo,
-    command: task.toUpperCase().replace(' ', '_'),
-    user_id: this.loginId
-  };
-
-  // Add RFID details only for Remote Start
+  // Map task -> command
+  let command = '';
   if (task === 'Remote Start') {
-    payload.id_tag = this.selectedRfid!;
-    payload.id_tag_type = this.idTagType || 'tagType';
+    command = 'START_CHARGING';
+  } else if (task === 'Remote Stop') {
+    command = 'STOP_CHARGING';
+  } else {
+    this.snackBar.open(`No API implemented for ${task}`, 'Close', { duration: 3000 });
+    return;
   }
 
-  // Decide which API to call
+  const payload: any = {
+    command,
+    charger_id: this.charger.serial_no,          // dynamic
+    charger_sr_no: this.charger.serial_no,        // dynamic
+    connector: connectorNo,                       // dynamic
+    id_tag: this.selectedRfid,                    // dropdown value
+    id_tag_type: "RF_ID",
+    user_id: this.loginId,                        // dynamic user_id
+    command_source: "web",
+    device_id: null,
+    app_version: null,
+    os_version: null,
+    station_id: this.charger?.station_id || 1,    // dynamic
+    mobile_no: null,
+    vehicle_id: null,
+    vehicle_number: null
+  };
+
+  console.log('Perform Task Payload:', payload);
+
   if (task === 'Remote Start') {
     this.ocppService.startChargingStation(payload).subscribe({
       next: (res: any) => {
@@ -271,13 +312,8 @@ performTask(connectorNo: any, task: string) {
         console.error(err);
       }
     });
-  } else {
-    // fallback for other tasks
-    this.snackBar.open(`No API implemented for ${task}`, 'Close', { duration: 3000 });
   }
 }
-
-
 
 
   performCommand(command: string): void {
