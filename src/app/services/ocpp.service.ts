@@ -202,19 +202,35 @@ getLocalListVersion(payload: any): Observable<any> {
   }
 
 // inside OCPPService
-getOcppLogs(chargerId: string, loginId: string, fromDate: string = '', toDate: string = '') {
+getOcppLogs(
+  chargerId: string,
+  loginId: string,
+  fromDate: string = '',
+  toDate: string = ''
+) {
   const payload = {
     charger_id: chargerId,
     f_date: fromDate,
     t_date: toDate
   };
 
-  return this.http.post(
+  console.log('📤 Sending OCPP Logs Payload:', payload);
+
+  const headers = new HttpHeaders({
+    'Content-Type': 'application/json'
+  });
+
+  return this.http.post<any[]>(
     `${this.middleUrl}/charger/${loginId}`,
     payload,
-    { headers: this.getAuthHeaders() }
+    { headers }
   );
 }
+
+
+
+
+
 
 
   
