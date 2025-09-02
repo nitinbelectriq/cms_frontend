@@ -96,7 +96,7 @@
         <div *ngIf="expandedConnectors.has(conn.connector_no)" style="margin: 5px;">
 
           <div *ngIf="selectedTask" style="margin-top: 12px;">
-  <ng-container [ngSwitch]="selectedTask">
+            <ng-container [ngSwitch]="selectedTask">
 
     <div *ngSwitchCase="'Remote Start'">
           <div style="display: flex; flex-direction: column;">
@@ -106,12 +106,12 @@
               
             </mat-radio-group>
          <mat-form-field appearance="outline" class="custom-label">
-  <mat-select [(ngModel)]="selectedRfid" placeholder="Select RFID">
-    <mat-option *ngFor="let rfid of rfidList" [value]="rfid.rf_id_no">
-      {{ rfid.rf_id_no }}
-    </mat-option>
-  </mat-select>
-</mat-form-field>
+            <mat-select [(ngModel)]="selectedRfid" placeholder="Select RFID">
+               <mat-option *ngFor="let rfid of rfidList" [value]="rfid.rf_id_no">
+                {{ rfid.rf_id_no }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
 
             
           </div>
@@ -145,31 +145,45 @@
   </div>
 </div>
 
+        <!-- Reserve Now -->
+        <div *ngSwitchCase="'Reserve Now'">
+          <div style="display: flex; flex-direction: column;">
+            <mat-radio-group aria-label="Select an option">
+              <mat-label>Choose Id Tag Type</mat-label>
+              <mat-radio-button class="radio-btn" value="1">RFID</mat-radio-button>
+              
+            </mat-radio-group>
 
-    <!-- <div>
-      <div >
-        <div align="end" style="right:0; font-size: small; display: flex; justify-content: flex-end;">
-          <mat-card  style=" width: fit-content; padding: 8px; display: flex; flex-direction: column; gap: 4px;">
-             
-            <button mat-stroked-button class="btn-trigger" >METER VALUES </button>
-            <button mat-stroked-button class="btn-trigger"> BOOT NOTIFICATION </button>
-            <button mat-stroked-button class="btn-trigger">STATUS NOTIFICATION  </button>
-            <button mat-stroked-button class="btn-trigger"> DIAGNOSTICSSTATUS NOTIFICATION</button>
-            <button mat-stroked-button class="btn-trigger"> HEART BEAT</button>
-            <button mat-stroked-button  class="btn-trigger"> FIRMWARESTATUS NOTIFICATION</button>
+            <div class="remote-stop" style="margin-top: 10px;">
+         <mat-form-field appearance="outline" class="custom-label">
+          <mat-label>ID Tag</mat-label>
+            <mat-select [(ngModel)]="selectedRfid" placeholder="Select ID tag">
+               <mat-option *ngFor="let rfid of rfidList" [value]="rfid.rf_id_no">
+                {{ rfid.rf_id_no }}
+              </mat-option>
+            </mat-select>
+          </mat-form-field>
+
             
-
-          </mat-card>
-        </div>
-      </div>
+          
+            <!-- Expiry Date Picker -->
+            <mat-form-field appearance="outline" class="custom-label full-width">
+              <mat-label>Expiry Date</mat-label>
+              <input matInput [matDatepicker]="picker"  placeholder="Choose a date" />
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+          </div>
+          </div>
+          <div style="gap: 10px;" align="end">
+            <button mat-raised-button style="margin-right: 10px;" class="create">Perform</button>
+            <button mat-raised-button>Cancel</button>
+          </div>
       
-    
-      <div>
+        </div>
 
-      </div>
-    </div> -->
 
-     
+     <!-- manage configurations -->
       <div *ngSwitchCase="'Manage Configurations'">
         <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
           <div class="manage-config">
@@ -188,6 +202,7 @@
           </div>
 
         </div>
+
 
         <div class="tbl-mng-config">
           
@@ -232,18 +247,64 @@
 
         
       </div>
+
+      <!-- change availability -->
       
       <div *ngSwitchCase="'Change Availability'">
         <div>
           <mat-form-field appearance="outline" class="custom-label">
-            <mat-select [(ngModel)]="binding" placeholder="Select The Id">
-              <mat-option *ngFor="let item of list">
-              </mat-option>
+            <mat-select [(ngModel)]="binding" placeholder="Select Availability Type">
+              
+             
+                <mat-option value="operative"> Operative</mat-option>
+                <mat-option value="unoperative"> Inoperative </mat-option>
             </mat-select>
           </mat-form-field>
         </div>
+        <div style="gap: 10px;" align="end">
+            <button mat-raised-button style="margin-right: 10px;" class="create">Perform</button>
+            <button mat-raised-button>Cancel</button>
+        </div>
+        
 
       </div>
+
+      <!-- update firmware -->
+       <div *ngSwitchCase="'Update Firmware'">
+        <div class="update-firmware">
+          <mat-form-field appearance="outline" class="custom-label updatefirmware">
+              <mat-label>Location</mat-label>
+              <input matInput   placeholder="Choose a Location" />
+              
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="custom-label updatefirmware">
+              <mat-label> Retries (Integer)</mat-label>
+              <input matInput   placeholder="Choose a value" />
+              
+            </mat-form-field>
+
+            <mat-form-field appearance="outline" class="custom-label updatefirmware">
+              <mat-label> Retries Interval (Integer)</mat-label>
+              <input matInput   placeholder="Choose a value" />
+              
+            </mat-form-field>
+
+
+            <mat-form-field appearance="outline" class="custom-label updatefirmware">
+              <mat-label>Retrieve Date</mat-label>
+              <input matInput [matDatepicker]="picker"  placeholder="Choose a date" />
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
+        </div>
+
+        <div style="gap: 10px;" align="end">
+            <button mat-raised-button style="margin-right: 10px;" class="create">Perform</button>
+            <button mat-raised-button>Cancel</button>
+        </div>
+
+       </div>
 
       
       <!-- <div *ngSwitchDefault>output2</div> -->

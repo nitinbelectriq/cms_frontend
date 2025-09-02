@@ -11,7 +11,7 @@
       <mat-icon matSuffix>person</mat-icon>
     </mat-form-field>
 
-    <mat-form-field appearance="fill" class="full-width">
+    <mat-form-field appearance="outline" class="custom-label">
       <mat-label>Select Role</mat-label>
       <mat-select formControlName="role" (selectionChange)="onRoleChange($event.value)" [disabled]="!roles.length || loadingRoles">
         <mat-option *ngFor="let role of roles" [value]="role.id">

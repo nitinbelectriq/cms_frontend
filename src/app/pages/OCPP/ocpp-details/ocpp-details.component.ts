@@ -16,6 +16,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { MatDatepickerModule } from '@angular/material/datepicker';
 
 @Component({
   standalone: true,
@@ -35,7 +36,8 @@ import { MatSnackBar } from '@angular/material/snack-bar';
     MatInputModule,
     MatCheckboxModule,
     MatRadioModule,
-    MatRadioButton
+    MatRadioButton,
+    MatDatepickerModule
   ],
   providers: [DatePipe],
   templateUrl: './ocpp-details.component.html',
@@ -255,6 +257,15 @@ fetchActiveTransaction(connectorNo: number) {
     this.selectedTask = menu.name;
   }
   else if (menu.name === 'Trigger Message') {
+    this.selectedTask = menu.name;
+  }
+  else if(menu.name === 'Reserve Now'){
+    this.selectedTask = menu.name;
+  }
+  else if(menu.name === 'Change Availability'){
+    this.selectedTask = menu.name;
+  }
+  else if(menu.name === 'Update Firmware'){
     this.selectedTask = menu.name;
   }
      else {
