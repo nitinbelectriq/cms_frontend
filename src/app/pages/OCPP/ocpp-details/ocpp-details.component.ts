@@ -1,4 +1,6 @@
-import { Component, OnInit, inject } from '@angular/core';
+import { Component, OnInit, AfterViewInit, ViewChild, inject } from '@angular/core';
+import { MatPaginator } from '@angular/material/paginator';
+import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule, DatePipe } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -17,7 +19,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatRadioButton, MatRadioModule } from '@angular/material/radio';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { MatDatepickerModule } from '@angular/material/datepicker';
-
+import { MatPaginatorModule } from '@angular/material/paginator';
 @Component({
   standalone: true,
   selector: 'app-charger-detail',
@@ -37,17 +39,20 @@ import { MatDatepickerModule } from '@angular/material/datepicker';
     MatCheckboxModule,
     MatRadioModule,
     MatRadioButton,
-    MatDatepickerModule
+    MatDatepickerModule,
+    MatPaginatorModule
   ],
   providers: [DatePipe],
   templateUrl: './ocpp-details.component.html',
   styleUrls: ['./ocpp-details.component.scss']
 })
 export class ChargerDetailComponent implements OnInit {
- displayedColumnsLogs: string[] = ['action', 'request', 'response', 'request_date'];
+displayedColumnsLogs: string[] = ['action', 'request', 'response', 'request_date'];
   displayedColumns1: string[] = ['select', 'key', 'value', 'action'];
 
-  dataSourceLogs: any[] = [];
+  dataSourceLogs = new MatTableDataSource<any>([]);
+
+  @ViewChild(MatPaginator) paginator!: MatPaginator;
   dataSource: any[] = [];
 
 
@@ -84,59 +89,73 @@ loginId: string = '';
   private router = inject(Router);
   private datePipe = inject(DatePipe);
   private snackBar = inject(MatSnackBar);
+  
 connectors: any[] = [];
   ngOnInit(): void {
-    this.chargerId = this.route.snapshot.paramMap.get('id') || '';
-    const loginId = localStorage.getItem('user_id') || '';
-    const payload = { cpo_id: '', station_id: '' };
+  this.chargerId = this.route.snapshot.paramMap.get('id') || '';
   this.loginId = localStorage.getItem('user_id') || '';
-    this.ocppService.getChargersDynamic(loginId, payload).subscribe((res) => {
-      const found = res.data.find((item) => item.serial_no === this.chargerId);
-      this.charger = found;
-       if (this.charger) {
-      this.connectors = this.charger.connector_data || [];
+
+  const payload = { cpo_id: '', station_id: '' };
+
+  this.ocppService.getChargersDynamic(this.loginId, payload).subscribe((res) => {
+    const found = res.data.find((item: any) => item.serial_no === this.chargerId);
+    this.charger = found;
+
+    if (this.charger) {
+      // ✅ Initialize connectors with index-based numbering and placeholders for RFID
+      this.connectors = (this.charger.connector_data || []).map((c: any, index: number) => ({
+        ...c,
+        connector_no: index + 1,
+        rfids: [],
+        selectedRfid: null,
+      }));
+
+      // Load logs and connector-specific RFIDs
+      this.loadOcppLogs();
+      this.connectors.forEach((connector) => {
+        this.loadConnectorRFIDs(connector);
+      });
+
+      // Load other data if required
       this.loadAdditionalData();
     }
+  });
+}
+
+ngAfterViewInit() {
+    this.dataSourceLogs.paginator = this.paginator;
+  }
+
+  loadOcppLogs() {
+    if (!this.charger) return;
+
+    const toDate = new Date();
+    const fromDate = new Date(toDate);
+    fromDate.setDate(toDate.getDate() - 1);
+
+    const fromDateStr = this.datePipe.transform(fromDate, 'yyyy-MM-dd', 'Asia/Kolkata')!;
+    const toDateStr = this.datePipe.transform(toDate, 'yyyy-MM-dd', 'Asia/Kolkata')!;
+
+    console.log('📅 Date Range:', fromDateStr, '→', toDateStr);
+
+    this.ocppService.getOcppLogs(this.charger.serial_no, this.loginId, fromDateStr, toDateStr).subscribe({
+      next: (res: any) => {
+        console.log('✅ OCPP Logs Response:', res);
+
+        const logs = Array.isArray(res) ? res : (res?.data || []);
+
+        this.dataSourceLogs.data = logs.map((log: any) => ({
+          ...log,
+          request: JSON.stringify(log.request || log.charger_request || {}),
+          response: JSON.stringify(log.response || log.charger_response || {})
+        }));
+      },
+      error: (err: any) => {
+        console.error('❌ OCPP Logs API Error:', err);
+        this.snackBar.open('Error fetching OCPP logs', 'Close', { duration: 3000 });
+      }
     });
   }
-loadOcppLogs() {
-  if (!this.charger) return;
-
- const toDate = new Date();
-const fromDate = new Date(toDate);
-fromDate.setDate(toDate.getDate() - 1);
-
-// Only date (yyyy-MM-dd)
-const fromDateStr = this.datePipe.transform(fromDate, 'yyyy-MM-dd', 'Asia/Kolkata')!;
-const toDateStr = this.datePipe.transform(toDate, 'yyyy-MM-dd', 'Asia/Kolkata')!;
-
-console.log('📅 Date Range:', fromDateStr, '→', toDateStr);
-
-this.ocppService.getOcppLogs(
-  this.charger.serial_no,
-  this.loginId,
-  fromDateStr,
-  toDateStr
-).subscribe({
-  next: (res: any) => {
-    console.log('✅ OCPP Logs Response:', res);
-
-    // If API returns array directly, use it
-    this.dataSourceLogs = Array.isArray(res) ? res : (res?.data || []);
-
-    this.dataSourceLogs = this.dataSourceLogs.map((log: any) => ({
-      ...log,
-      request: JSON.stringify(log.request || log.charger_request || {}),
-      response: JSON.stringify(log.response || log.charger_response || {})
-    }));
-  },
-  error: (err: any) => {
-    console.error('❌ OCPP Logs API Error:', err);
-    this.snackBar.open('Error fetching OCPP logs', 'Close', { duration: 3000 });
-  }
-});
-
-}
 
   loadAdditionalData() {
     const serialNo = this.charger.serial_no;
@@ -182,6 +201,38 @@ this.ocppService.getRFIDsByCpoId(cpoId).subscribe((res) => {
     });
     this.loadOcppLogs();
   }
+// ✅ Fetch RFID list for each connector individually
+onIdTagTypeChange(connector: any) {
+  if (connector.selectedIdTagType === 'rfid') {
+    this.loadConnectorRFIDs(connector);
+  } else {
+    connector.rfids = [];
+    connector.selectedRfid = null;
+  }
+}
+
+loadConnectorRFIDs(connector: any) {
+  if (connector.rfids && connector.rfids.length > 0) {
+    return; // already loaded once
+  }
+
+  const cpoId = this.charger?.cpo_id || '1';
+
+  this.ocppService.getRFIDsByCpoId(cpoId).subscribe({
+    next: (res) => {
+      const rfidList = res?.data || [];
+      connector.rfids = rfidList;
+      connector.selectedRfid = null; // don’t preselect, let user choose
+    },
+    error: (err) => {
+      console.error("Failed to load RFIDs:", err);
+      connector.rfids = [];
+      connector.selectedRfid = null;
+    }
+  });
+}
+
+
 
   toggleActions(): void {
     this.showActions = !this.showActions;
@@ -273,16 +324,22 @@ fetchActiveTransaction(connectorNo: number) {
     }
   }
 
-performTask(connectorNo: any, task: string) {
+performTask(connectorNo: number, task: string) {
   if (!this.charger) return;
 
-  // Prevent Remote Start if no RFID is selected
-  if (task === 'Remote Start' && !this.selectedRfid) {
-    this.snackBar.open('Please select an RFID before performing Remote Start', 'Close', { duration: 3000 });
-    return;
-  }
+  // ✅ Get connector object
+  const connector = this.connectors.find(c => c.connector_no === connectorNo);
 
-  // Map task -> command
+  // Prevent Remote Start if no RFID is selected for this connector
+  // if (task === 'Remote Start' && !connector?.selectedRfid) {
+  //   this.snackBar.open(
+  //     `Please select an RFID for Connector ${connectorNo} before Remote Start`,
+  //     'Close',
+  //     { duration: 3000 }
+  //   );
+  //   return;
+  // }
+
   let command = '';
   if (task === 'Remote Start') {
     command = 'START_CHARGING';
@@ -295,17 +352,17 @@ performTask(connectorNo: any, task: string) {
 
   const payload: any = {
     command,
-    charger_id: this.charger.serial_no,          // dynamic
-    charger_sr_no: this.charger.serial_no,        // dynamic
-    connector: connectorNo,                       // dynamic
-    id_tag: this.selectedRfid,                    // dropdown value
+    charger_id: this.charger.serial_no,
+    charger_sr_no: this.charger.serial_no,
+    connector: connectorNo,
+    id_tag: connector?.selectedRfid || null,
     id_tag_type: "RF_ID",
-    user_id: this.loginId,                        // dynamic user_id
+    user_id: this.loginId,
     command_source: "web",
     device_id: null,
     app_version: null,
     os_version: null,
-    station_id: this.charger?.station_id || 1,    // dynamic
+    station_id: this.charger?.station_id || 1,
     mobile_no: null,
     vehicle_id: null,
     vehicle_number: null
@@ -316,25 +373,36 @@ performTask(connectorNo: any, task: string) {
   if (task === 'Remote Start') {
     this.ocppService.startChargingStation(payload).subscribe({
       next: (res: any) => {
-        this.snackBar.open(res?.message || `${task} command sent successfully!`, 'Close', { duration: 3000 });
+        this.snackBar.open(res?.message, 'Close', {
+          duration: 3000,
+          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+        });
       },
       error: (err: any) => {
-        this.snackBar.open(`Failed to send ${task} command`, 'Close', { duration: 3000 });
-        console.error(err);
+        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+          duration: 3000,
+          panelClass: ['snackbar-error']
+        });
       }
     });
   } else if (task === 'Remote Stop') {
     this.ocppService.stopChargingStation(payload).subscribe({
       next: (res: any) => {
-        this.snackBar.open(res?.message || `${task} command sent successfully!`, 'Close', { duration: 3000 });
+        this.snackBar.open(res?.message, 'Close', {
+          duration: 3000,
+          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+        });
       },
       error: (err: any) => {
-        this.snackBar.open(`Failed to send ${task} command`, 'Close', { duration: 3000 });
-        console.error(err);
+        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+          duration: 3000,
+          panelClass: ['snackbar-error']
+        });
       }
     });
   }
 }
+
 
 
   performCommand(command: string): void {
@@ -575,82 +643,6 @@ performTask(connectorNo: any, task: string) {
 
   }
 
-  // remoteStart(){
-  //   if (!this.charger) return;
-  //   const payload = {
- 
-  //     command: "START_CHARGING",
-  //     charger_id: this.charger.charger_id,
-  //     charger_sr_no: this.charger.serial_no,
-  //     connector: 1,
-  //     id_tag: "20211227173626",
-  //     id_tag_type: "tagType",
-  //     user_id: 63,
-  //     command_source: "web",
-  //     device_id: null,
-  //     app_version: null,
-  //     os_version: null,
-  //     station_id: 1,
-  //     mobile_no: null,
-  //     vehicle_id: null,
-  //     vehicle_number: null
-  //   }
-
-  //   console.log('this payload :', payload);
-  //   this.ocppService.startChargingStation(payload).subscribe({
-  //     next: (res: any) =>{
-  //       this.snackBar.open(res?.message, 'Close', {
-  //         duration: 3000,
-  //         panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-  //     });
-  //   },
-  //     error: (err: any) => {
-  //       this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-  //         duration: 3000,
-  //         panelClass: ['snackbar-error']
-  //       });
-  //     }
-  //   });
-  // }
-
-  // remoteStop(){
-  //     if (!this.charger) return;
-  //   const payload = {
- 
-  //     command: "STOP_CHARGING",
-  //     charger_id: this.charger.charger_id,
-  //     charger_sr_no: this.charger.serial_no,
-  //     connector: 1,
-  //     id_tag: "20211227173626",
-  //     id_tag_type: "tagType",
-  //     user_id: 63,
-  //     command_source: "web",
-  //     device_id: null,
-  //     app_version: null,
-  //     os_version: null,
-  //     station_id: 1,
-  //     mobile_no: null,
-  //     vehicle_id: null,
-  //     vehicle_number: null
-  //   }
-
-  //   console.log('this payload :', payload);
-  //   this.ocppService.stopChargingStation(payload).subscribe({
-  //     next: (res: any) =>{
-  //       this.snackBar.open(res?.message, 'Close', {
-  //         duration: 3000,
-  //         panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-  //     });
-  //   },
-  //     error: (err: any) => {
-  //       this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-  //         duration: 3000,
-  //         panelClass: ['snackbar-error']
-  //       });
-  //     }
-  //   });
-
-  // }
 
   getTriggerMessage(){
     if(!this.charger){
@@ -777,6 +769,67 @@ performTask(connectorNo: any, task: string) {
   }
 }
 
+selectedAvailability: string = 'Operative'; // default option
 
+changeAvailability(connectorNo: number = 1) {
+  if (!this.charger) return;
 
+  const payload = {
+    command: "CHANGE_AVAILABILITY",
+    charger_id: this.charger.serial_no,
+    charger_sr_no: this.charger.serial_no,
+    connector: connectorNo,
+    type: this.selectedAvailability   // <-- bound from dropdown
+  };
+
+  console.log('Change Availability Payload:', payload);
+
+  this.ocppService.changeAvailability(payload).subscribe({
+    next: (res: any) => {
+      this.snackBar.open(res?.message, 'Close', {
+        duration: 3000,
+        panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+      });
+    },
+    error: (err: any) => {
+      this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+        duration: 3000,
+        panelClass: ['snackbar-error']
+      });
+    }
+  });
+}
+
+getReserveNow(connectorNo: number = 1) {
+  if (!this.charger) return;
+
+  const payload = {
+       "command": "RESERVE_NOW",
+      "charger_id": "TEST001",
+      "charger_sr_no": "TEST001",  
+      "charger_connector":1,  
+      "charger_idtag":"1234",
+      "charger_parentIdTag":"0",
+      "reservation_id":"1234",
+      "charger_expiry_date":"2025-07-20T16:26:56.350Z" // <-- bound from dropdown
+  };
+
+  console.log('Change Availability Payload:', payload);
+
+  this.ocppService.changeAvailability(payload).subscribe({
+    next: (res: any) => {
+      this.snackBar.open(res?.message, 'Close', {
+        duration: 3000,
+        panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+      });
+    },
+    error: (err: any) => {
+      this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+        duration: 3000,
+        panelClass: ['snackbar-error']
+      });
+    }
+  });
+
+}
 }

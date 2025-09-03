@@ -88,10 +88,11 @@
           </mat-icon>
           <strong>Connector {{ conn.connector_no }}:</strong> {{ conn.connector_type_name }}
         </div>
-          <div (click)="toggleExpand(conn.connector_no)">
-            <mat-icon *ngIf="!expandedConnectors.has(conn.connector_no)">expand_more</mat-icon>
-            <mat-icon *ngIf="expandedConnectors.has(conn.connector_no)">expand_less</mat-icon>
-          </div>
+         <div (click)="toggleExpand(conn.connector_no); loadConnectorRFIDs(conn)">
+  <mat-icon *ngIf="!expandedConnectors.has(conn.connector_no)">expand_more</mat-icon>
+  <mat-icon *ngIf="expandedConnectors.has(conn.connector_no)">expand_less</mat-icon>
+</div>
+
         </div>
         <div *ngIf="expandedConnectors.has(conn.connector_no)" style="margin: 5px;">
 
@@ -99,29 +100,41 @@
             <ng-container [ngSwitch]="selectedTask">
 
     <div *ngSwitchCase="'Remote Start'">
-          <div style="display: flex; flex-direction: column;">
-            <mat-radio-group aria-label="Select an option">
-              <mat-label>Choose Id Tag Type</mat-label>
-              <mat-radio-button class="radio-btn" value="1">RFID</mat-radio-button>
-              
-            </mat-radio-group>
-         <mat-form-field appearance="outline" class="custom-label">
-            <mat-select [(ngModel)]="selectedRfid" placeholder="Select RFID">
-               <mat-option *ngFor="let rfid of rfidList" [value]="rfid.rf_id_no">
-                {{ rfid.rf_id_no }}
-              </mat-option>
-            </mat-select>
-          </mat-form-field>
+  <div style="display: flex; flex-direction: column; gap: 10px;">
+    
+    <!-- Radio group for Id Tag Type -->
+    <mat-label>Choose Id Tag Type</mat-label>
+    <mat-radio-group [(ngModel)]="conn.selectedIdTagType" aria-label="Select Id Tag Type"
+                     (change)="onIdTagTypeChange(conn)">
+      <mat-radio-button class="radio-btn" value="rfid">RFID</mat-radio-button>
+      <!-- Later you can add more options if needed -->
+    </mat-radio-group>
 
-            
-          </div>
+    <!-- RFID Dropdown - only visible if user selects RFID -->
+    <ng-container *ngIf="conn.selectedIdTagType === 'rfid'">
+      <mat-form-field appearance="outline" class="full-width">
+        <mat-label>Select RFID for Connector {{ conn.connector_no }}</mat-label>
+        <mat-select [(ngModel)]="conn.selectedRfid">
+          <mat-option *ngFor="let r of conn.rfids" [value]="r.rf_id_no">
+            {{ r.rf_id_no }}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
 
-          <div style="gap: 10px;" align="end">
-            <button mat-raised-button (click)="performTask(conn.connector_no, selectedTask)" style="margin-right: 10px;" class="create">Perform</button>
-            <button mat-raised-button>Cancel</button>
-          </div>
-      
-    </div>
+  </div>
+
+  <div style="gap: 10px;" align="end">
+    <button mat-raised-button 
+            (click)="performTask(conn.connector_no, selectedTask)" 
+            style="margin-right: 10px;" 
+            class="create">
+      Perform
+    </button>
+    <button mat-raised-button>Cancel</button>
+  </div>
+</div>
+
 
     <div *ngSwitchCase="'Remote Stop'">
   <div class="remote-stop">
@@ -250,24 +263,25 @@
 
       <!-- change availability -->
       
-      <div *ngSwitchCase="'Change Availability'">
-        <div>
-          <mat-form-field appearance="outline" class="custom-label">
-            <mat-select [(ngModel)]="binding" placeholder="Select Availability Type">
-              
-             
-                <mat-option value="operative"> Operative</mat-option>
-                <mat-option value="unoperative"> Inoperative </mat-option>
-            </mat-select>
-          </mat-form-field>
-        </div>
-        <div style="gap: 10px;" align="end">
-            <button mat-raised-button style="margin-right: 10px;" class="create">Perform</button>
-            <button mat-raised-button>Cancel</button>
-        </div>
-        
+     <div *ngSwitchCase="'Change Availability'">
+  <div>
+    <mat-form-field appearance="outline" class="custom-label">
+      <mat-select [(ngModel)]="selectedAvailability" placeholder="Select Availability Type">
+        <mat-option value="Operative">Operative</mat-option>
+        <mat-option value="Inoperative">Inoperative</mat-option>
+      </mat-select>
+    </mat-form-field>
+  </div>
 
-      </div>
+  <div style="gap: 10px;" align="end">
+    <button mat-raised-button style="margin-right: 10px;" class="create" 
+            (click)="changeAvailability(1)">
+      Perform
+    </button>
+    <button mat-raised-button>Cancel</button>
+  </div>
+</div>
+
 
       <!-- update firmware -->
        <div *ngSwitchCase="'Update Firmware'">
@@ -374,33 +388,7 @@
     </div>
   
 </mat-card>
-<!-- 
-<table mat-table [dataSource]="dataSourceLogs" class="mat-elevation-z8">
 
-  <ng-container matColumnDef="action">
-    <th mat-header-cell *matHeaderCellDef> Action </th>
-    <td mat-cell *matCellDef="let element"> {{element.action}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="request">
-    <th mat-header-cell *matHeaderCellDef> Request </th>
-    <td mat-cell *matCellDef="let element"> {{element.request}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="response">
-    <th mat-header-cell *matHeaderCellDef> Response </th>
-    <td mat-cell *matCellDef="let element"> {{element.response}} </td>
-  </ng-container>
-
-  <ng-container matColumnDef="request_date">
-    <th mat-header-cell *matHeaderCellDef> Request Date </th>
-    <td mat-cell *matCellDef="let element"> {{element.request_date}} </td>
-  </ng-container>
-
-  <tr mat-header-row *matHeaderRowDef="displayedColumnsLogs"></tr>
-  <tr mat-row *matRowDef="let row; columns: displayedColumnsLogs;"></tr>
-</table>
- -->
 <div class="table-container mat-elevation-z8">
   <table mat-table [dataSource]="dataSourceLogs" class="mat-table-custom">
 
@@ -432,11 +420,17 @@
     <ng-container matColumnDef="request_date">
       <th mat-header-cell *matHeaderCellDef> Request Date </th>
       <td mat-cell *matCellDef="let element" data-label="Request Date">
-        {{ element.request_date }}
+        {{ element.request_date | date:'short' }}
       </td>
     </ng-container>
 
     <tr mat-header-row *matHeaderRowDef="displayedColumnsLogs"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumnsLogs;"></tr>
   </table>
+
+  <!-- ✅ Pagination -->
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 50]"
+                 showFirstLastButtons>
+  </mat-paginator>
 </div>
+
