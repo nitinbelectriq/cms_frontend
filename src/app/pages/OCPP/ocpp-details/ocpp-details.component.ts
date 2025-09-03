@@ -218,11 +218,13 @@ loadConnectorRFIDs(connector: any) {
 
   const cpoId = this.charger?.cpo_id || '1';
 
-  this.ocppService.getRFIDsByCpoId(cpoId).subscribe({
+   this.ocppService.getRFIDsByCpoId(cpoId).subscribe({
     next: (res) => {
       const rfidList = res?.data || [];
       connector.rfids = rfidList;
-      connector.selectedRfid = null; // don’t preselect, let user choose
+
+      // ✅ Preselect first RFID if available
+      connector.selectedRfid = rfidList.length > 0 ? rfidList[0].rf_id_no : null;
     },
     error: (err) => {
       console.error("Failed to load RFIDs:", err);
@@ -325,83 +327,38 @@ fetchActiveTransaction(connectorNo: number) {
   }
 
 performTask(connectorNo: number, task: string) {
-  if (!this.charger) return;
-
-  // ✅ Get connector object
   const connector = this.connectors.find(c => c.connector_no === connectorNo);
+  if (!connector) return;
 
-  // Prevent Remote Start if no RFID is selected for this connector
-  // if (task === 'Remote Start' && !connector?.selectedRfid) {
-  //   this.snackBar.open(
-  //     `Please select an RFID for Connector ${connectorNo} before Remote Start`,
-  //     'Close',
-  //     { duration: 3000 }
-  //   );
-  //   return;
-  // }
-
-  let command = '';
-  if (task === 'Remote Start') {
-    command = 'START_CHARGING';
-  } else if (task === 'Remote Stop') {
-    command = 'STOP_CHARGING';
-  } else {
-    this.snackBar.open(`No API implemented for ${task}`, 'Close', { duration: 3000 });
-    return;
-  }
-
-  const payload: any = {
-    command,
+  let payload: any = {
     charger_id: this.charger.serial_no,
     charger_sr_no: this.charger.serial_no,
     connector: connectorNo,
-    id_tag: connector?.selectedRfid || null,
-    id_tag_type: "RF_ID",
     user_id: this.loginId,
     command_source: "web",
     device_id: null,
     app_version: null,
     os_version: null,
-    station_id: this.charger?.station_id || 1,
+    station_id: this.charger.station_id || 1,
     mobile_no: null,
     vehicle_id: null,
     vehicle_number: null
   };
 
-  console.log('Perform Task Payload:', payload);
-
   if (task === 'Remote Start') {
-    this.ocppService.startChargingStation(payload).subscribe({
-      next: (res: any) => {
-        this.snackBar.open(res?.message, 'Close', {
-          duration: 3000,
-          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-        });
-      },
-      error: (err: any) => {
-        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-          duration: 3000,
-          panelClass: ['snackbar-error']
-        });
-      }
-    });
+    payload.command = 'START_CHARGING';
+    payload.id_tag = connector.selectedRfid;
+    payload.id_tag_type = "RF_ID";
+    this.ocppService.startChargingStation(payload).subscribe(res => console.log(res));
   } else if (task === 'Remote Stop') {
-    this.ocppService.stopChargingStation(payload).subscribe({
-      next: (res: any) => {
-        this.snackBar.open(res?.message, 'Close', {
-          duration: 3000,
-          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-        });
-      },
-      error: (err: any) => {
-        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-          duration: 3000,
-          panelClass: ['snackbar-error']
-        });
-      }
-    });
+    const transactionId = this.id_of_active_transaction || this.current_active_tranjection;
+    if (!transactionId) return;
+    payload.command = 'STOP_CHARGING';
+    payload.transaction_id = transactionId;
+    this.ocppService.stopChargingStation(payload).subscribe(res => console.log(res));
   }
 }
+
 
 
 
@@ -566,82 +523,88 @@ performTask(connectorNo: number, task: string) {
     }
   }
  
-  remoteStart(){
-    if (!this.charger) return;
-    const payload = {
- 
-      command: "START_CHARGING",
-      charger_id: this.charger.charger_id,
-      charger_sr_no: this.charger.serial_no,
-      connector: 1,
-      id_tag: "20211227173626",
-      id_tag_type: "tagType",
-      user_id: this.loginId,
-      command_source: "web",
-      device_id: null,
-      app_version: null,
-      os_version: null,
-      station_id: 1,
-      mobile_no: null,
-      vehicle_id: null,
-      vehicle_number: null
-    }
+remoteStart(connectorNo: number = 1) {
+  const connector = this.connectors.find(c => c.connector_no === connectorNo);
+  if (!connector) return;
 
-    console.log('this payload :', payload);
-    this.ocppService.startChargingStation(payload).subscribe({
-      next: (res: any) =>{
-        this.snackBar.open(res?.message, 'Close', {
-          duration: 3000,
-          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-      });
-    },
-      error: (err: any) => {
-        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-          duration: 3000,
-          panelClass: ['snackbar-error']
-        });
-      }
-    });
+  const payload = {
+    command: "START_CHARGING",
+    charger_id: this.charger.serial_no,
+    charger_sr_no: this.charger.serial_no,
+    connector: connectorNo,
+    id_tag: connector.selectedRfid,  // ✅ Required for Remote Start
+    id_tag_type: "RF_ID",
+    user_id: this.loginId,
+    command_source: "web",
+    device_id: null,
+    app_version: null,
+    os_version: null,
+    station_id: this.charger.station_id || 1,
+    mobile_no: null,
+    vehicle_id: null,
+    vehicle_number: null
+  };
+
+  this.ocppService.startChargingStation(payload).subscribe({
+    next: (res: any) => { /* handle response */ },
+    error: (err: any) => { /* handle error */ }
+  });
+}
+
+
+
+remoteStop(connectorNo: number = 1) {
+  if (!this.charger) return;
+
+  const connector = this.connectors.find(c => c.connector_no === connectorNo);
+  if (!connector) {
+    this.snackBar.open(`Connector ${connectorNo} not found`, 'Close', { duration: 3000 });
+    return;
   }
 
-  remoteStop(){
-      if (!this.charger) return;
-    const payload = {
- 
-      command: "STOP_CHARGING",
-      charger_id: this.charger.charger_id,
-      charger_sr_no: this.charger.serial_no,
-      connector: 1,
-      id_tag: "20211227173626",
-      id_tag_type: "tagType",
-      user_id: this.loginId,
-      command_source: "web",
-      device_id: null,
-      app_version: null,
-      os_version: null,
-      station_id: 1,
-      mobile_no: null,
-      vehicle_id: null,
-      vehicle_number: null
-    }
+  // Use either user input or API value
+  const transactionId = this.id_of_active_transaction || this.current_active_tranjection;
+  if (!transactionId) {
+    this.snackBar.open(`No active transaction found for Connector ${connectorNo}`, 'Close', { duration: 3000 });
+    return;
+  }
 
-    console.log('this payload :', payload);
-    this.ocppService.stopChargingStation(payload).subscribe({
-      next: (res: any) =>{
-        this.snackBar.open(res?.message, 'Close', {
-          duration: 3000,
-          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+  const payload = {
+    command: "STOP_CHARGING",
+    charger_id: this.charger.serial_no,
+    charger_sr_no: this.charger.serial_no,
+    connector: connectorNo,
+    transaction_id: transactionId,  // ✅ Correct property
+    user_id: this.loginId,
+    command_source: "web",
+    device_id: null,
+    app_version: null,
+    os_version: null,
+    station_id: this.charger.station_id || 1,
+    mobile_no: null,
+    vehicle_id: null,
+    vehicle_number: null
+  };
+
+  console.log('Remote Stop Payload:', payload);
+
+  this.ocppService.stopChargingStation(payload).subscribe({
+    next: (res: any) => {
+      this.snackBar.open(res?.message, 'Close', {
+        duration: 3000,
+        panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
       });
     },
-      error: (err: any) => {
-        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-          duration: 3000,
-          panelClass: ['snackbar-error']
-        });
-      }
-    });
+    error: (err: any) => {
+      this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+        duration: 3000,
+        panelClass: ['snackbar-error']
+      });
+    }
+  });
+}
 
-  }
+
 
 
   getTriggerMessage(){
