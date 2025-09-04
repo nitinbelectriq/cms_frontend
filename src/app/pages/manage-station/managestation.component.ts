@@ -110,13 +110,13 @@ export class ManagestationComponent implements OnInit, AfterViewInit {
           stationcode: item.code,
           chargercount: item.total_chargers,
           address: `${item.address1 || ''}, ${item.address2 || ''}, ${item.city_name || ''}, ${item.state_name || ''}, ${item.country_name || ''} - ${item.PIN || ''}`,
-          status: item.status === 'Y',
+          status: item.status,
           raw: item
         }));
 
         this.dataSource.data = stations;
         this.dataSource.filterPredicate = (data: any, filter: string) => {
-          const combined = `${data.stationName} ${data.contactperson} ${data.cpo} ${data.stationcode}`.toLowerCase();
+          const combined = `${data.stationName} ${data.contactperson} ${data.cpo} ${data.address} ${data.status} ${data.chargercount} ${data.stationcode}`.toLowerCase();
           return combined.includes(filter);
         };
       },
