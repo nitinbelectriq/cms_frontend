@@ -10,12 +10,14 @@ import { routes } from './app/app.routes';
 // Import Angular Material Datepicker and Native Date module
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
+import { HashLocationStrategy, LocationStrategy } from '@angular/common';
 
 bootstrapApplication(AppComponent, {
   providers: [
     provideRouter(routes),
     provideHttpClient(withFetch()),
     provideAnimations(),
-    importProvidersFrom(MatDatepickerModule, MatNativeDateModule)
+    importProvidersFrom(MatDatepickerModule, MatNativeDateModule),
+      { provide: LocationStrategy, useClass: HashLocationStrategy } 
   ]
 });

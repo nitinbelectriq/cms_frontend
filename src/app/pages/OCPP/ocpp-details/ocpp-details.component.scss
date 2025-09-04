@@ -330,3 +330,22 @@
   transition: 0.3s;
 }
 
+
+
+
+.table-container {
+  max-height: 400px; /* or whatever height you want */
+  overflow-y: auto;  /* enable vertical scroll */
+  margin-top: 20px;
+}
+
+table {
+  width: 100%;
+}
+
+.mat-header-row {
+  position: sticky;
+  top: 0;
+  background: #fafafa;
+  z-index: 2;
+}
