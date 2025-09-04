@@ -114,7 +114,7 @@
     <ng-container *ngIf="conn.selectedIdTagType === 'rfid'">
       <mat-form-field appearance="outline" class="full-width">
         <mat-label>Select RFID for Connector {{ conn.connector_no }}</mat-label>
-        <mat-select [(ngModel)]="conn.selectedRfid">
+        <mat-select [(ngModel)]="rfidselect">
           <mat-option *ngFor="let r of conn.rfids" [value]="r.rf_id_no">
             {{ r.rf_id_no }}
           </mat-option>

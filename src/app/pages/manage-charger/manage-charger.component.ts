@@ -132,10 +132,13 @@ export class ManageChargersComponent implements OnInit, AfterViewInit {
           clientName: 'Belectriq'
         }));
         this.dataSource.data = transformedData;
+        //console.log(this.dataSource.data)
 
-        this.dataSource.filterPredicate = (data: Charger, filter: string) => {
-             const combined = `${data.clientName} ${data.modelName} ${data.id} ${data.name} ${this.mapStatus(data.status)}`.toLowerCase();
+        this.dataSource.filterPredicate = (data: any, filter: string) => {
+             const combined = `${data.clientName} ${data.model_name} ${data.id} ${data.serial_no} ${data.name} ${this.mapStatus(data.status)}`.toLowerCase();
+               console.log(data.serial_no, data.name);
                 return combined.includes(filter);
+                
            };
         console.log(transformedData);
 

@@ -74,6 +74,8 @@ idTagType: string | null = null;       // for radio button
 selectedRfid: string | null = null; // will hold the rf_id_no
 selectTrigger='';
 
+rfidselect='';
+
 
   menus: any[] = [];
   availabilityTypes: any[] = [];
@@ -335,6 +337,7 @@ performTask(connectorNo: number, task: string) {
     });
     return;
   }
+  console.log(connector);
 
   let payload: any = {
     charger_id: this.charger.serial_no,
@@ -362,6 +365,7 @@ performTask(connectorNo: number, task: string) {
 
     payload.command = "START_CHARGING";
     payload.id_tag = connector.selectedRfid;
+    payload.id_tag = this.rfidselect;
     payload.id_tag_type = "RF_ID";
 
     this.ocppService.startChargingStation(payload).subscribe({
