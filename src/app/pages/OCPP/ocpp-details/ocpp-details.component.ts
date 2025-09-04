@@ -328,7 +328,13 @@ fetchActiveTransaction(connectorNo: number) {
 
 performTask(connectorNo: number, task: string) {
   const connector = this.connectors.find(c => c.connector_no === connectorNo);
-  if (!connector) return;
+  if (!connector) {
+    this.snackBar.open(`Connector ${connectorNo} not found.`, "Close", {
+      duration: 3000,
+      panelClass: ["snackbar-error"]
+    });
+    return;
+  }
 
   let payload: any = {
     charger_id: this.charger.serial_no,
@@ -345,19 +351,66 @@ performTask(connectorNo: number, task: string) {
     vehicle_number: null
   };
 
-  if (task === 'Remote Start') {
-    payload.command = 'START_CHARGING';
+  if (task === "Remote Start") {
+    if (!connector.selectedRfid) {
+      this.snackBar.open("Please select an RFID before starting.", "Close", {
+        duration: 3000,
+        panelClass: ["snackbar-error"]
+      });
+      return;
+    }
+
+    payload.command = "START_CHARGING";
     payload.id_tag = connector.selectedRfid;
     payload.id_tag_type = "RF_ID";
-    this.ocppService.startChargingStation(payload).subscribe(res => console.log(res));
-  } else if (task === 'Remote Stop') {
+
+    this.ocppService.startChargingStation(payload).subscribe({
+      next: res => {
+        console.log("Remote Start response:", res);
+        this.snackBar.open(res?.message || "Start command sent.", "Close", {
+          duration: 3000,
+          panelClass: ["snackbar-success"]
+        });
+      },
+      error: err => {
+        this.snackBar.open(`Error: ${err?.message || err}`, "Close", {
+          duration: 3000,
+          panelClass: ["snackbar-error"]
+        });
+      }
+    });
+
+  } else if (task === "Remote Stop") {
     const transactionId = this.id_of_active_transaction || this.current_active_tranjection;
-    if (!transactionId) return;
-    payload.command = 'STOP_CHARGING';
+    if (!transactionId) {
+      this.snackBar.open("No active transaction found to stop.", "Close", {
+        duration: 3000,
+        panelClass: ["snackbar-error"]
+      });
+      return;
+    }
+
+    payload.command = "STOP_CHARGING";
     payload.transaction_id = transactionId;
-    this.ocppService.stopChargingStation(payload).subscribe(res => console.log(res));
+
+    this.ocppService.stopChargingStation(payload).subscribe({
+      next: res => {
+        console.log("Remote Stop response:", res);
+        this.snackBar.open(res?.message || "Stop command sent.", "Close", {
+          duration: 3000,
+          panelClass: ["snackbar-success"]
+        });
+      },
+      error: err => {
+        this.snackBar.open(`Error: ${err?.message || err}`, "Close", {
+          duration: 3000,
+          panelClass: ["snackbar-error"]
+        });
+      }
+    });
   }
 }
+
 
 
 
