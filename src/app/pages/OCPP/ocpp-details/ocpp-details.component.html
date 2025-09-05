@@ -157,6 +157,20 @@
     <button mat-raised-button>Cancel</button>
   </div>
 </div>
+<!-- Unlock Connector -->
+<div *ngSwitchCase="'Unlock Connector'">
+  <p>Unlock Connector {{ conn.connector_no }}</p>
+  <div align="end">
+    <button mat-raised-button 
+            (click)="performTask(conn.connector_no, 'Unlock Connector')" 
+            style="margin-right: 10px;" 
+            color="primary">
+      Perform
+    </button>
+    <button mat-raised-button color="warn" (click)="selectedTask = null">Cancel</button>
+  </div>
+</div>
+
 
         <!-- Reserve Now -->
         <div *ngSwitchCase="'Reserve Now'">
@@ -369,15 +383,16 @@
   <div class="settings-container mat-elevation-z4" (click)="$event.stopPropagation()">
     <h3>Charger Controls</h3>
 
-    <div class="settings-actions" style="display: flex; flex-wrap: wrap; gap: 10px;">
-      <ng-container *ngFor="let menu of menus">
-        <ng-container *ngFor="let conn of connectors">
-          <button mat-raised-button color="primary" (click)="onMenuClick(menu, conn.connector_no)">
-            {{menu.name}}
-          </button>
-        </ng-container>
-      </ng-container>
-    </div>
+  <div class="settings-actions" style="display: flex; flex-wrap: wrap; gap: 10px;">
+  <button
+    *ngFor="let menu of menus"
+    mat-raised-button
+    color="primary"
+    (click)="onMenuClick(menu)">
+    {{ menu.name }}
+  </button>
+</div>
+
 
   </div>
 </div>
@@ -390,6 +405,20 @@
 </mat-card>
 
 <div class="table-container mat-elevation-z8">
+
+  <!-- 🔄 Refresh + ⬇ Export Buttons -->
+  <div class="table-header">
+    <button mat-raised-button color="primary" (click)="refreshLogs()">
+      <mat-icon>refresh</mat-icon>
+      Refresh
+    </button>
+
+    <button mat-raised-button color="accent" (click)="exportLogsToCsv()">
+      <mat-icon>download</mat-icon>
+      Export CSV
+    </button>
+  </div>
+
   <table mat-table [dataSource]="dataSourceLogs" class="mat-table-custom">
 
     <!-- Action Column -->
@@ -429,8 +458,9 @@
   </table>
 
   <!-- ✅ Pagination -->
-  <mat-paginator [pageSizeOptions]="[5, 10, 25, 50]"
-                 showFirstLastButtons>
+  <mat-paginator [pageSizeOptions]="[5, 10, 25, 50]" showFirstLastButtons>
   </mat-paginator>
 </div>
+
+
 

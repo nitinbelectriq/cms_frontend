@@ -165,20 +165,20 @@ export class CreateManageChargerComponent implements OnInit {
       };
 
       this.chargerService.createCharger(createPayload).subscribe({
-        next: (res: ApiResponse) => {
-          if (res?.data?.status== true) {
-            //console.log(res);
-            this.snackBar.open('Charger created successfully!', 'Close', { duration: 3000 });
-            this.dialogRef.close(true);
-          } else {
-            this.snackBar.open(`Create failed: ${res.data.message}`, 'Close', { duration: 4000 });
-          }
-        },
-        error: (err) => {
-          console.error('Create error', err);
-          this.snackBar.open('Failed to create charger.', 'Close', { duration: 3000 });
-        },
-      });
+  next: (res: ApiResponse) => {
+    if (res?.status === true) {
+      this.snackBar.open('Charger created successfully!', 'Close', { duration: 3000 });
+      this.dialogRef.close(true);
+    } else {
+      this.snackBar.open(`Create failed: ${res?.message || "Unknown error"}`, 'Close', { duration: 4000 });
+    }
+  },
+  error: (err) => {
+    console.error('Create error', err);
+    this.snackBar.open(`Failed to create charger. ${err?.message || ""}`, 'Close', { duration: 3000 });
+  }
+});
+
     }
   }
 
