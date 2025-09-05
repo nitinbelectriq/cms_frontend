@@ -46,15 +46,14 @@ import { MatPaginatorModule } from '@angular/material/paginator';
   templateUrl: './ocpp-details.component.html',
   styleUrls: ['./ocpp-details.component.scss']
 })
-export class ChargerDetailComponent implements OnInit {
-displayedColumnsLogs: string[] = ['action', 'request', 'response', 'request_date'];
-  displayedColumns1: string[] = ['select', 'key', 'value', 'action'];
+export class ChargerDetailComponent implements OnInit, AfterViewInit {
+  readonly displayedColumnsLogs: string[] = ['action', 'request', 'response', 'request_date'];
+  readonly displayedColumns1: string[] = ['select', 'key', 'value', 'action'];
 
   dataSourceLogs = new MatTableDataSource<any>([]);
-
   @ViewChild(MatPaginator) paginator!: MatPaginator;
-  dataSource: any[] = [];
 
+  dataSource: any[] = [];
 
   chargerId = '';
   charger: any;
@@ -70,12 +69,11 @@ displayedColumnsLogs: string[] = ['action', 'request', 'response', 'request_date
 
   selectedAction: string | null = null;
   selectedTask: string | null = null;
-idTagType: string | null = null;       // for radio button
-selectedRfid: string | null = null; // will hold the rf_id_no
-selectTrigger='';
+  idTagType: string | null = null; // for radio button
+  selectedRfid: string | null = null; // will hold the rf_id_no
+  selectTrigger = '';
 
-rfidselect='';
-
+  rfidselect = '';
 
   menus: any[] = [];
   availabilityTypes: any[] = [];
@@ -86,226 +84,242 @@ rfidselect='';
   expiryDate: Date | null = null;
 
   expandedConnectors: Set<number> = new Set();
-loginId: string = '';
+  loginId: string = '';
+  connectors: any[] = [];
+
+  // DI via inject()
   private route = inject(ActivatedRoute);
   private ocppService = inject(OCPPService);
   private router = inject(Router);
   private datePipe = inject(DatePipe);
   private snackBar = inject(MatSnackBar);
-  
-connectors: any[] = [];
+
   ngOnInit(): void {
-  this.chargerId = this.route.snapshot.paramMap.get('id') || '';
-  this.loginId = localStorage.getItem('user_id') || '';
+    this.chargerId = this.route.snapshot.paramMap.get('id') || '';
+    this.loginId = localStorage.getItem('user_id') || '';
 
-  const payload = { cpo_id: '', station_id: '' };
+    const payload = { cpo_id: '', station_id: '' };
 
-  this.ocppService.getChargersDynamic(this.loginId, payload).subscribe((res) => {
-    const found = res.data.find((item: any) => item.serial_no === this.chargerId);
-    this.charger = found;
+    // load chargers and initialize if found
+    this.ocppService.getChargersDynamic(this.loginId, payload).subscribe({
+      next: (res: any) => {
+        const found = (res?.data || []).find((item: any) => item.serial_no === this.chargerId);
+        this.charger = found;
 
-    if (this.charger) {
-      // ✅ Initialize connectors with index-based numbering and placeholders for RFID
-      this.connectors = (this.charger.connector_data || []).map((c: any, index: number) => ({
-        ...c,
-        connector_no: index + 1,
-        rfids: [],
-        selectedRfid: null,
-      }));
+        if (!this.charger) return;
 
-      // Load logs and connector-specific RFIDs
-      this.loadOcppLogs();
-      this.connectors.forEach((connector) => {
-        this.loadConnectorRFIDs(connector);
-      });
+        // initialize connectors with connector_no and RFIDs placeholder
+        this.connectors = (this.charger.connector_data || []).map((c: any, index: number) => ({
+          ...c,
+          connector_no: index + 1,
+          rfids: [],
+          selectedRfid: null,
+        }));
 
-      // Load other data if required
-      this.loadAdditionalData();
-    }
-  });
-}
+        this.loadOcppLogs();
 
-ngAfterViewInit() {
+        // load RFIDs per connector (lazy; will noop if already loaded)
+        this.connectors.forEach((connector) => {
+          this.loadConnectorRFIDs(connector);
+        });
+
+        this.loadAdditionalData();
+      },
+      error: (err: any) => {
+        this.handleApiError(err, 'Error fetching chargers');
+      }
+    });
+  }
+
+  ngAfterViewInit() {
     this.dataSourceLogs.paginator = this.paginator;
   }
 
- loadOcppLogs() {
-  if (!this.charger) return;
-
-  const toDate = new Date();
-  const fromDate = new Date(toDate);
-  fromDate.setDate(toDate.getDate() - 1);
-
-  const fromDateStr = this.datePipe.transform(fromDate, 'yyyy-MM-dd', 'Asia/Kolkata')!;
-  const toDateStr = this.datePipe.transform(toDate, 'yyyy-MM-dd', 'Asia/Kolkata')!;
-
-  console.log('📅 Date Range:', fromDateStr, '→', toDateStr);
-
-  this.ocppService.getOcppLogs(this.charger.serial_no, this.loginId, fromDateStr, toDateStr).subscribe({
-    next: (res: any) => {
-      console.log('✅ OCPP Logs Response:', res);
-
-      const logs = Array.isArray(res) ? res : (res?.data || []);
-
-      this.dataSourceLogs.data = logs.map((log: any) => ({
-        ...log,
-        request: JSON.stringify(log.request || log.charger_request || {}),
-        response: JSON.stringify(log.response || log.charger_response || {})
-      }));
-    },
-    error: (err: any) => {
-      console.error('❌ OCPP Logs API Error:', err);
-      this.snackBar.open('Error fetching OCPP logs', 'Close', { duration: 3000 });
-    }
-  });
-}
-
-// ✅ Make sure this is OUTSIDE of loadOcppLogs()
-refreshLogs() {
-  this.loadOcppLogs();
-}
-
-exportLogsToCsv() {
-  const logs = this.dataSourceLogs.data;
-
-  if (!logs || logs.length === 0) {
-    this.snackBar.open('No logs available to export', 'Close', { duration: 3000 });
-    return;
+  // ---------- Helpers ----------
+  private showSnack(message: string, success = true, duration = 3000) {
+    const panelClass = success ? ['snackbar-success'] : ['snackbar-error'];
+    this.snackBar.open(message, 'Close', { duration, panelClass });
   }
 
-  // Helper to safely escape CSV values
-  const escapeCsv = (value: any): string => {
-    if (value == null) return '';
-    let str = String(value);
-    // Escape double quotes
-    str = str.replace(/"/g, '""');
-    // Wrap in quotes so commas/newlines don't break columns
-    return `"${str}"`;
-  };
+  private handleApiError(err: any, fallbackMessage = 'Something went wrong') {
+    console.error(fallbackMessage, err);
+    const msg = err?.message || fallbackMessage;
+    this.showSnack(msg, false);
+  }
 
-  // Headers
-  const headers = ['Action', 'Request', 'Response', 'Request Date'];
-  const csvRows: string[] = [];
-  csvRows.push(headers.join(','));
+  // ---------- Logs ----------
+  loadOcppLogs() {
+    if (!this.charger) return;
 
-  // Data rows
-  logs.forEach(log => {
-    const row = [
-      escapeCsv(log.action),
-      escapeCsv(log.request),
-      escapeCsv(log.response),
-      escapeCsv(log.request_date)
-    ];
-    csvRows.push(row.join(','));
-  });
+    const toDate = new Date();
+    const fromDate = new Date(toDate);
+    fromDate.setDate(toDate.getDate() - 1);
 
-  // Build CSV
-  const csvData = csvRows.join('\n');
-  const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
-  const url = window.URL.createObjectURL(blob);
+    const fromDateStr = this.datePipe.transform(fromDate, 'yyyy-MM-dd', 'Asia/Kolkata')!;
+    const toDateStr = this.datePipe.transform(toDate, 'yyyy-MM-dd', 'Asia/Kolkata')!;
 
-  // Trigger download
-  const link = document.createElement('a');
-  link.href = url;
-  link.download = `ocpp_logs_${new Date().toISOString().slice(0, 10)}.csv`;
-  link.click();
-  window.URL.revokeObjectURL(url);
-}
+    console.log('📅 Date Range:', fromDateStr, '→', toDateStr);
 
+    this.ocppService.getOcppLogs(this.charger.serial_no, this.loginId, fromDateStr, toDateStr).subscribe({
+      next: (res: any) => {
+        console.log('✅ OCPP Logs Response:', res);
 
+        const logs = Array.isArray(res) ? res : (res?.data || []);
+        this.dataSourceLogs.data = logs.map((log: any) => ({
+          ...log,
+          request: JSON.stringify(log.request || log.charger_request || {}),
+          response: JSON.stringify(log.response || log.charger_response || {})
+        }));
+      },
+      error: (err: any) => {
+        console.error('❌ OCPP Logs API Error:', err);
+        this.showSnack('Error fetching OCPP logs', false);
+      }
+    });
+  }
+
+  // Keep public method name
+  refreshLogs() {
+    this.loadOcppLogs();
+  }
+
+  exportLogsToCsv() {
+    const logs = this.dataSourceLogs.data;
+    if (!logs || logs.length === 0) {
+      this.showSnack('No logs available to export', false);
+      return;
+    }
+
+    const escapeCsv = (value: any): string => {
+      if (value == null) return '';
+      let str = String(value);
+      str = str.replace(/"/g, '""');
+      return `"${str}"`;
+    };
+
+    const headers = ['Action', 'Request', 'Response', 'Request Date'];
+    const csvRows: string[] = [headers.join(',')];
+
+    logs.forEach(log => {
+      const row = [
+        escapeCsv(log.action),
+        escapeCsv(log.request),
+        escapeCsv(log.response),
+        escapeCsv(log.request_date)
+      ];
+      csvRows.push(row.join(','));
+    });
+
+    const csvData = csvRows.join('\n');
+    const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+    const url = window.URL.createObjectURL(blob);
+
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `ocpp_logs_${new Date().toISOString().slice(0, 10)}.csv`;
+    link.click();
+    window.URL.revokeObjectURL(url);
+  }
+
+  // ---------- Additional data ----------
   loadAdditionalData() {
+    if (!this.charger) return;
     const serialNo = this.charger.serial_no;
     const cpoId = this.charger.cpo_id || '1';
 
-    // Fetch menus dynamically
-   this.ocppService.getMenus().subscribe((res: any) => {
-  // Make sure response is valid
-  if (Array.isArray(res) && res.length > 0) {
-    console.log('Menus API first item:', res[0].name);
-    this.menus = res.map((item: any) => ({
-      id: item.id,
-      name: item.name,
-      description: item.description
-    }));
-  } else if (res?.data && Array.isArray(res.data)) {
-    console.log('Menus API first item:', res.data[0]?.name);
-    this.menus = res.data.map((item: any) => ({
-      id: item.id,
-      name: item.name,
-      description: item.description
-    }));
-  } else {
-    console.warn('Menus API returned no items:', res);
-    this.menus = [];
-  }
-});
-
-
-    this.ocppService.getAvailabilityTypes().subscribe((res) => {
-      this.availabilityTypes = res?.data || [];
+    // menus
+    this.ocppService.getMenus().subscribe({
+      next: (res: any) => {
+        if (Array.isArray(res) && res.length > 0) {
+          console.log('Menus API first item:', res[0].name);
+          this.menus = res.map((item: any) => ({ id: item.id, name: item.name, description: item.description }));
+        } else if (res?.data && Array.isArray(res.data)) {
+          console.log('Menus API first item:', res.data[0]?.name);
+          this.menus = res.data.map((item: any) => ({ id: item.id, name: item.name, description: item.description }));
+        } else {
+          console.warn('Menus API returned no items:', res);
+          this.menus = [];
+        }
+      },
+      error: (err: any) => this.handleApiError(err, 'Failed to load menus')
     });
 
-    this.ocppService.getHeartbeat({ charger_id: serialNo }).subscribe((res: any) => {
-      this.heartbeatData = res.data;
-      this.heartbeatData.formattedDate = this.datePipe.transform(
-        res.data.last_ping_datetime,
-        'dd-MM-yyyy, h:mm:ss a',
-        'Asia/Kolkata'
-      );
-      this.chargerStatus = res?.message;
+    this.ocppService.getAvailabilityTypes().subscribe({
+      next: (res: any) => (this.availabilityTypes = res?.data || []),
+      error: (err: any) => this.handleApiError(err, 'Failed to load availability types')
     });
 
-this.ocppService.getRFIDsByCpoId(cpoId).subscribe((res) => {
-  this.rfidList = res?.data || [];
-  if (this.rfidList.length > 0) {
-    this.selectedRfid = this.rfidList[0].rf_id_no; // preselect first
-  }
-});
- 
-
-    this.ocppService.getChargerConnectorStatus(serialNo).subscribe((res) => {
-      this.connectorStatus = res;
-      if (res?.data) {
-        this.charger.connector_data = res.data;
-      }
+    // heartbeat
+    this.ocppService.getHeartbeat({ charger_id: serialNo }).subscribe({
+      next: (res: any) => {
+        this.heartbeatData = res.data;
+        if (res?.data?.last_ping_datetime) {
+          this.heartbeatData.formattedDate = this.datePipe.transform(
+            res.data.last_ping_datetime,
+            'dd-MM-yyyy, h:mm:ss a',
+            'Asia/Kolkata'
+          );
+        }
+        this.chargerStatus = res?.message;
+      },
+      error: (err: any) => this.handleApiError(err, 'Failed to load heartbeat')
     });
+
+    // global RFIDs (used as fallback)
+    this.ocppService.getRFIDsByCpoId(cpoId).subscribe({
+      next: (res: any) => {
+        this.rfidList = res?.data || [];
+        if (this.rfidList.length > 0) {
+          this.selectedRfid = this.rfidList[0].rf_id_no;
+        }
+      },
+      error: (err: any) => this.handleApiError(err, 'Failed to load RFIDs')
+    });
+
+    // connector status
+    this.ocppService.getChargerConnectorStatus(serialNo).subscribe({
+      next: (res: any) => {
+        this.connectorStatus = res;
+        if (res?.data) {
+          this.charger.connector_data = res.data;
+        }
+      },
+      error: (err: any) => this.handleApiError(err, 'Failed to load connector status')
+    });
+
     this.loadOcppLogs();
   }
-// ✅ Fetch RFID list for each connector individually
-onIdTagTypeChange(connector: any) {
-  if (connector.selectedIdTagType === 'rfid') {
-    this.loadConnectorRFIDs(connector);
-  } else {
-    connector.rfids = [];
-    connector.selectedRfid = null;
-  }
-}
 
-loadConnectorRFIDs(connector: any) {
-  if (connector.rfids && connector.rfids.length > 0) {
-    return; // already loaded once
-  }
-
-  const cpoId = this.charger?.cpo_id || '1';
-
-   this.ocppService.getRFIDsByCpoId(cpoId).subscribe({
-    next: (res) => {
-      const rfidList = res?.data || [];
-      connector.rfids = rfidList;
-
-      // ✅ Preselect first RFID if available
-      connector.selectedRfid = rfidList.length > 0 ? rfidList[0].rf_id_no : null;
-    },
-    error: (err) => {
-      console.error("Failed to load RFIDs:", err);
+  // ---------- Connector-level RFID handling ----------
+  onIdTagTypeChange(connector: any) {
+    if (connector.selectedIdTagType === 'rfid') {
+      this.loadConnectorRFIDs(connector);
+    } else {
       connector.rfids = [];
       connector.selectedRfid = null;
     }
-  });
-}
+  }
 
+  loadConnectorRFIDs(connector: any) {
+    if (!this.charger) return;
+    if (connector.rfids && connector.rfids.length > 0) return; // already loaded
 
+    const cpoId = this.charger?.cpo_id || '1';
+    this.ocppService.getRFIDsByCpoId(cpoId).subscribe({
+      next: (res: any) => {
+        const rfidList = res?.data || [];
+        connector.rfids = rfidList;
+        connector.selectedRfid = rfidList.length > 0 ? rfidList[0].rf_id_no : null;
+      },
+      error: (err: any) => {
+        console.error('Failed to load RFIDs for connector:', err);
+        connector.rfids = [];
+        connector.selectedRfid = null;
+      }
+    });
+  }
 
+  // ---------- UI toggles ----------
   toggleActions(): void {
     this.showActions = !this.showActions;
     this.showSettings = false;
@@ -313,188 +327,77 @@ loadConnectorRFIDs(connector: any) {
   }
 
   toggleSettings(): void {
-  this.showSettings = !this.showSettings;
-  this.showActions = false;
-  this.resetbtn = false;
-
+    this.showSettings = !this.showSettings;
+    this.showActions = false;
+    this.resetbtn = false;
   }
 
- toggleExpand(connectorNo: number) {
-  if (this.expandedConnectors.has(connectorNo)) {
-    this.expandedConnectors.delete(connectorNo);
-    this.selectedTask = null;
-    this.idTagType = null;
-    this.selectedRfid = null;
-  } else {
-    this.expandedConnectors.add(connectorNo);
-    if (!this.selectedTask) {
-      this.selectedTask = 'Remote Start'; // default task when expanded
-    }
-  }
-}
-fetchActiveTransaction(connectorNo: number) {
-  if (!this.charger) return;
-
-  const chargerId = this.charger.serial_no;
-
-  this.ocppService.getActiveTransactionId(chargerId, connectorNo).subscribe({
-    next: (res: any) => {
-      if (res) {
-        this.current_active_tranjection = res.data;
-      } else {
-        this.current_active_tranjection = '';
-        this.snackBar.open('No active transaction found', 'Close', { duration: 3000 });
+  toggleExpand(connectorNo: number) {
+    if (this.expandedConnectors.has(connectorNo)) {
+      this.expandedConnectors.delete(connectorNo);
+      this.selectedTask = null;
+      this.idTagType = null;
+      this.selectedRfid = null;
+    } else {
+      this.expandedConnectors.add(connectorNo);
+      if (!this.selectedTask) {
+        this.selectedTask = 'Remote Start';
       }
-    },
-    error: (err: any) => {
-      this.snackBar.open('Error fetching active transaction', 'Close', { duration: 3000 });
-      console.error(err);
-    }
-  });
-}
-
-
-  onMenuClick(menu: any, connectorNo?: number) {
-   if (menu.name === 'Unlock Connector') {
-  this.selectedTask = menu.name;
-  }
-  else if (menu.name === 'Remote Start') {
-    this.selectedTask = menu.name;
-  }
-  else if (menu.name === 'Remote Stop') {
-    this.selectedTask = menu.name;
-    if (connectorNo) {
-      this.fetchActiveTransaction(connectorNo);
-    }
-  }
-  else if (menu.name === 'Manage Configurations') {
-    this.selectedTask = menu.name;
-  }
-  else if (menu.name === 'Trigger Message') {
-    this.selectedTask = menu.name;
-  }
-  else if(menu.name === 'Reserve Now'){
-    this.selectedTask = menu.name;
-  }
-  else if(menu.name === 'Change Availability'){
-    this.selectedTask = menu.name;
-  }
-  else if(menu.name === 'Update Firmware'){
-    this.selectedTask = menu.name;
-  }
-     else {
-      //this.selectedTask = menu.name;
     }
   }
 
-performTask(connectorNo: number, task: string) {
-  const connector = this.connectors.find(c => c.connector_no === connectorNo);
-  if (!connector) {
-    this.snackBar.open(`Connector ${connectorNo} not found.`, "Close", {
-      duration: 3000,
-      panelClass: ["snackbar-error"]
-    });
-    return;
-  }
-  console.log(connector);
+  fetchActiveTransaction(connectorNo: number, callback?: () => void) {
+    if (!this.charger) return;
 
-  let payload: any = {
-    charger_id: this.charger.serial_no,
-    charger_sr_no: this.charger.serial_no,
-    connector: connectorNo,
-    user_id: this.loginId,
-    command_source: "web",
-    device_id: null,
-    app_version: null,
-    os_version: null,
-    station_id: this.charger.station_id || 1,
-    mobile_no: null,
-    vehicle_id: null,
-    vehicle_number: null
-  };
-
-  if (task === "Remote Start") {
-    if (!connector.selectedRfid) {
-      this.snackBar.open("Please select an RFID before starting.", "Close", {
-        duration: 3000,
-        panelClass: ["snackbar-error"]
-      });
-      return;
-    }
-
-    payload.command = "START_CHARGING";
-    payload.id_tag = connector.selectedRfid;
-    payload.id_tag = this.rfidselect;
-    payload.id_tag_type = "RF_ID";
-
-    this.ocppService.startChargingStation(payload).subscribe({
-      next: res => {
-        console.log("Remote Start response:", res);
-        this.snackBar.open(res?.message || "Start command sent.", "Close", {
-          duration: 3000,
-          panelClass: ["snackbar-success"]
-        });
-      },
-      error: err => {
-        this.snackBar.open(`Error: ${err?.message || err}`, "Close", {
-          duration: 3000,
-          panelClass: ["snackbar-error"]
-        });
-      }
-    });
-
-  } else if (task === "Remote Stop") {
-    const transactionId = this.id_of_active_transaction || this.current_active_tranjection;
-    if (!transactionId) {
-      this.snackBar.open("No active transaction found to stop.", "Close", {
-        duration: 3000,
-        panelClass: ["snackbar-error"]
-      });
-      return;
-    }
-
-    payload.command = "STOP_CHARGING";
-    payload.transaction_id = transactionId;
-
-    this.ocppService.stopChargingStation(payload).subscribe({
-      next: res => {
-        console.log("Remote Stop response:", res);
-        this.snackBar.open(res?.message || "Stop command sent.", "Close", {
-          duration: 3000,
-          panelClass: ["snackbar-success"]
-        });
-      },
-      error: err => {
-        this.snackBar.open(`Error: ${err?.message || err}`, "Close", {
-          duration: 3000,
-          panelClass: ["snackbar-error"]
-        });
-      }
-    });
-  }
-   else if (task === "Unlock Connector") {
-    payload.command = "UNLOCK_CONNECTOR";
-
-    this.ocppService.unlockConnector(payload).subscribe({
+    const chargerId = this.charger.serial_no;
+    this.ocppService.getActiveTransactionId(chargerId, connectorNo).subscribe({
       next: (res: any) => {
-        this.snackBar.open(res?.message || "Unlock command sent.", "Close", {
-          duration: 3000,
-          panelClass: res?.status ? ["snackbar-success"] : ["snackbar-error"]
-        });
+        if (res?.data) {
+          this.current_active_tranjection = res.data;
+          if (callback) callback();
+        } else {
+          this.current_active_tranjection = '';
+          this.showSnack('No active transaction found', false);
+        }
       },
       error: (err: any) => {
-        this.snackBar.open(`Error: ${err?.message || err}`, "Close", {
-          duration: 3000,
-          panelClass: ["snackbar-error"]
-        });
+        this.handleApiError(err, 'Error fetching active transaction');
       }
     });
   }
-}
 
+  onMenuClick(menu: any, connectorNo?: number) {
+    // preserve original branching and names
+    if (menu.name === 'Unlock Connector') this.selectedTask = menu.name;
+    else if (menu.name === 'Remote Start') this.selectedTask = menu.name;
+    else if (menu.name === 'Remote Stop') this.selectedTask = menu.name;
+    else if (menu.name === 'Manage Configurations') this.selectedTask = menu.name;
+    else if (menu.name === 'Trigger Message') this.selectedTask = menu.name;
+    else if (menu.name === 'Reserve Now') this.selectedTask = menu.name;
+    else if (menu.name === 'Change Availability') this.selectedTask = menu.name;
+    else if (menu.name === 'Update Firmware') this.selectedTask = menu.name;
+    // intentionally leave default behavior untouched
+  }
 
+  performTask(connectorNo: number, task: string) {
+    const connector = this.connectors.find(c => c.connector_no === connectorNo);
+    if (!connector) {
+      this.showSnack(`Connector ${connectorNo} not found.`, false);
+      return;
+    }
 
+    console.log(connector);
 
+    if (task === 'Remote Start') {
+      this.remoteStart(connectorNo);
+    } else if (task === 'Remote Stop') {
+      this.fetchActiveTransaction(connectorNo, () => {
+        this.remoteStop(connectorNo);
+      });
+    } else if (task === 'Unlock Connector') {
+      this.unlockConnector(connectorNo);
+    }
+  }
 
   performCommand(command: string): void {
     console.log(`Executing ${command}...`);
@@ -502,6 +405,7 @@ performTask(connectorNo: number, task: string) {
 
   getLocalListVersion(connectorNo: number = 1) {
     if (!this.charger) return;
+
     const payload = {
       command: 'GET_LOCAL_LIST_VERSION',
       charger_id: this.charger.serial_no,
@@ -511,22 +415,15 @@ performTask(connectorNo: number, task: string) {
 
     this.ocppService.getLocalListVersion(payload).subscribe({
       next: (res: any) => {
-        this.snackBar.open(res?.message, 'Close', {
-          duration: 3000,
-          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-        });
+        this.showSnack(res?.message, !!res?.status);
       },
-      error: (err: any) => {
-        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-          duration: 3000,
-          panelClass: ['snackbar-error']
-        });
-      }
+      error: (err: any) => this.handleApiError(err, 'Error getting local list version')
     });
   }
 
   clearCache(connectorNo: number = 1) {
     if (!this.charger) return;
+
     const payload = {
       command: 'CLEAR_CACHE',
       charger_id: this.charger.serial_no,
@@ -537,29 +434,15 @@ performTask(connectorNo: number, task: string) {
     this.performCommand('Clear Cache');
 
     this.ocppService.clearCache(payload).subscribe({
-      next: (res: any) => {
-        this.snackBar.open(res?.message, 'Close', {
-          duration: 3000,
-          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-        });
-      },
-      error: (err: any) => {
-        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-          duration: 3000,
-          panelClass: ['snackbar-error']
-        });
-      }
+      next: (res: any) => this.showSnack(res?.message, !!res?.status),
+      error: (err: any) => this.handleApiError(err, 'Error clearing cache')
     });
   }
 
   reset() {
-    this.resetbtn= !this.resetbtn;
-   // this.performCommand('Reset');
-
-    
-  }  
-   
-
+    this.resetbtn = !this.resetbtn;
+    // this.performCommand('Reset'); // preserved original commented intent
+  }
 
   hardReset() {
     if (!this.charger) return;
@@ -570,18 +453,8 @@ performTask(connectorNo: number, task: string) {
     };
 
     this.ocppService.resetHard(payload).subscribe({
-      next: (res: any) => {
-        this.snackBar.open(res?.message, 'Close', {
-          duration: 3000,
-          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-        });
-      },
-      error: (err: any) => {
-        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-          duration: 3000,
-          panelClass: ['snackbar-error']
-        });
-      }
+      next: (res: any) => this.showSnack(res?.message, !!res?.status),
+      error: (err: any) => this.handleApiError(err, 'Error performing hard reset')
     });
   }
 
@@ -594,45 +467,26 @@ performTask(connectorNo: number, task: string) {
     };
 
     this.ocppService.resetSoft(payload).subscribe({
-      next: (res: any) => {
-        this.snackBar.open(res?.message, 'Close', {
-          duration: 3000,
-          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-        });
-      },
-      error: (err: any) => {
-        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-          duration: 3000,
-          panelClass: ['snackbar-error']
-        });
-      }
+      next: (res: any) => this.showSnack(res?.message, !!res?.status),
+      error: (err: any) => this.handleApiError(err, 'Error performing soft reset')
     });
   }
 
-  unlockConnector() {
+  unlockConnector(connectorNo: number = 1) {
     if (!this.charger) return;
+
     const payload = {
       command: 'UNLOCK_CONNECTOR',
-      charger_id: this.charger.charger_id,
-      charger_sr_no: this.chargerId,
-      connector: this.charger?.ConnectorData?.connector_no || 1
+      charger_id: this.charger.serial_no,
+      charger_sr_no: this.charger.serial_no,
+      connector: connectorNo
     };
 
     console.log('Unlock Connector payload:', payload);
 
     this.ocppService.unlockConnector(payload).subscribe({
-      next: (res: any) => {
-        this.snackBar.open(res?.message, 'Close', {
-          duration: 3000,
-          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-        });
-      },
-      error: (err: any) => {
-        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-          duration: 3000,
-          panelClass: ['snackbar-error']
-        });
-      }
+      next: (res: any) => this.showSnack(res?.message, !!res?.status),
+      error: (err: any) => this.handleApiError(err, 'Error unlocking connector')
     });
   }
 
@@ -656,349 +510,198 @@ performTask(connectorNo: number, task: string) {
         return 'default';
     }
   }
- 
-remoteStart(connectorNo: number = 1) {
-  const connector = this.connectors.find(c => c.connector_no === connectorNo);
-  if (!connector) return;
 
-  const payload = {
-    command: "START_CHARGING",
-    charger_id: this.charger.serial_no,
-    charger_sr_no: this.charger.serial_no,
-    connector: connectorNo,
-    id_tag: connector.selectedRfid,  // ✅ Required for Remote Start
-    id_tag_type: "RF_ID",
-    user_id: this.loginId,
-    command_source: "web",
-    device_id: null,
-    app_version: null,
-    os_version: null,
-    station_id: this.charger.station_id || 1,
-    mobile_no: null,
-    vehicle_id: null,
-    vehicle_number: null
-  };
+  remoteStart(connectorNo: number = 1) {
+    const connector = this.connectors.find(c => c.connector_no === connectorNo);
+    if (!connector || !this.charger) return;
 
-  this.ocppService.startChargingStation(payload).subscribe({
-    next: (res: any) => { /* handle response */ },
-    error: (err: any) => { /* handle error */ }
-  });
-}
+    const payload = {
+      command: 'START_CHARGING',
+      charger_id: this.charger.serial_no,
+      charger_sr_no: this.charger.serial_no,
+      connector: connectorNo,
+      id_tag: connector.selectedRfid,
+      id_tag_type: 'RF_ID',
+      user_id: this.loginId,
+      command_source: 'web',
+      device_id: null,
+      app_version: null,
+      os_version: null,
+      station_id: this.charger.station_id || 1,
+      mobile_no: null,
+      vehicle_id: null,
+      vehicle_number: null
+    };
 
-
-
-remoteStop(connectorNo: number = 1) {
-  if (!this.charger) return;
-
-  const connector = this.connectors.find(c => c.connector_no === connectorNo);
-  if (!connector) {
-    this.snackBar.open(`Connector ${connectorNo} not found`, 'Close', { duration: 3000 });
-    return;
+    this.ocppService.startChargingStation(payload).subscribe({
+      next: (_res: any) => { /* handle response if needed */ },
+      error: (err: any) => this.handleApiError(err, 'Error on remote start')
+    });
   }
 
-  // Use either user input or API value
-  const transactionId = this.id_of_active_transaction || this.current_active_tranjection;
-  if (!transactionId) {
-    this.snackBar.open(`No active transaction found for Connector ${connectorNo}`, 'Close', { duration: 3000 });
-    return;
+  remoteStop(connectorNo: number = 1) {
+    if (!this.charger) return;
+
+    const connector = this.connectors.find(c => c.connector_no === connectorNo);
+    if (!connector) {
+      this.showSnack(`Connector ${connectorNo} not found`, false);
+      return;
+    }
+
+    const transactionId = this.id_of_active_transaction || this.current_active_tranjection;
+    if (!transactionId) {
+      this.showSnack(`No active transaction found for Connector ${connectorNo}`, false);
+      return;
+    }
+
+    const payload = {
+      command: 'STOP_CHARGING',
+      charger_id: this.charger.serial_no,
+      charger_sr_no: this.charger.serial_no,
+      connector: connectorNo,
+      transaction_id: transactionId,
+      user_id: this.loginId,
+      command_source: 'web',
+      device_id: null,
+      app_version: null,
+      os_version: null,
+      station_id: this.charger.station_id || 1,
+      mobile_no: null,
+      vehicle_id: null,
+      vehicle_number: null
+    };
+
+    console.log('Remote Stop Payload:', payload);
+
+    this.ocppService.stopChargingStation(payload).subscribe({
+      next: (res: any) => this.showSnack(res?.message, !!res?.status),
+      error: (err: any) => this.handleApiError(err, 'Error on remote stop')
+    });
   }
 
-  const payload = {
-    command: "STOP_CHARGING",
-    charger_id: this.charger.serial_no,
-    charger_sr_no: this.charger.serial_no,
-    connector: connectorNo,
-    transaction_id: transactionId,  // ✅ Correct property
-    user_id: this.loginId,
-    command_source: "web",
-    device_id: null,
-    app_version: null,
-    os_version: null,
-    station_id: this.charger.station_id || 1,
-    mobile_no: null,
-    vehicle_id: null,
-    vehicle_number: null
-  };
+  // ---------- Trigger / Message operations ----------
+  getTriggerMessage() {
+    if (!this.charger) return;
 
-  console.log('Remote Stop Payload:', payload);
-
-  this.ocppService.stopChargingStation(payload).subscribe({
-    next: (res: any) => {
-      this.snackBar.open(res?.message, 'Close', {
-        duration: 3000,
-        panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-      });
-    },
-    error: (err: any) => {
-      this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-        duration: 3000,
-        panelClass: ['snackbar-error']
-      });
-    }
-  });
-}
-
-
-
-
-  getTriggerMessage(){
-    if(!this.charger){
-      return ;
-    }
-
-    const payload= {
+    const payload = {
       charger_id: this.chargerId,
-      f_date : this.charger,
-      t_date : this.charger,
-      connector: '',
-    }
-     const loginId = localStorage.getItem('user_id') || '';
+      f_date: this.charger,
+      t_date: this.charger,
+      connector: ''
+    };
+    const loginId = localStorage.getItem('user_id') || '';
 
-    this.ocppService.getTriggermessage(loginId,payload).subscribe({
-      next: (res: any) =>{
-        this.snackBar.open(res?.message, 'Close', {
-          duration: 3000,
-          panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-      });
-    },
-      error: (err: any) => {
-        this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-          duration: 3000,
-          panelClass: ['snackbar-error']
-        });
-      }
-
-    })
+    this.ocppService.getTriggermessage(loginId, payload).subscribe({
+      next: (res: any) => this.showSnack(res?.message, !!res?.status),
+      error: (err: any) => this.handleApiError(err, 'Error getting trigger message')
+    });
   }
 
   performTriggerTask(connectorNo: number, trigger: string) {
-  switch (trigger) {
-    case 'MeterValues':
-      {
-      const payload= {
-          command: "METER_VALUES",
-          charger_id: this.chargerId,
-          charger_sr_no: this.charger.serial_no,
-          connector: connectorNo
-      }
-      this.ocppService.getTriggermessage(this.loginId, payload).subscribe(  {
-        //console.log('Meter Values response:', res);
-         next: (res: any) => {
-      this.snackBar.open(res?.message, 'Close', {
-        duration: 3000,
-        panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-      });
-    },
-    error: (err: any) => {
-      this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-        duration: 3000,
-        panelClass: ['snackbar-error']
-      });
-    }
-      });
-      break;
-    }
+    if (!this.charger) return;
 
-    case 'BootNotification':
-      { 
-        const payload= {
-          command: "BOOT_NOTIFICATION",
-          charger_id: this.chargerId,
-          charger_sr_no: this.charger.serial_no,
-          connector: connectorNo
-        }
-       this.ocppService.getTriggermessage(this.loginId, payload).subscribe({
-        //console.log('Boot Notification response:', res);
-       next: (res: any) => {
-            this.snackBar.open(res?.message, 'Close', {
-             duration: 3000,
-            panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-            });
-           },
-        error: (err: any) => {
-            this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-            duration: 3000,
-            panelClass: ['snackbar-error']
-            });
-          }
-      });
-      break;
-    }
+    const commonPayloadBase = {
+      charger_id: this.chargerId,
+      charger_sr_no: this.charger.serial_no,
+      connector: connectorNo
+    };
 
-    case 'StatusNotification': 
-    {
-      const payload = {
-          command: "STATUS_NOTIFICATION",
-          charger_id: this.chargerId,
-          charger_sr_no: this.charger.serial_no,
-          connector: connectorNo
-      }
-        this.ocppService.getTriggermessage(this.loginId, payload).subscribe( {
-        //console.log('Status Notification response:', res);
-         next: (res: any) => {
-           this.snackBar.open(res?.message, 'Close', {
-            duration: 3000,
-            panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-            });
-          },
-         error: (err: any) => {
-            this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-            duration: 3000,
-             panelClass: ['snackbar-error']
-            });
-           }
-      });
-      break;
-    }
-    
-
-    case 'DiagnosticsStatusNotification':
-      {
-        const payload={
-           command: "DIAGNOSTICSSTATUS_NOTIFICATION",
-          charger_id: this.chargerId,
-          charger_sr_no: this.charger.serial_no,
-          connector: connectorNo
-        }
-         this.ocppService.getTriggermessage(this.loginId, payload).subscribe( {
-           //console.log('Diagnostics Status Notification response:', res);
-            next: (res: any) => {
-      this.snackBar.open(res?.message, 'Close', {
-        duration: 3000,
-        panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-      });
-    },
-    error: (err: any) => {
-      this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-        duration: 3000,
-        panelClass: ['snackbar-error']
-      });
-    }
-           });
+    switch (trigger) {
+      case 'MeterValues': {
+        const payload = { command: 'METER_VALUES', ...commonPayloadBase };
+        this.ocppService.getTriggermessage(this.loginId, payload).subscribe({
+          next: (res: any) => this.showSnack(res?.message, !!res?.status),
+          error: (err: any) => this.handleApiError(err, 'Error triggering MeterValues')
+        });
         break;
       }
-     
-
-    case 'Heartbeat':
-      {
-        const payload={
-           command: "HEART_BEAT",
-          charger_id: this.chargerId,
-          charger_sr_no: this.charger.serial_no,
-          connector: connectorNo
-        }
-       this.ocppService.getTriggermessage(this.loginId, payload).subscribe( {
-       // console.log('Heartbeat response:', res);
-        next: (res: any) => {
-      this.snackBar.open(res?.message, 'Close', {
-        duration: 3000,
-        panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-      });
-    },
-    error: (err: any) => {
-      this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-        duration: 3000,
-        panelClass: ['snackbar-error']
-      });
-    }
-      });
-      break;
+      case 'BootNotification': {
+        const payload = { command: 'BOOT_NOTIFICATION', ...commonPayloadBase };
+        this.ocppService.getTriggermessage(this.loginId, payload).subscribe({
+          next: (res: any) => this.showSnack(res?.message, !!res?.status),
+          error: (err: any) => this.handleApiError(err, 'Error triggering BootNotification')
+        });
+        break;
       }
-      
-
-    case 'FirmwareStatusNotification':
-      {
-          const payload={
-           command: "FIRMWARESTATUS_NOTIFICATION",
-          charger_id: this.chargerId,
-          charger_sr_no: this.charger.serial_no,
-          connector: connectorNo
-        }
-       this.ocppService.getTriggermessage(this.loginId, payload).subscribe( {
-        //console.log('Firmware Status Notification response:', res);
-         next: (res: any) => {
-      this.snackBar.open(res?.message, 'Close', {
-        duration: 3000,
-        panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-      });
-    },
-    error: (err: any) => {
-      this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-        duration: 3000,
-        panelClass: ['snackbar-error']
-      });
-    }
-      });
-      break;
+      case 'StatusNotification': {
+        const payload = { command: 'STATUS_NOTIFICATION', ...commonPayloadBase };
+        this.ocppService.getTriggermessage(this.loginId, payload).subscribe({
+          next: (res: any) => this.showSnack(res?.message, !!res?.status),
+          error: (err: any) => this.handleApiError(err, 'Error triggering StatusNotification')
+        });
+        break;
       }
-      
+      case 'DiagnosticsStatusNotification': {
+        const payload = { command: 'DIAGNOSTICSSTATUS_NOTIFICATION', ...commonPayloadBase };
+        this.ocppService.getTriggermessage(this.loginId, payload).subscribe({
+          next: (res: any) => this.showSnack(res?.message, !!res?.status),
+          error: (err: any) => this.handleApiError(err, 'Error triggering DiagnosticsStatusNotification')
+        });
+        break;
+      }
+      case 'Heartbeat': {
+        const payload = { command: 'HEART_BEAT', ...commonPayloadBase };
+        this.ocppService.getTriggermessage(this.loginId, payload).subscribe({
+          next: (res: any) => this.showSnack(res?.message, !!res?.status),
+          error: (err: any) => this.handleApiError(err, 'Error triggering Heartbeat')
+        });
+        break;
+      }
+      case 'FirmwareStatusNotification': {
+        const payload = { command: 'FIRMWARESTATUS_NOTIFICATION', ...commonPayloadBase };
+        this.ocppService.getTriggermessage(this.loginId, payload).subscribe({
+          next: (res: any) => this.showSnack(res?.message, !!res?.status),
+          error: (err: any) => this.handleApiError(err, 'Error triggering FirmwareStatusNotification')
+        });
+        break;
+      }
+      default:
+        console.warn('No trigger selected');
+    }
+  }
 
-    default:
-      console.warn('No trigger selected');
+  // ---------- Availability / Reserve ----------
+  selectedAvailability: string = 'Operative';
+
+  changeAvailability(connectorNo: number = 1) {
+    if (!this.charger) return;
+
+    const payload = {
+      command: 'CHANGE_AVAILABILITY',
+      charger_id: this.charger.serial_no,
+      charger_sr_no: this.charger.serial_no,
+      connector: connectorNo,
+      type: this.selectedAvailability
+    };
+
+    console.log('Change Availability Payload:', payload);
+
+    this.ocppService.changeAvailability(payload).subscribe({
+      next: (res: any) => this.showSnack(res?.message, !!res?.status),
+      error: (err: any) => this.handleApiError(err, 'Error changing availability')
+    });
+  }
+
+  getReserveNow(connectorNo: number = 1) {
+    if (!this.charger) return;
+
+    const payload = {
+      command: 'RESERVE_NOW',
+      charger_id: this.chargerId,
+      charger_sr_no: this.charger.serial_no,
+      charger_connector: connectorNo,
+      charger_idtag: this.selectedRfid,
+      charger_parentIdTag: '0',
+      reservation_id: '1234',
+      charger_expiry_date: this.expiryDate
+    };
+
+    console.log('Reserve Now Payload:', payload);
+
+    this.ocppService.changeAvailability(payload).subscribe({
+      next: (res: any) => this.showSnack(res?.message, !!res?.status),
+      error: (err: any) => this.handleApiError(err, 'Error reserving now')
+    });
   }
 }
 
-selectedAvailability: string = 'Operative'; // default option
-
-changeAvailability(connectorNo: number = 1) {
-  if (!this.charger) return;
-
-  const payload = {
-    command: "CHANGE_AVAILABILITY",
-    charger_id: this.charger.serial_no,
-    charger_sr_no: this.charger.serial_no,
-    connector: connectorNo,
-    type: this.selectedAvailability   // <-- bound from dropdown
-  };
-
-  console.log('Change Availability Payload:', payload);
-
-  this.ocppService.changeAvailability(payload).subscribe({
-    next: (res: any) => {
-      this.snackBar.open(res?.message, 'Close', {
-        duration: 3000,
-        panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-      });
-    },
-    error: (err: any) => {
-      this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-        duration: 3000,
-        panelClass: ['snackbar-error']
-      });
-    }
-  });
-}
-
-getReserveNow(connectorNo: number = 1) {
-  if (!this.charger) return;
-
-  const payload = {
-       command: "RESERVE_NOW",
-      charger_id: this.chargerId,
-      charger_sr_no: this.charger.serial_no,  
-      charger_connector:connectorNo,  
-      charger_idtag:this.selectedRfid,
-      charger_parentIdTag:"0",
-      reservation_id:"1234",
-      charger_expiry_date: this.expiryDate // <-- bound from dropdown
-  };
-
-  console.log('Change Availability Payload:', payload);
-
-  this.ocppService.changeAvailability(payload).subscribe({
-    next: (res: any) => {
-      this.snackBar.open(res?.message, 'Close', {
-        duration: 3000,
-        panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
-      });
-    },
-    error: (err: any) => {
-      this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
-        duration: 3000,
-        panelClass: ['snackbar-error']
-      });
-    }
-  });
-
-}
-}
