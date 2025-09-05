@@ -83,6 +83,7 @@ rfidselect='';
   chargerStatus: any;
   rfidList: any[] = [];
   connectorStatus: any;
+  expiryDate: Date | null = null;
 
   expandedConnectors: Set<number> = new Set();
 loginId: string = '';
@@ -702,10 +703,22 @@ remoteStop(connectorNo: number = 1) {
           command: "METER_VALUES",
           charger_id: this.chargerId,
           charger_sr_no: this.charger.serial_no,
-          connector: 1
+          connector: connectorNo
       }
-      this.ocppService.getTriggermessage(this.loginId, payload).subscribe(res => {
-        console.log('Meter Values response:', res);
+      this.ocppService.getTriggermessage(this.loginId, payload).subscribe(  {
+        //console.log('Meter Values response:', res);
+         next: (res: any) => {
+      this.snackBar.open(res?.message, 'Close', {
+        duration: 3000,
+        panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+      });
+    },
+    error: (err: any) => {
+      this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+        duration: 3000,
+        panelClass: ['snackbar-error']
+      });
+    }
       });
       break;
     }
@@ -716,10 +729,22 @@ remoteStop(connectorNo: number = 1) {
           command: "BOOT_NOTIFICATION",
           charger_id: this.chargerId,
           charger_sr_no: this.charger.serial_no,
-          connector: 1
+          connector: connectorNo
         }
-       this.ocppService.getTriggermessage(this.loginId, payload).subscribe(res => {
-        console.log('Boot Notification response:', res);
+       this.ocppService.getTriggermessage(this.loginId, payload).subscribe({
+        //console.log('Boot Notification response:', res);
+       next: (res: any) => {
+            this.snackBar.open(res?.message, 'Close', {
+             duration: 3000,
+            panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+            });
+           },
+        error: (err: any) => {
+            this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+            duration: 3000,
+            panelClass: ['snackbar-error']
+            });
+          }
       });
       break;
     }
@@ -730,10 +755,22 @@ remoteStop(connectorNo: number = 1) {
           command: "STATUS_NOTIFICATION",
           charger_id: this.chargerId,
           charger_sr_no: this.charger.serial_no,
-          connector: 1
+          connector: connectorNo
       }
-        this.ocppService.getTriggermessage(this.loginId, payload).subscribe(res => {
-        console.log('Status Notification response:', res);
+        this.ocppService.getTriggermessage(this.loginId, payload).subscribe( {
+        //console.log('Status Notification response:', res);
+         next: (res: any) => {
+           this.snackBar.open(res?.message, 'Close', {
+            duration: 3000,
+            panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+            });
+          },
+         error: (err: any) => {
+            this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+            duration: 3000,
+             panelClass: ['snackbar-error']
+            });
+           }
       });
       break;
     }
@@ -745,10 +782,22 @@ remoteStop(connectorNo: number = 1) {
            command: "DIAGNOSTICSSTATUS_NOTIFICATION",
           charger_id: this.chargerId,
           charger_sr_no: this.charger.serial_no,
-          connector: 1
+          connector: connectorNo
         }
-         this.ocppService.getTriggermessage(this.loginId, payload).subscribe(res => {
-           console.log('Diagnostics Status Notification response:', res);
+         this.ocppService.getTriggermessage(this.loginId, payload).subscribe( {
+           //console.log('Diagnostics Status Notification response:', res);
+            next: (res: any) => {
+      this.snackBar.open(res?.message, 'Close', {
+        duration: 3000,
+        panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+      });
+    },
+    error: (err: any) => {
+      this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+        duration: 3000,
+        panelClass: ['snackbar-error']
+      });
+    }
            });
         break;
       }
@@ -760,10 +809,22 @@ remoteStop(connectorNo: number = 1) {
            command: "HEART_BEAT",
           charger_id: this.chargerId,
           charger_sr_no: this.charger.serial_no,
-          connector: 1
+          connector: connectorNo
         }
-       this.ocppService.getTriggermessage(this.loginId, payload).subscribe(res => {
-        console.log('Heartbeat response:', res);
+       this.ocppService.getTriggermessage(this.loginId, payload).subscribe( {
+       // console.log('Heartbeat response:', res);
+        next: (res: any) => {
+      this.snackBar.open(res?.message, 'Close', {
+        duration: 3000,
+        panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+      });
+    },
+    error: (err: any) => {
+      this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+        duration: 3000,
+        panelClass: ['snackbar-error']
+      });
+    }
       });
       break;
       }
@@ -775,10 +836,22 @@ remoteStop(connectorNo: number = 1) {
            command: "FIRMWARESTATUS_NOTIFICATION",
           charger_id: this.chargerId,
           charger_sr_no: this.charger.serial_no,
-          connector: 1
+          connector: connectorNo
         }
-       this.ocppService.getTriggermessage(this.loginId, payload).subscribe(res => {
-        console.log('Firmware Status Notification response:', res);
+       this.ocppService.getTriggermessage(this.loginId, payload).subscribe( {
+        //console.log('Firmware Status Notification response:', res);
+         next: (res: any) => {
+      this.snackBar.open(res?.message, 'Close', {
+        duration: 3000,
+        panelClass: res?.status ? ['snackbar-success'] : ['snackbar-error']
+      });
+    },
+    error: (err: any) => {
+      this.snackBar.open(`Error: ${err?.message || err}`, 'Close', {
+        duration: 3000,
+        panelClass: ['snackbar-error']
+      });
+    }
       });
       break;
       }
@@ -824,14 +897,14 @@ getReserveNow(connectorNo: number = 1) {
   if (!this.charger) return;
 
   const payload = {
-       "command": "RESERVE_NOW",
-      "charger_id": "TEST001",
-      "charger_sr_no": "TEST001",  
-      "charger_connector":1,  
-      "charger_idtag":"1234",
-      "charger_parentIdTag":"0",
-      "reservation_id":"1234",
-      "charger_expiry_date":"2025-07-20T16:26:56.350Z" // <-- bound from dropdown
+       command: "RESERVE_NOW",
+      charger_id: this.chargerId,
+      charger_sr_no: this.charger.serial_no,  
+      charger_connector:connectorNo,  
+      charger_idtag:this.selectedRfid,
+      charger_parentIdTag:"0",
+      reservation_id:"1234",
+      charger_expiry_date: this.expiryDate // <-- bound from dropdown
   };
 
   console.log('Change Availability Payload:', payload);
