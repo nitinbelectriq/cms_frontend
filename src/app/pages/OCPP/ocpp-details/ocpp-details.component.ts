@@ -129,50 +129,117 @@ ngAfterViewInit() {
     this.dataSourceLogs.paginator = this.paginator;
   }
 
-  loadOcppLogs() {
-    if (!this.charger) return;
+ loadOcppLogs() {
+  if (!this.charger) return;
 
-    const toDate = new Date();
-    const fromDate = new Date(toDate);
-    fromDate.setDate(toDate.getDate() - 1);
+  const toDate = new Date();
+  const fromDate = new Date(toDate);
+  fromDate.setDate(toDate.getDate() - 1);
 
-    const fromDateStr = this.datePipe.transform(fromDate, 'yyyy-MM-dd', 'Asia/Kolkata')!;
-    const toDateStr = this.datePipe.transform(toDate, 'yyyy-MM-dd', 'Asia/Kolkata')!;
+  const fromDateStr = this.datePipe.transform(fromDate, 'yyyy-MM-dd', 'Asia/Kolkata')!;
+  const toDateStr = this.datePipe.transform(toDate, 'yyyy-MM-dd', 'Asia/Kolkata')!;
 
-    console.log('📅 Date Range:', fromDateStr, '→', toDateStr);
+  console.log('📅 Date Range:', fromDateStr, '→', toDateStr);
 
-    this.ocppService.getOcppLogs(this.charger.serial_no, this.loginId, fromDateStr, toDateStr).subscribe({
-      next: (res: any) => {
-        console.log('✅ OCPP Logs Response:', res);
+  this.ocppService.getOcppLogs(this.charger.serial_no, this.loginId, fromDateStr, toDateStr).subscribe({
+    next: (res: any) => {
+      console.log('✅ OCPP Logs Response:', res);
 
-        const logs = Array.isArray(res) ? res : (res?.data || []);
+      const logs = Array.isArray(res) ? res : (res?.data || []);
 
-        this.dataSourceLogs.data = logs.map((log: any) => ({
-          ...log,
-          request: JSON.stringify(log.request || log.charger_request || {}),
-          response: JSON.stringify(log.response || log.charger_response || {})
-        }));
-      },
-      error: (err: any) => {
-        console.error('❌ OCPP Logs API Error:', err);
-        this.snackBar.open('Error fetching OCPP logs', 'Close', { duration: 3000 });
-      }
-    });
+      this.dataSourceLogs.data = logs.map((log: any) => ({
+        ...log,
+        request: JSON.stringify(log.request || log.charger_request || {}),
+        response: JSON.stringify(log.response || log.charger_response || {})
+      }));
+    },
+    error: (err: any) => {
+      console.error('❌ OCPP Logs API Error:', err);
+      this.snackBar.open('Error fetching OCPP logs', 'Close', { duration: 3000 });
+    }
+  });
+}
+
+// ✅ Make sure this is OUTSIDE of loadOcppLogs()
+refreshLogs() {
+  this.loadOcppLogs();
+}
+
+exportLogsToCsv() {
+  const logs = this.dataSourceLogs.data;
+
+  if (!logs || logs.length === 0) {
+    this.snackBar.open('No logs available to export', 'Close', { duration: 3000 });
+    return;
   }
+
+  // Helper to safely escape CSV values
+  const escapeCsv = (value: any): string => {
+    if (value == null) return '';
+    let str = String(value);
+    // Escape double quotes
+    str = str.replace(/"/g, '""');
+    // Wrap in quotes so commas/newlines don't break columns
+    return `"${str}"`;
+  };
+
+  // Headers
+  const headers = ['Action', 'Request', 'Response', 'Request Date'];
+  const csvRows: string[] = [];
+  csvRows.push(headers.join(','));
+
+  // Data rows
+  logs.forEach(log => {
+    const row = [
+      escapeCsv(log.action),
+      escapeCsv(log.request),
+      escapeCsv(log.response),
+      escapeCsv(log.request_date)
+    ];
+    csvRows.push(row.join(','));
+  });
+
+  // Build CSV
+  const csvData = csvRows.join('\n');
+  const blob = new Blob([csvData], { type: 'text/csv;charset=utf-8;' });
+  const url = window.URL.createObjectURL(blob);
+
+  // Trigger download
+  const link = document.createElement('a');
+  link.href = url;
+  link.download = `ocpp_logs_${new Date().toISOString().slice(0, 10)}.csv`;
+  link.click();
+  window.URL.revokeObjectURL(url);
+}
+
 
   loadAdditionalData() {
     const serialNo = this.charger.serial_no;
     const cpoId = this.charger.cpo_id || '1';
 
     // Fetch menus dynamically
-    this.ocppService.getMenus().subscribe((res: any) => {
-      console.log('Menus API response:', res[0].name); // Debug: check response
-      this.menus = (res || []).map((item: any) => ({
-        id: item.id,
-        name: item.name,
-        description: item.description
-      }));
-    });
+   this.ocppService.getMenus().subscribe((res: any) => {
+  // Make sure response is valid
+  if (Array.isArray(res) && res.length > 0) {
+    console.log('Menus API first item:', res[0].name);
+    this.menus = res.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      description: item.description
+    }));
+  } else if (res?.data && Array.isArray(res.data)) {
+    console.log('Menus API first item:', res.data[0]?.name);
+    this.menus = res.data.map((item: any) => ({
+      id: item.id,
+      name: item.name,
+      description: item.description
+    }));
+  } else {
+    console.warn('Menus API returned no items:', res);
+    this.menus = [];
+  }
+});
+
 
     this.ocppService.getAvailabilityTypes().subscribe((res) => {
       this.availabilityTypes = res?.data || [];
@@ -246,19 +313,10 @@ loadConnectorRFIDs(connector: any) {
   }
 
   toggleSettings(): void {
-    this.showSettings = !this.showSettings;
-    this.showActions = false;
+  this.showSettings = !this.showSettings;
+  this.showActions = false;
+  this.resetbtn = false;
 
-    if (this.showSettings) {
-      this.ocppService.getMenus().subscribe((res: any) => {
-        console.log('Menus API response:', res[0].name); 
-        this.menus = (res || []).map((item: any) => ({
-          id: item.id,
-          name: item.name,
-          description: item.description
-        }));
-      });
-    }
   }
 
  toggleExpand(connectorNo: number) {
@@ -297,8 +355,8 @@ fetchActiveTransaction(connectorNo: number) {
 
 
   onMenuClick(menu: any, connectorNo?: number) {
-  if (menu.name === 'Unlock Connector') {
-    this.selectedTask = menu.name;
+   if (menu.name === 'Unlock Connector') {
+  this.selectedTask = menu.name;
   }
   else if (menu.name === 'Remote Start') {
     this.selectedTask = menu.name;
@@ -414,6 +472,24 @@ performTask(connectorNo: number, task: string) {
       }
     });
   }
+   else if (task === "Unlock Connector") {
+    payload.command = "UNLOCK_CONNECTOR";
+
+    this.ocppService.unlockConnector(payload).subscribe({
+      next: (res: any) => {
+        this.snackBar.open(res?.message || "Unlock command sent.", "Close", {
+          duration: 3000,
+          panelClass: res?.status ? ["snackbar-success"] : ["snackbar-error"]
+        });
+      },
+      error: (err: any) => {
+        this.snackBar.open(`Error: ${err?.message || err}`, "Close", {
+          duration: 3000,
+          panelClass: ["snackbar-error"]
+        });
+      }
+    });
+  }
 }
 
 
@@ -449,13 +525,13 @@ performTask(connectorNo: number, task: string) {
     });
   }
 
-  clearCache() {
+  clearCache(connectorNo: number = 1) {
     if (!this.charger) return;
     const payload = {
       command: 'CLEAR_CACHE',
-      charger_id: this.charger.charger_id,
-      charger_sr_no: this.chargerId,
-      connector: this.charger?.ConnectorData?.connector_no || 1
+      charger_id: this.charger.serial_no,
+      charger_sr_no: this.charger.serial_no,
+      connector: connectorNo
     };
 
     this.performCommand('Clear Cache');

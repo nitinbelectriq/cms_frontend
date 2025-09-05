@@ -349,3 +349,11 @@ table {
   background: #fafafa;
   z-index: 2;
 }
+
+.table-header {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 10px;
+}
+
