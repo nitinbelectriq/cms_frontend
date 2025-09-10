@@ -397,6 +397,9 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
     } else if (task === 'Unlock Connector') {
       this.unlockConnector(connectorNo);
     }
+    else if (task === 'Update Firmware') {
+    this.updateFirmware(connectorNo);
+  }
   }
 
   performCommand(command: string): void {
@@ -520,7 +523,7 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
       charger_id: this.charger.serial_no,
       charger_sr_no: this.charger.serial_no,
       connector: connectorNo,
-      id_tag: connector.selectedRfid,
+      id_tag: this.rfidselect,
       id_tag_type: 'RF_ID',
       user_id: this.loginId,
       command_source: 'web',
@@ -662,6 +665,10 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
 
   // ---------- Availability / Reserve ----------
   selectedAvailability: string = 'Operative';
+firmwareLocation: string = '';
+firmwareRetries: number = 5;
+firmwareRetryInterval: number = 0;
+firmwareRetrieveDate: Date | null = null;
 
   changeAvailability(connectorNo: number = 1) {
     if (!this.charger) return;
@@ -703,5 +710,30 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
       error: (err: any) => this.handleApiError(err, 'Error reserving now')
     });
   }
+  updateFirmware(connectorNo: number = 1) {
+  if (!this.charger) return;
+
+  const payload = {
+    command: 'UPDATE_FIRMWARE',
+    charger_id: this.charger.charger_id,
+    charger_sr_no: this.charger.serial_no,
+    connector: connectorNo,
+    location: this.firmwareLocation || 'http://ftps.p2power.com/Q1_FINAL_TYPE2.bin',
+    retries: this.firmwareRetries ,
+    retryInterval: this.firmwareRetryInterval ,
+    retrieve_date: this.firmwareRetrieveDate
+      ? new Date(this.firmwareRetrieveDate).toISOString()
+      : new Date().toISOString()
+  };
+
+  console.log('Update Firmware Payload:', payload);
+
+  this.ocppService.updateFirmware(payload).subscribe({
+    next: (res: any) => this.showSnack(res?.message || 'Firmware update triggered', !!res?.status),
+    error: (err: any) => this.handleApiError(err, 'Error updating firmware')
+  });
+}
+
+
 }
 
