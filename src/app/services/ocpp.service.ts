@@ -227,6 +227,9 @@ getOcppLogs(
   );
 }
 
+updateFirmware(payload: any) {
+  return this.http.post(`${this.middleUrl}/updatefirmware`, payload);
+}
 
 
 
