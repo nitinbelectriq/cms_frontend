@@ -73,6 +73,14 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
   selectedRfid: string | null = null; // will hold the rf_id_no
   selectTrigger = '';
 
+  getDiagnosticEndDate: Date | null= null;
+  getDiagnosticStartDate: Date | null= null;
+
+  vendorId: string= '';
+dataTag='';
+messageId='';
+messageids=[];
+
   rfidselect = '';
 
   menus: any[] = [];
@@ -376,6 +384,8 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
     else if (menu.name === 'Reserve Now') this.selectedTask = menu.name;
     else if (menu.name === 'Change Availability') this.selectedTask = menu.name;
     else if (menu.name === 'Update Firmware') this.selectedTask = menu.name;
+    else if(menu.name ==='Get Diagnostics') this.selectedTask = menu.name;
+    else if(menu.name === 'Data Transfer') this.selectedTask = menu.name
     // intentionally leave default behavior untouched
   }
 
