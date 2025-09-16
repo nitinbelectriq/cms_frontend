@@ -113,6 +113,18 @@ export const routes: Routes = [
           ),
       },
       {
+  path: 'user-charging-log',
+  loadComponent: () =>
+    import('./pages/OCPP/user-charging-logs/user-charging-logs.component')
+      .then((m) => m.UserChargingLogsComponent),
+},
+{
+  path: 'charger-charging-logs',
+  loadComponent: () =>
+    import('./pages/OCPP/charger-charging-logs/charger-charging-logs.component')
+      .then((m) => m.ChargerChargingLogsComponent),
+},
+      {
         path: 'manage-user',
         loadComponent: () =>
           import('./pages/user-management/user-management/user-management.component').then(

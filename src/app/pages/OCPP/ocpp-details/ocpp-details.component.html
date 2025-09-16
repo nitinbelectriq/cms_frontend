@@ -373,30 +373,29 @@
 
 <!-- data transfer -->
 
- <div *ngSwitchCase="'Data Transfer'">
+<div *ngSwitchCase="'Data Transfer'">
   <div class="update-firmware">
+    <!-- Vendor Id -->
     <mat-form-field appearance="outline" class="custom-label updatefirmware">
       <mat-label>Vendor Id</mat-label>
       <input matInput [(ngModel)]="vendorId" placeholder="Give a vendor" name="vendorId"/>
     </mat-form-field>
 
-    <ng-container >
+    <!-- Message Id dropdown -->
+    <ng-container>
       <mat-form-field appearance="outline" class="custom-label">
         <mat-label>Message Id</mat-label>
         <mat-select [(ngModel)]="messageId">
-          <mat-option *ngFor="let r of messageids" [value]="r">
-            
-          </mat-option>
+          <mat-option *ngFor="let r of messageids" [value]="r">{{ r }}</mat-option>
         </mat-select>
       </mat-form-field>
     </ng-container>
 
+    <!-- Data Tag -->
     <mat-form-field appearance="outline" class="custom-label updatefirmware">
       <mat-label>Data Tag</mat-label>
       <input matInput type="number" [(ngModel)]="dataTag" placeholder="Give a Tag" name="dataTag"/>
     </mat-form-field>
-
-   
   </div>
 
   <div style="gap: 10px;" align="end">
@@ -405,6 +404,7 @@
     <button mat-raised-button (click)="selectedTask = null">Cancel</button>
   </div>
 </div>
+
 
 
       

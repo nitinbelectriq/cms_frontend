@@ -79,8 +79,26 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
   vendorId: string= '';
 dataTag='';
 messageId='';
-messageids=[];
+// 1. Add the fixed message IDs list:
+messageids: string[] = [
+  'GET_S_DNS',
+  'GET_S_PORT',
+  'GET_S_HSURL',
+  'GET_S_WIFISSID',
+  'GET_S_WIFIPASS',
+  'SET_S_DNS',
+  'SET_S_PORT',
+  'SET_S_HSURL',
+  'SET_S_WIFISSID',
+  'SET_S_WIFIPASS',
+  'SET_CLRLOGS',
+  'CC_CONFIG',
+  'SET_SCHEDULE'
+];
 
+
+
+// 2. Add a method to call the Data Transfer API:
   rfidselect = '';
 
   menus: any[] = [];
@@ -410,6 +428,9 @@ messageids=[];
     else if (task === 'Update Firmware') {
     this.updateFirmware(connectorNo);
   }
+  else if (task === 'Data Transfer') {
+    this.callDataTransfer(connectorNo);
+  }
   }
 
   performCommand(command: string): void {
@@ -725,7 +746,7 @@ firmwareRetrieveDate: Date | null = null;
 
   const payload = {
     command: 'UPDATE_FIRMWARE',
-    charger_id: this.charger.charger_id,
+    charger_id: this.charger.serial_no,
     charger_sr_no: this.charger.serial_no,
     connector: connectorNo,
     location: this.firmwareLocation || 'http://ftps.p2power.com/Q1_FINAL_TYPE2.bin',
@@ -743,6 +764,32 @@ firmwareRetrieveDate: Date | null = null;
     error: (err: any) => this.handleApiError(err, 'Error updating firmware')
   });
 }
+// Inside ChargerDetailComponent class
+
+
+callDataTransfer(connectorNo: number) {
+  if (!this.charger) return;
+
+  const payload = {
+    command: 'DATA_TRANSFER',
+    child_command: this.messageId,  // selected dropdown option
+    charger_id: this.charger.serial_no,
+    charger_sr_no: this.charger.serial_no,
+    connector: connectorNo,
+    vendor_id: this.vendorId,
+    data: this.dataTag || '0'
+  };
+
+  console.log('Data Transfer payload:', payload);
+
+  this.ocppService.callDataTransfer(payload).subscribe({
+    next: (res: any) => {
+      this.showSnack(res?.message || 'Data Transfer executed', !!res?.status);
+    },
+    error: (err: any) => this.handleApiError(err, 'Error executing Data Transfer')
+  });
+}
+
 
 
 }

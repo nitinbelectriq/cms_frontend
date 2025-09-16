@@ -1,4 +1,4 @@
 export const environment = {
-  apiBaseUrl: 'http://3.91.8.153:5500' ,
-  apiMiddleUrl:'http://3.91.8.153:4800'
+  apiBaseUrl: 'http://54.237.51.117:5500',
+  apiMiddleUrl:'http://54.237.51.117:4800'
 };

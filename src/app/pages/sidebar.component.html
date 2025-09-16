@@ -91,17 +91,27 @@
         <a mat-list-item routerLink="/home/charging-station" class="nested-link">Manage Station</a>
       </div>
 
-      <!-- OCPP Operations -->
-      <div mat-list-item (click)="toggleSection('ocpp')" class="parent-item">
-        <mat-icon>settings_input_component</mat-icon>
-        <span>OCPP Operations</span>
-        <mat-icon class="expand-icon">
-          {{ isSectionOpen['ocpp'] ? 'expand_less' : 'expand_more' }}
-        </mat-icon>
-      </div>
-      <div *ngIf="isSectionOpen['ocpp']" class="nested-links">
-        <a mat-list-item routerLink="/home/ocpp-diagnostic" class="nested-link">OCPP Diagnostic</a>
-      </div>
+     <!-- OCPP Operations -->
+<div mat-list-item (click)="toggleSection('ocpp')" class="parent-item">
+  <mat-icon>settings_input_component</mat-icon>
+  <span>OCPP Operations</span>
+  <mat-icon class="expand-icon">
+    {{ isSectionOpen['ocpp'] ? 'expand_less' : 'expand_more' }}
+  </mat-icon>
+</div>
+
+<div *ngIf="isSectionOpen['ocpp']" class="nested-links">
+  <a mat-list-item routerLink="/home/ocpp-diagnostic" class="nested-link">
+    OCPP Diagnostic
+  </a>
+  <a mat-list-item routerLink="/home/user-charging-log" class="nested-link">
+    User Charging Log
+  </a>
+  <a mat-list-item routerLink="/home/charger-charging-logs" class="nested-link">
+    Charger Charging Logs
+  </a>
+</div>
+
 
       <!-- ✅ User Management with Submenus -->
       <div mat-list-item (click)="toggleSection('user')" class="parent-item">
