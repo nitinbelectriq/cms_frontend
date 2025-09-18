@@ -209,6 +209,11 @@ messageids: string[] = [
     this.loadOcppLogs();
   }
 
+  // refresh complete page
+  refreshPage() {
+  window.location.reload();
+}
+
   exportLogsToCsv() {
     const logs = this.dataSourceLogs.data;
     if (!logs || logs.length === 0) {
