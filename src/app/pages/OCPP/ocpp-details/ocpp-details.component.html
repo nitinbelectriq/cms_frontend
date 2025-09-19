@@ -221,6 +221,109 @@
       
         </div>
 
+        <!-- Get composite schedule -->
+
+  <div *ngSwitchCase="'Get Composite Schedule'">
+  <div class="remote-stop">
+    <!-- Editable -->
+    <mat-form-field appearance="outline" class="custom-label">
+      <mat-label>Duration (in seconds)</mat-label>
+      <input matInput [(ngModel)]="compositeScheduleDuration" placeholder="Duration">
+    </mat-form-field>
+
+    <!-- Read-only, filled by API -->
+          <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Charging Rate Unit</mat-label>
+        <mat-select [(ngModel)]="ChargingRateUnit">
+          <mat-option >
+           
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+  </div>
+
+  <div style="gap: 10px;" align="end">
+    <button mat-raised-button (click)="performTask(conn.connector_no, selectedTask)" 
+            style="margin-right: 10px;" class="create">
+      Perform
+    </button>
+    <button mat-raised-button>Cancel</button>
+  </div>
+</div>
+
+        <!-- clear charging profile -->
+         <div *ngSwitchCase="'Clear Charging Profile'">
+  <div class="update-firmware">
+    
+
+    <!-- Read-only, filled by API -->
+          <mat-form-field appearance="outline" class="custom-label updatefirmware">
+        <mat-label>Filter Type</mat-label>
+        <mat-select [(ngModel)]="clearProfileFilter">
+          <mat-option >
+           
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+                <mat-form-field appearance="outline" class="custom-label updatefirmware">
+        <mat-label>Charging Profile Id</mat-label>
+        <mat-select [(ngModel)]="clearChargingProfileId">
+          <mat-option >
+           
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+                <mat-form-field appearance="outline" class="custom-label updatefirmware">
+        <mat-label>Charging Profile Purpose</mat-label>
+        <mat-select [(ngModel)]="ChargingProfilePurpose">
+          <mat-option >
+           
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      
+      <!-- stack level -->
+    <mat-form-field appearance="outline" class="custom-label updatefirmware">
+      <mat-label>Stack Level</mat-label>
+      <input matInput [(ngModel)]="stackLevel" placeholder="Stack Level">
+    </mat-form-field>
+  </div>
+
+  <div style="gap: 10px;" align="end">
+    <button mat-raised-button (click)="performTask(conn.connector_no, selectedTask)" 
+            style="margin-right: 10px;" class="create">
+      Perform
+    </button>
+    <button mat-raised-button>Cancel</button>
+  </div>
+</div>
+
+<!-- Set charging profile -->
+
+      <div *ngSwitchCase="'Set Charging Profile'">
+        <div>
+          <mat-form-field appearance="outline" class="custom-label updatefirmware">
+        <mat-label>Charging Profile Id</mat-label>
+        <mat-select [(ngModel)]="setChargingProfileId">
+          <mat-option >
+           
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+        </div>
+        <div style="gap: 10px;" align="end">
+          <button mat-raised-button (click)="performTask(conn.connector_no, selectedTask)" 
+            style="margin-right: 10px;" class="create">
+            Perform
+          </button>
+          <button mat-raised-button>Cancel</button>
+        </div>
+
+      </div>
 
      <!-- manage configurations -->
       <div *ngSwitchCase="'Manage Configurations'">

@@ -77,6 +77,16 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
   getDiagnosticStartDate: Date | null= null;
 
   vendorId: string= '';
+  ChargingRateUnit='';
+  compositeScheduleDuration=null;
+
+  ChargingProfilePurpose='';
+  clearChargingProfileId='';
+  clearProfileFilter='';
+  stackLevel= '';
+
+  setChargingProfileId='';
+
 dataTag='';
 messageId='';
 // 1. Add the fixed message IDs list:
@@ -408,7 +418,11 @@ messageids: string[] = [
     else if (menu.name === 'Change Availability') this.selectedTask = menu.name;
     else if (menu.name === 'Update Firmware') this.selectedTask = menu.name;
     else if(menu.name ==='Get Diagnostics') this.selectedTask = menu.name;
-    else if(menu.name === 'Data Transfer') this.selectedTask = menu.name
+    else if(menu.name === 'Data Transfer') this.selectedTask = menu.name;
+    else if(menu.name === 'Get Composite Schedule') this.selectedTask = menu.name;
+    else if(menu.name === 'Clear Charging Profile') this.selectedTask = menu.name;
+    else if(menu.name === 'Set Charging Profile') this.selectedTask = menu.name;
+
     // intentionally leave default behavior untouched
   }
 
