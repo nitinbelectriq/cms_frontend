@@ -85,6 +85,50 @@
         </div>
       </div>
 
+      <div *ngIf="unselectconnector">
+        <ng-container  [ngSwitch]="selectedTask">
+
+            <div *ngSwitchCase="'Update Firmware'">
+              <div class="update-firmware">
+                <mat-form-field appearance="outline" class="custom-label updatefirmware">
+                  <mat-label>Location</mat-label>
+                  <input matInput [(ngModel)]="firmwareLocation" placeholder="Choose a Location" name="firmwareLocation"/>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="custom-label updatefirmware">
+                  <mat-label>Retries (Integer)</mat-label>
+                  <input matInput type="number" [(ngModel)]="firmwareRetries" placeholder="Choose a value" name="firmwareRetries"/>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="custom-label updatefirmware">
+                  <mat-label>Retry Interval (Integer)</mat-label>
+                  <input matInput type="number" [(ngModel)]="firmwareRetryInterval" placeholder="Choose a value" name="firmwareRetryInterval"/>
+                </mat-form-field>
+
+                <mat-form-field appearance="outline" class="custom-label updatefirmware">
+                  <mat-label>Retrieve Date</mat-label>
+                  <input matInput [matDatepicker]="picker" [(ngModel)]="firmwareRetrieveDate" placeholder="Choose a date" name="firmwareRetrieveDate"/>
+                  <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+                  <mat-datepicker #picker></mat-datepicker>
+                </mat-form-field>
+              </div>
+
+              <div style="gap: 10px;" align="end">
+                <button mat-raised-button style="margin-right: 10px;" class="create"
+                 (click)="performTask( selectedTask)">Perform</button>
+                <button mat-raised-button (click)="selectedTask = null">Cancel</button>
+              </div>
+            </div>
+
+
+          <div >output</div>
+          <div *ngSwitchDefault>output2</div>
+        </ng-container>
+
+      </div>
+      
+    <div *ngIf="!unselectconnector">
+
     <div *ngFor="let conn of charger?.connector_data" style="margin: 8px 0;">
       <mat-card style="margin-bottom: 5px; display: flex; flex-direction: column; justify-content: space-between;">
         <div style="padding: 12px; display: flex; flex-direction: row; justify-content: space-between;">
@@ -565,6 +609,7 @@
         
       </mat-card>
     </div>
+  </div>
    </div>
 
 <div *ngIf="showSettings" class="settings-backdrop">

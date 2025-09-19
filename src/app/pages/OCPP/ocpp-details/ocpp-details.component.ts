@@ -69,6 +69,7 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
 
   selectedAction: string | null = null;
   selectedTask: string | null = null;
+  unselectconnector: boolean = false;
   idTagType: string | null = null; // for radio button
   selectedRfid: string | null = null; // will hold the rf_id_no
   selectTrigger = '';
@@ -416,7 +417,11 @@ messageids: string[] = [
     else if (menu.name === 'Trigger Message') this.selectedTask = menu.name;
     else if (menu.name === 'Reserve Now') this.selectedTask = menu.name;
     else if (menu.name === 'Change Availability') this.selectedTask = menu.name;
-    else if (menu.name === 'Update Firmware') this.selectedTask = menu.name;
+    else if (menu.name === 'Update Firmware'){
+      this.selectedTask = menu.name;
+      this.unselectconnector= !this.unselectconnector;
+
+    } 
     else if(menu.name ==='Get Diagnostics') this.selectedTask = menu.name;
     else if(menu.name === 'Data Transfer') this.selectedTask = menu.name;
     else if(menu.name === 'Get Composite Schedule') this.selectedTask = menu.name;
@@ -760,6 +765,7 @@ firmwareRetrieveDate: Date | null = null;
       error: (err: any) => this.handleApiError(err, 'Error reserving now')
     });
   }
+  
   updateFirmware(connectorNo: number = 1) {
   if (!this.charger) return;
 
