@@ -73,6 +73,7 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
   idTagType: string | null = null; // for radio button
   selectedRfid: string | null = null; // will hold the rf_id_no
   selectTrigger = '';
+  setconnectorId=null;
 
   getDiagnosticEndDate: Date | null= null;
   getDiagnosticStartDate: Date | null= null;
@@ -410,23 +411,85 @@ messageids: string[] = [
 
   onMenuClick(menu: any, connectorNo?: number) {
     // preserve original branching and names
-    if (menu.name === 'Unlock Connector') this.selectedTask = menu.name;
-    else if (menu.name === 'Remote Start') this.selectedTask = menu.name;
-    else if (menu.name === 'Remote Stop') this.selectedTask = menu.name;
-    else if (menu.name === 'Manage Configurations') this.selectedTask = menu.name;
-    else if (menu.name === 'Trigger Message') this.selectedTask = menu.name;
-    else if (menu.name === 'Reserve Now') this.selectedTask = menu.name;
-    else if (menu.name === 'Change Availability') this.selectedTask = menu.name;
-    else if (menu.name === 'Update Firmware'){
+    if (menu.name === 'Unlock Connector'){
       this.selectedTask = menu.name;
-      this.unselectconnector= !this.unselectconnector;
+      this.unselectconnector= false;
 
     } 
-    else if(menu.name ==='Get Diagnostics') this.selectedTask = menu.name;
-    else if(menu.name === 'Data Transfer') this.selectedTask = menu.name;
-    else if(menu.name === 'Get Composite Schedule') this.selectedTask = menu.name;
-    else if(menu.name === 'Clear Charging Profile') this.selectedTask = menu.name;
-    else if(menu.name === 'Set Charging Profile') this.selectedTask = menu.name;
+       //this.selectedTask = menu.name;
+    else if (menu.name === 'Remote Start') {
+      this.selectedTask = menu.name;
+      this.unselectconnector= false;
+
+    } 
+      //this.selectedTask = menu.name;
+    else if (menu.name === 'Remote Stop'){
+      this.selectedTask = menu.name;
+      this.unselectconnector= false;
+
+    } 
+      //this.selectedTask = menu.name;
+    else if (menu.name === 'Manage Configurations'){
+      this.selectedTask = menu.name;
+      this.unselectconnector= false;
+
+    } 
+      // this.selectedTask = menu.name;
+    else if (menu.name === 'Trigger Message'){
+      this.selectedTask = menu.name;
+      this.unselectconnector= false;
+
+    } 
+      // this.selectedTask = menu.name;
+    else if (menu.name === 'Reserve Now'){
+      this.selectedTask = menu.name;
+      this.unselectconnector= false;
+
+    } 
+       //this.selectedTask = menu.name;
+    else if (menu.name === 'Change Availability'){
+      this.selectedTask = menu.name;
+      this.unselectconnector= false;
+
+    } 
+       //this.selectedTask = menu.name;
+    else if (menu.name === 'Update Firmware'){
+      this.selectedTask = menu.name;
+      this.unselectconnector= true;
+
+    } 
+    else if(menu.name ==='Get Diagnostics'){
+      this.selectedTask = menu.name;
+      this.unselectconnector= true;
+
+    } 
+    // this.selectedTask = menu.name;
+    else if(menu.name === 'Data Transfer') {
+      this.selectedTask = menu.name;
+      this.unselectconnector= true;
+
+    } 
+    // this.selectedTask = menu.name;
+    else if(menu.name === 'Get Composite Schedule')
+      {
+      this.selectedTask = menu.name;
+      this.unselectconnector= true;
+
+    } 
+      // this.selectedTask = menu.name;
+    else if(menu.name === 'Clear Charging Profile')
+      {
+      this.selectedTask = menu.name;
+      this.unselectconnector= true;
+
+    } 
+      //this.selectedTask = menu.name;
+    else if(menu.name === 'Set Charging Profile'){
+      this.selectedTask = menu.name;
+      this.unselectconnector= true;
+
+    } 
+      // this.selectedTask = menu.name;
 
     // intentionally leave default behavior untouched
   }
