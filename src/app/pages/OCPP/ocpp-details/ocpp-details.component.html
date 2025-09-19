@@ -86,6 +86,9 @@
       </div>
 
       <div *ngIf="unselectconnector">
+        <div *ngIf="selectedTask">
+
+       
         <ng-container  [ngSwitch]="selectedTask">
 
             <div *ngSwitchCase="'Update Firmware'">
@@ -115,15 +118,208 @@
 
               <div style="gap: 10px;" align="end">
                 <button mat-raised-button style="margin-right: 10px;" class="create"
-                 (click)="performTask( selectedTask)">Perform</button>
+                 (click)="performTask(1, selectedTask)">Perform</button>
                 <button mat-raised-button (click)="selectedTask = null">Cancel</button>
               </div>
             </div>
 
+            <!-- get daignostic -->
 
-          <div >output</div>
-          <div *ngSwitchDefault>output2</div>
+     <div *ngSwitchCase="'Get Diagnostics'">
+  <div class="update-firmware">
+    <mat-form-field appearance="outline" class="custom-label updatefirmware">
+      <mat-label>Location</mat-label>
+      <input matInput [(ngModel)]="firmwareLocation" placeholder="Choose a Location" name="firmwareLocation"/>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label updatefirmware">
+      <mat-label>Retries (Integer)</mat-label>
+      <input matInput type="number" [(ngModel)]="firmwareRetries" placeholder="Choose a value" name="firmwareRetries"/>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label updatefirmware">
+      <mat-label>Retry Interval (Integer)</mat-label>
+      <input matInput type="number" [(ngModel)]="firmwareRetryInterval" placeholder="Choose a value" name="firmwareRetryInterval"/>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label updatefirmware">
+      <mat-label>Start Date</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="getDiagnosticStartDate" placeholder="Choose a date" name="firmwareRetrieveDate"/>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+
+    <mat-form-field appearance="outline" class="custom-label updatefirmware">
+      <mat-label>End Date</mat-label>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="getDiagnosticEndDate" placeholder="Choose a date" name="firmwareRetrieveDate"/>
+      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+      <mat-datepicker #picker></mat-datepicker>
+    </mat-form-field>
+  </div>
+
+  <div style="gap: 10px;" align="end">
+    <button mat-raised-button style="margin-right: 10px;" class="create"
+            (click)="performTask(1, selectedTask)">Perform</button>
+    <button mat-raised-button (click)="selectedTask = null">Cancel</button>
+  </div>
+</div>
+
+<!-- data transfer -->
+
+<div *ngSwitchCase="'Data Transfer'">
+  <div class="update-firmware">
+    <!-- Vendor Id -->
+    <mat-form-field appearance="outline" class="custom-label updatefirmware">
+      <mat-label>Vendor Id</mat-label>
+      <input matInput [(ngModel)]="vendorId" placeholder="Give a vendor" name="vendorId"/>
+    </mat-form-field>
+
+    <!-- Message Id dropdown -->
+    <ng-container>
+      <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Message Id</mat-label>
+        <mat-select [(ngModel)]="messageId">
+          <mat-option *ngFor="let r of messageids" [value]="r">{{ r }}</mat-option>
+        </mat-select>
+      </mat-form-field>
+    </ng-container>
+
+    <!-- Data Tag -->
+    <mat-form-field appearance="outline" class="custom-label updatefirmware">
+      <mat-label>Data Tag</mat-label>
+      <input matInput type="number" [(ngModel)]="dataTag" placeholder="Give a Tag" name="dataTag"/>
+    </mat-form-field>
+  </div>
+
+  <div style="gap: 10px;" align="end">
+    <button mat-raised-button style="margin-right: 10px;" class="create"
+            (click)="performTask(1, selectedTask)">Perform</button>
+    <button mat-raised-button (click)="selectedTask = null">Cancel</button>
+  </div>
+</div>
+
+
+
+            <!-- new -->
+
+                 <!-- Get composite schedule -->
+
+  <div *ngSwitchCase="'Get Composite Schedule'">
+  <div class="remote-stop">
+    <!-- Editable -->
+    <mat-form-field appearance="outline" class="custom-label">
+      <mat-label>Duration (in seconds)</mat-label>
+      <input matInput [(ngModel)]="compositeScheduleDuration" placeholder="Duration">
+    </mat-form-field>
+
+    <!-- Read-only, filled by API -->
+          <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Charging Rate Unit</mat-label>
+        <mat-select [(ngModel)]="ChargingRateUnit">
+          <mat-option >
+           
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+  </div>
+
+  <div style="gap: 10px;" align="end">
+    <button mat-raised-button (click)="performTask(1, selectedTask)" 
+            style="margin-right: 10px;" class="create">
+      Perform
+    </button>
+    <button mat-raised-button>Cancel</button>
+  </div>
+</div>
+
+        <!-- clear charging profile -->
+         <div *ngSwitchCase="'Clear Charging Profile'">
+  <div class="update-firmware">
+    
+
+    <!-- Read-only, filled by API -->
+               <mat-form-field appearance="outline" class="custom-label updatefirmware">
+        <mat-label> Connector Id</mat-label>
+        <mat-select [(ngModel)]="setconnectorId">
+          <mat-option >
+           
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+                <mat-form-field appearance="outline" class="custom-label updatefirmware">
+        <mat-label>Charging Profile Id</mat-label>
+        <mat-select [(ngModel)]="clearChargingProfileId">
+          <mat-option >
+           
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+                <mat-form-field appearance="outline" class="custom-label updatefirmware">
+        <mat-label>Charging Profile Purpose</mat-label>
+        <mat-select [(ngModel)]="ChargingProfilePurpose">
+          <mat-option >
+           
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+      
+      <!-- stack level -->
+    <mat-form-field appearance="outline" class="custom-label updatefirmware">
+      <mat-label>Stack Level</mat-label>
+      <input matInput [(ngModel)]="stackLevel" placeholder="Stack Level">
+    </mat-form-field>
+  </div>
+
+  <div style="gap: 10px;" align="end">
+    <button mat-raised-button (click)="performTask(1, selectedTask)" 
+            style="margin-right: 10px;" class="create">
+      Perform
+    </button>
+    <button mat-raised-button>Cancel</button>
+  </div>
+</div>
+
+<!-- Set charging profile -->
+
+      <div *ngSwitchCase="'Set Charging Profile'">
+        <div>
+          <mat-form-field appearance="outline" class="custom-label updatefirmware">
+        <mat-label>Charging Profile Id</mat-label>
+        <mat-select [(ngModel)]="setChargingProfileId">
+          <mat-option >
+           
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+        <mat-form-field appearance="outline" class="custom-label updatefirmware">
+        <mat-label> Connector Id</mat-label>
+        <mat-select [(ngModel)]="setconnectorId">
+          <mat-option >
+           
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+        </div>
+        <div style="gap: 10px;" align="end">
+          <button mat-raised-button (click)="performTask(1, selectedTask)" 
+            style="margin-right: 10px;" class="create">
+            Perform
+          </button>
+          <button mat-raised-button>Cancel</button>
+        </div>
+
+      </div>
+
+
+
+          
         </ng-container>
+        </div>
 
       </div>
       
