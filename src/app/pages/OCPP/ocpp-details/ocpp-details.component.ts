@@ -94,6 +94,7 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
   setProfileKind='';
   setPofilePurpose='';
   setChargingRateUnit=null;
+  Duration: number | null = null;
 
 dataTag='';
 messageId='';
@@ -524,6 +525,12 @@ messageids: string[] = [
   else if (task === 'Data Transfer') {
     this.callDataTransfer(connectorNo);
   }
+  else if(task=== 'Set Charging Profile'){
+    this.setChargingProfile();
+  }
+  else if(task === 'Clear Charging Profile'){
+    this.clearChargingProfile();
+  }
   }
 
   performCommand(command: string): void {
@@ -874,7 +881,7 @@ callDataTransfer(connectorNo: number) {
     data: this.dataTag || '0'
   };
 
-  console.log('Data Transfer payload:', payload);
+  //console.log('Data Transfer payload:', payload);
 
   this.ocppService.callDataTransfer(payload).subscribe({
     next: (res: any) => {
@@ -884,6 +891,56 @@ callDataTransfer(connectorNo: number) {
   });
 }
 
+setChargingProfile(){
+  const payload= {
+    command: "SETCHARGING_PROFILE",
+    charger_id: this.charger.serial_no,
+    charger_sr_no: this.charger.serial_no,
+    connector: this.setconnectorId,
+    station_id: this.charger.station_id,
+     chargingProfileId: this.setChargingProfileId,
+    transactionId: this.transactionId,
+    stackLevel: this.stackLevel,
+    chargingProfilePurpose: this.setPofilePurpose,
+    chargingProfileKind: this.setProfileKind,
+    recurrencyKind: this.setRecurrencyKind, 
+    validFrom: "2025-09-22T18:08:16Z",
+    validTo: "2025-09-23T18:21:19Z",  
+    duration: this.Duration,
+    startSchedule: this.startSchedule,
+    startPeriod:0,
+    chargingRateUnit: this.ChargingRateUnit,
+    limit:0.1,
+    numberPhases:2,
+    minChargingRate:0.1
+  }
+  this.ocppService.setChargingProfile(payload).subscribe({
+     next: (res: any) => {
+      this.showSnack(res?.message || 'Data Transfer executed', !!res?.status);
+    },
+    error: (err: any) => this.handleApiError(err, 'Error executing Data Transfer')
+  })
+
+}
+ 
+clearChargingProfile(){
+  const payload={
+    command: "CLEARCHARGING_PROFILE",
+    charger_id: this.charger.serial_no,
+    charger_sr_no: this.charger.serial_no,
+    connector: this.setconnectorId,
+    Id: this.clearChargingProfileId,    
+    stackLevel: this.stackLevel,
+    chargingProfilePurpose: this.setPofilePurpose,
+  }
+
+  this.ocppService.clearChargingProfile(payload).subscribe({
+     next: (res: any) => {
+      this.showSnack(res?.message || 'Data Transfer executed', !!res?.status);
+    },
+    error: (err: any) => this.handleApiError(err, 'Error executing Data Transfer')
+  })
+}
 
 
 }
