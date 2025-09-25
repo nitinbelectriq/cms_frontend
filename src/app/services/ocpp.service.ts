@@ -234,6 +234,19 @@ callDataTransfer(payload: any) {
   return this.http.post(`${this.middleUrl}/dataTransfer`, payload);
 }
 
+setChargingProfile(payload: any){
+  return this.http.post(`${this.middleUrl}/setChargingProfile`, payload, {
+    headers: this.getAuthHeaders()
+  });
+}
+
+clearChargingProfile(payload: any){
+  return this.http.post(`${this.middleUrl}/clearChargingProfile`, payload, {
+    headers: this.getAuthHeaders()
+  })
+}
+
+
 
   
 }
