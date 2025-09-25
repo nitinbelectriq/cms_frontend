@@ -76,7 +76,7 @@
 
    
    <div style="width: 100%;">
-      <div class="connector-heading dashboard-row" style="margin-top: 24px; ">
+      <div class="connector-heading dashboard-row" style="margin-top: 24px; margin-bottom: 10px;">
         <h4><strong>Connector Status</strong></h4>
         <div>
           <button mat-stroked-button (click)="toggleSettings()">
@@ -86,7 +86,7 @@
       </div>
 
       <div *ngIf="unselectconnector">
-        <div *ngIf="selectedTask">
+        <mat-card *ngIf="selectedTask" style="padding: 5px;">
 
        
         <ng-container  [ngSwitch]="selectedTask">
@@ -241,9 +241,9 @@
                <mat-form-field appearance="outline" class="custom-label updatefirmware">
         <mat-label> Connector Id</mat-label>
         <mat-select [(ngModel)]="setconnectorId">
-          <mat-option >
-           
-          </mat-option>
+          <mat-option value="0" >0</mat-option>
+            <mat-option value="1" >1</mat-option>
+              <mat-option value="2" >2</mat-option>
         </mat-select>
       </mat-form-field>
 
@@ -285,24 +285,92 @@
 <!-- Set charging profile -->
 
       <div *ngSwitchCase="'Set Charging Profile'">
-        <div>
-          <mat-form-field appearance="outline" class="custom-label updatefirmware">
+        <div class="update-firmware">
+          <mat-form-field appearance="outline" class="custom-label ">
         <mat-label>Charging Profile Id</mat-label>
-        <mat-select [(ngModel)]="setChargingProfileId">
-          <mat-option >
-           
-          </mat-option>
+        <input matInput [(ngModel)]="setChargingProfileId" placeholder="profile ID">
+      </mat-form-field>
+
+       <mat-form-field appearance="outline" class="custom-label ">
+          <mat-label>Transaction ID</mat-label>
+          <input matInput [(ngModel)]="transactionId" placeholder="Transaction ID">
+          </mat-form-field>
+
+        <mat-form-field appearance="outline" class="custom-label ">
+        <mat-label> Connector Id</mat-label>
+        <mat-select [(ngModel)]="setconnectorId">
+                   <mat-option value="0" >0</mat-option>
+            <mat-option value="1" >1</mat-option>
+              <mat-option value="2" >2</mat-option>
         </mat-select>
       </mat-form-field>
 
-        <mat-form-field appearance="outline" class="custom-label updatefirmware">
-        <mat-label> Connector Id</mat-label>
-        <mat-select [(ngModel)]="setconnectorId">
-          <mat-option >
-           
-          </mat-option>
+          <mat-form-field appearance="outline" class="custom-label ">
+          <mat-label>Stack Level</mat-label>
+          <input matInput [(ngModel)]="stackLevel" placeholder="Stack Level">
+          </mat-form-field>
+
+          <!-- Charging profile purpose -->
+         <mat-form-field appearance="outline" class="custom-label ">
+        <mat-label> Charging Profile Purpose</mat-label>
+        <mat-select [(ngModel)]="setPofilePurpose">
+          <mat-option value="TxProfile"> TxProfile </mat-option>
+           <mat-option value="ChargePointMaxProfile"> ChargePointMaxProfile </mat-option>
+            <mat-option value="TxDefaultProfile"> TxDefaultProfile </mat-option>
         </mat-select>
       </mat-form-field>
+
+      <!-- CHARGING PROFILE KIND -->
+                  <mat-form-field appearance="outline" class="custom-label ">
+        <mat-label> Charging Profile Kind</mat-label>
+        <mat-select [(ngModel)]="setProfileKind">
+          <mat-option value="Absolute" >Absolute  </mat-option>
+          <mat-option value="Recurring " >Recurring   </mat-option>
+          <mat-option value="Relative" >Relative  </mat-option>
+
+
+        </mat-select>
+      </mat-form-field>
+
+          <!-- recurrency kind -->
+        <mat-form-field appearance="outline" class="custom-label ">
+        <mat-label> Recurrency Kind</mat-label>
+        <mat-select [(ngModel)]="setRecurrencyKind">
+          <mat-option value="Daily">Daily </mat-option>
+          <mat-option value="Weekly">Weekly </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+
+                <mat-form-field appearance="outline" class="custom-label ">
+          <mat-label>Duration</mat-label>
+          <input matInput [(ngModel)]="stackLevel" placeholder="Integer">
+          </mat-form-field>
+
+
+
+
+          <!-- charging rate unit -->
+        <mat-form-field appearance="outline" class="custom-label ">
+        <mat-label> Charging rate Unit</mat-label>
+        <mat-select [(ngModel)]="setChargingRateUnit">
+          <mat-option value="W"> W </mat-option>
+           <mat-option value="A"> A </mat-option>
+        </mat-select>
+      </mat-form-field>
+
+          <!-- <mat-form-field appearance="outline" class="custom-label ">
+          <mat-label>Start Schedule</mat-label>
+          <input matInput [(ngModel)]="startSchedule" placeholder="Start Schedule">
+          </mat-form-field> -->
+
+           <!-- Expiry Date Picker -->
+            <mat-form-field appearance="outline" class="custom-label">
+              <mat-label>Start Schedule</mat-label>
+              <input matInput [matDatepicker]="picker" [(ngModel)]="startSchedule"  placeholder="Choose a date" />
+              <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
+              <mat-datepicker #picker></mat-datepicker>
+            </mat-form-field>
 
         </div>
         <div style="gap: 10px;" align="end">
@@ -319,7 +387,7 @@
 
           
         </ng-container>
-        </div>
+      </mat-card>
 
       </div>
       
