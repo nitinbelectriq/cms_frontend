@@ -86,8 +86,14 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
   clearChargingProfileId='';
   clearProfileFilter='';
   stackLevel= '';
+  transactionId: number | null =null;
+  startSchedule: Date | null= null;
 
   setChargingProfileId='';
+  setRecurrencyKind='';
+  setProfileKind='';
+  setPofilePurpose='';
+  setChargingRateUnit=null;
 
 dataTag='';
 messageId='';
