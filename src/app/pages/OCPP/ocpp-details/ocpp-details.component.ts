@@ -438,7 +438,7 @@ messageids: string[] = [
       //this.selectedTask = menu.name;
     else if (menu.name === 'Manage Configurations'){
       this.selectedTask = menu.name;
-      this.unselectconnector= false;
+      this.unselectconnector= true;
 
     } 
       // this.selectedTask = menu.name;
