@@ -1,0 +1,102 @@
+<div class="header">
+  <div>
+     <h2>Manage Callback close</h2>
+  </div>
+   
+  <div class="header-right">
+    <mat-card class="search-container" >
+      <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Search</mat-label>
+        <input matInput [(ngModel)]="searchText" (input)="applyFilter()" placeholder="Search...">
+        <mat-icon matSuffix>search</mat-icon>
+      </mat-form-field>
+    </mat-card>
+
+    <div style="display: flex; justify-content: flex-end; margin-bottom: 10px;">
+      <button mat-raised-button color="primary" class="download-btn" (click)="downloadCSV()">
+        <mat-icon class="download-icon" style="font-size: 30px; height: 30px; width: 30px;">download_for_offline</mat-icon>
+       Export</button>
+    </div>
+
+    
+    
+    </div>
+  </div>
+  <mat-card style="padding: 16px; ">
+
+  
+
+  
+
+  <div style="margin: 3px 0;">
+    <button mat-raised-button  (click)="goBackToOpenRequest()">
+      <strong>
+       Open Request
+      </strong>
+      
+    </button>
+
+    <button mat-raised-button  style="margin-left: 8px;" (click)="goToCloseRequest()">
+      Close Request
+    </button>
+  </div>
+
+   <div style="overflow-x: auto;">
+    <table mat-table [dataSource]="dataSource" class="mat-elevation-z8" style="width: 100%;">
+
+    <!-- Serial -->
+<ng-container matColumnDef="Name">
+  <th mat-header-cell *matHeaderCellDef> Name </th>
+  <td mat-cell *matCellDef="let row">{{row.Name}}
+    
+  </td>
+</ng-container>
+
+<!-- Charger ID -->
+<ng-container matColumnDef="Question">
+  <th mat-header-cell *matHeaderCellDef> Question </th>
+  <td mat-cell *matCellDef="let row">
+    <a style="cursor: pointer; color: #1976d2;" >
+      {{ row.Question}}
+    </a>
+  </td>
+</ng-container>
+
+
+      <!-- Station -->
+      <ng-container matColumnDef="Mobile">
+        <th mat-header-cell *matHeaderCellDef> Mobile </th>
+        <td mat-cell *matCellDef="let row"> {{ row.Mobile }} </td>
+      </ng-container>
+
+      <!-- Current V -->
+      <ng-container matColumnDef="Date">
+        <th mat-header-cell *matHeaderCellDef> Date </th>
+        <td mat-cell *matCellDef="let row"> {{ row.Date }} </td>
+      </ng-container>
+
+      <!-- Guns -->
+      <ng-container matColumnDef="Remarks">
+        <th mat-header-cell *matHeaderCellDef> Remarks </th>
+        <td mat-cell *matCellDef="let row"> {{ row.Remarks }} </td>
+      </ng-container>
+
+  
+
+      <!-- Action -->
+      <ng-container matColumnDef="action">
+        <th mat-header-cell *matHeaderCellDef> Action </th>
+        <td mat-cell *matCellDef="let row">
+          <button mat-button color="primary" (click)="onActionClick(row)">
+            Action
+          </button>
+        </td>
+      </ng-container>
+
+      <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+      <tr mat-row *matRowDef="let row; columns: displayedColumns;"></tr>
+    </table>
+  </div>
+
+  <mat-paginator [pageSizeOptions]="[5, 10, 20]" showFirstLastButtons></mat-paginator>
+</mat-card>

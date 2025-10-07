@@ -91,6 +91,8 @@
         <a mat-list-item routerLink="/home/charging-station" class="nested-link">Manage Station</a>
       </div>
 
+     
+
      <!-- OCPP Operations -->
 <div mat-list-item (click)="toggleSection('ocpp')" class="parent-item">
   <mat-icon>settings_input_component</mat-icon>
@@ -111,7 +113,18 @@
     Charger Charging Logs
   </a>
 </div>
-
+ <!-- callback management -->
+            <div mat-list-item (click)="toggleSection('callback')" class="parent-item">
+          <mat-icon>person_group</mat-icon>
+          <span>Callback Management</span>
+          <mat-icon class="expand-icon">
+            {{ isSectionOpen['callback'] ? 'expand_less' : 'expand_more' }}
+          </mat-icon>
+        </div>
+        <div *ngIf="isSectionOpen['callback']" class="nested-links">
+          <a mat-list-item routerLink="/home/manage-callback-open" class="nested-link">Manage Callback</a>
+        </div>
+      
 
       <!-- ✅ User Management with Submenus -->
       <div mat-list-item (click)="toggleSection('user')" class="parent-item">

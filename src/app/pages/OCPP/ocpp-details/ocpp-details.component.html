@@ -198,7 +198,70 @@
   </div>
 </div>
 
+<!-- manage configurations -->
+      <div *ngSwitchCase="'Manage Configurations'">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 20px;">
+          <div class="manage-config">
+            <button mat-raised-button class="manage-config-btn" color="primary">Get selected Configuaration</button>
+            <!-- <span></span> -->
+          </div>
 
+          <div  class="manage-config">
+             <button mat-raised-button class="manage-config-btn" color="primary">Get All Configuaration</button>
+            <!-- <span>Get All Configuaration</span> -->
+          </div>
+
+          <div class="manage-config">
+            <button mat-raised-button class="manage-config-btn" color="primary">Change Custom Configuaration</button>
+            <!-- <span>Change Custom Configuaration</span> -->
+          </div>
+
+        </div>
+
+
+        <div class="tbl-mng-config">
+          
+        
+
+          <table mat-table [dataSource]="dataSource" class="mat-elevation-z8">
+
+             <!-- Select Column -->
+              <ng-container matColumnDef="select">
+                <th mat-header-cell *matHeaderCellDef>Select</th>
+                <td mat-cell *matCellDef="let element">
+                  <mat-checkbox color="primary"></mat-checkbox>
+                </td>
+              </ng-container>
+
+              <!-- Key Column -->
+              <ng-container matColumnDef="key">
+                <th mat-header-cell *matHeaderCellDef>Key</th>
+                <td mat-cell *matCellDef="let element">{{ element.key }}</td>
+              </ng-container>
+
+              <!-- Value Column -->
+              <ng-container matColumnDef="value">
+                <th mat-header-cell *matHeaderCellDef>Value</th>
+                <td mat-cell *matCellDef="let element">{{ element.value }}</td>
+              </ng-container>
+
+              <!-- Action Column -->
+              <ng-container matColumnDef="action">
+                <th mat-header-cell *matHeaderCellDef>Action</th>
+                <td mat-cell *matCellDef="let element">
+                  <button mat-raised-button style="width: 20px; height: 25px;" class="manage-config-btn" color="primary">Change</button>
+                </td>
+              </ng-container>
+
+              <!-- Header and Row Declarations -->
+              <tr mat-header-row *matHeaderRowDef="displayedColumns1"></tr>
+              <tr mat-row *matRowDef="let row; columns: displayedColumns1;"></tr>
+
+          </table>
+        </div>
+
+        
+      </div>
 
             <!-- new -->
 
