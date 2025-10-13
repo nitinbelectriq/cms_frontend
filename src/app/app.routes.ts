@@ -111,6 +111,17 @@ export const routes: Routes = [
           import('./pages/OCPP/ocpp-details/ocpp-details.component').then(
             (m) => m.ChargerDetailComponent
           ),
+      },{
+        path: 'manage-callback-close', loadComponent: ()=>
+           import('./pages/call-back-management-close-request/call-back-management-close-request.component').then(
+          (m) => (m.CallBackManagementCloseRequestComponent)
+        )
+      },
+      {
+        path: 'manage-callback-open', loadComponent: ()=> 
+          import('./pages/call-back-management-open-request/call-back-management-open-request.component').then((m)=>
+          (m.CallBackManagementOpenRequestComponent))
+
       },
       {
   path: 'user-charging-log',
