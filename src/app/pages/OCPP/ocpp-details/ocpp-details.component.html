@@ -77,7 +77,11 @@
    
    <div style="width: 100%;">
       <div class="connector-heading dashboard-row" style="margin-top: 24px; margin-bottom: 10px;">
-        <h4><strong>Connector Status</strong></h4>
+        <div>
+          <h4><strong>Connector Status</strong> </h4>
+        <strong>{{selectedTask}} </strong>
+        </div>
+        
         <div>
           <button mat-stroked-button (click)="toggleSettings()">
             Settings <mat-icon>settings</mat-icon>
@@ -134,26 +138,31 @@
 
     <mat-form-field appearance="outline" class="custom-label updatefirmware">
       <mat-label>Retries (Integer)</mat-label>
-      <input matInput type="number" [(ngModel)]="firmwareRetries" placeholder="Choose a value" name="firmwareRetries"/>
+      <input matInput type="number" [(ngModel)]="getDiagnosticRetries" placeholder="Choose a value" name="getDiagnosticRetries"/>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="custom-label updatefirmware">
       <mat-label>Retry Interval (Integer)</mat-label>
-      <input matInput type="number" [(ngModel)]="firmwareRetryInterval" placeholder="Choose a value" name="firmwareRetryInterval"/>
+      <input matInput type="number" [(ngModel)]="getDiagnosticRetriesInterval" placeholder="Choose a value" name="getDiagnosticRetriesInterval"/>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="custom-label updatefirmware">
       <mat-label>Start Date</mat-label>
-      <input matInput [matDatepicker]="picker" [(ngModel)]="getDiagnosticStartDate" placeholder="Choose a date" name="firmwareRetrieveDate"/>
+      <input matInput [matDatepicker]="picker" [(ngModel)]="getDiagnosticStartDate" (dateChange)="onDateChange($event)" placeholder="Choose a date" name="firmwareRetrieveDate"/>
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-datepicker #picker></mat-datepicker>
     </mat-form-field>
 
+    <!-- <mat-form-field appearance="outline">
+    <mat-label>Time</mat-label>
+    <input matInput type="time" [(ngModel)]="diagnostictime">
+  </mat-form-field> -->
+
     <mat-form-field appearance="outline" class="custom-label updatefirmware">
       <mat-label>End Date</mat-label>
-      <input matInput [matDatepicker]="picker" [(ngModel)]="getDiagnosticEndDate" placeholder="Choose a date" name="firmwareRetrieveDate"/>
-      <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
-      <mat-datepicker #picker></mat-datepicker>
+      <input matInput [matDatepicker]="endpicker" [(ngModel)]="getDiagnosticEndDate" (dateChange)="onEndDateChange($event)" placeholder="Choose a date" name="getDiagnosticEndDate"/>
+      <mat-datepicker-toggle matSuffix [for]="endpicker"></mat-datepicker-toggle>
+      <mat-datepicker #endpicker></mat-datepicker>
     </mat-form-field>
   </div>
 
@@ -187,8 +196,64 @@
     <!-- Data Tag -->
     <mat-form-field appearance="outline" class="custom-label updatefirmware">
       <mat-label>Data Tag</mat-label>
-      <input matInput type="number" [(ngModel)]="dataTag" placeholder="Give a Tag" name="dataTag"/>
+      <input matInput  [(ngModel)]="dataTag" placeholder="Give a Tag" name="dataTag"/>
     </mat-form-field>
+  </div>
+
+  <div style="gap: 10px;" align="end">
+    <button mat-raised-button style="margin-right: 10px;" class="create"
+            (click)="performTask(1, selectedTask)">Perform</button>
+    <button mat-raised-button (click)="selectedTask = null">Cancel</button>
+  </div>
+</div>
+
+<!-- custom data transfer for uuid -->
+ <!-- data transfer -->
+
+<div *ngSwitchCase="'Custom Data Transfer'">
+  <div class="update-firmware">
+    <!-- Vendor Id -->
+    <mat-form-field appearance="outline" class="custom-label updatefirmware">
+      <mat-label>Vendor Id</mat-label>
+      <input matInput [(ngModel)]="vendorId" placeholder="Give a vendor" name="vendorId"/>
+    </mat-form-field>
+
+    <!-- Currency -->
+    <mat-form-field appearance="outline" class="custom-label updatefirmware">
+      <mat-label>Currency</mat-label>
+      <input matInput [(ngModel)]="customCurrency" placeholder="Give a vendor" name="vendorId"/>
+    </mat-form-field>
+
+    <!-- Method -->
+    <mat-form-field appearance="outline" class="custom-label updatefirmware">
+      <mat-label>Method</mat-label>
+      <input matInput [(ngModel)]="customMethod" placeholder="Give a vendor" name="vendorId"/>
+    </mat-form-field>
+
+    <!-- total cost -->
+    <mat-form-field appearance="outline" class="custom-label updatefirmware">
+      <mat-label>Total cost</mat-label>
+      <input matInput  [(ngModel)]="customtotalCost" placeholder="Give a vendor" name="vendorId"/>
+    </mat-form-field>
+    
+    <!-- Data Tag -->
+    <mat-form-field appearance="outline" class="custom-label updatefirmware">
+      <mat-label>Data Tag</mat-label>
+      <input matInput  [(ngModel)]="customdataTag" placeholder="Give a Tag" name="dataTag"/>
+    </mat-form-field>
+
+    <!-- Message Id dropdown -->
+    <ng-container>
+      <mat-form-field appearance="outline" class="custom-label">
+        <mat-label>Message Id</mat-label>
+        <input matInput  [(ngModel)]="messageId" placeholder="Give a Tag" name="massageId"/>
+        <!-- <mat-select [(ngModel)]="messageId">
+          <mat-option *ngFor="let r of messageids" [value]="r">{{ r }}</mat-option>
+        </mat-select> -->
+      </mat-form-field>
+    </ng-container>
+
+   
   </div>
 
   <div style="gap: 10px;" align="end">
@@ -592,6 +657,29 @@
       
         </div>
 
+        <!-- cancel reserve now -->
+          <div *ngSwitchCase="'Cancel Reservation'">
+              <div class="remote-stop">
+              <!-- Editable -->
+                <mat-form-field appearance="outline" class="custom-label">
+                  <input matInput [(ngModel)]="id_of_Cancel_reservation" placeholder="Id of Cancel Transaction">
+                </mat-form-field>
+
+              <!-- Read-only, filled by API -->
+              <mat-form-field appearance="outline" class="custom-label">
+                <input matInput [(ngModel)]="current_cancel_reservation"  placeholder="Current Cancel Transaction" readonly>
+              </mat-form-field>
+              </div>
+
+            <div style="gap: 10px;" align="end">
+              <button mat-raised-button (click)="performTask(conn.connector_no, selectedTask)" 
+              style="margin-right: 10px;" class="create">
+                Perform
+              </button>
+              <button mat-raised-button>Cancel</button>
+            </div>
+          </div>
+
         <!-- Get composite schedule -->
 
   <div *ngSwitchCase="'Get Composite Schedule'">
@@ -818,7 +906,7 @@
 
 <!-- get daignostic -->
 
-     <div *ngSwitchCase="'Get Diagnostics'">
+     <!-- <div *ngSwitchCase="'Get Diagnostics'">
   <div class="update-firmware">
     <mat-form-field appearance="outline" class="custom-label updatefirmware">
       <mat-label>Location</mat-label>
@@ -855,7 +943,7 @@
             (click)="performTask(conn.connector_no, selectedTask)">Perform</button>
     <button mat-raised-button (click)="selectedTask = null">Cancel</button>
   </div>
-</div>
+</div> -->
 
 <!-- data transfer -->
 

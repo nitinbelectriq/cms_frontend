@@ -246,6 +246,18 @@ clearChargingProfile(payload: any){
   })
 }
 
+getCancelReservation(payload: any){
+  return this.http.post(`${this.middleUrl}/cancelreservation`, payload, {
+    headers: this.getAuthHeaders()
+  })
+}
+
+getactiveReservationId(payload: any){
+  return this.http.post(`${this.middleUrl}/getActiveReservationId`, payload, {
+    headers: this.getAuthHeaders()
+  })
+}
+
 
 
   
