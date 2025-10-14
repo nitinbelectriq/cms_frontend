@@ -2,7 +2,7 @@ import { Component, OnInit, AfterViewInit, ViewChild, inject } from '@angular/co
 import { MatPaginator } from '@angular/material/paginator';
 import { MatTableDataSource } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { CommonModule, DatePipe } from '@angular/common';
+import { CommonModule, DatePipe, Time } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
@@ -40,7 +40,8 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     MatRadioModule,
     MatRadioButton,
     MatDatepickerModule,
-    MatPaginatorModule
+    MatPaginatorModule,
+    
   ],
   providers: [DatePipe],
   templateUrl: './ocpp-details.component.html',
@@ -77,6 +78,35 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
 
   getDiagnosticEndDate: Date | null= null;
   getDiagnosticStartDate: Date | null= null;
+  getDiagnosticRetriesInterval: number =0;
+  getDiagnosticRetries: number= 0;
+
+  
+  //selectedDate: Date | null = null;
+  finalDiagnosticstartDateTime: Date | null = null;
+  finalDiagnosticEndDateTime: Date | null = null;
+
+
+  // called whenever user selects a date
+  onDateChange(event: any) {
+    const pickedDate = new Date(event.value);
+    const now = new Date();
+
+    // Combine picked date with current time
+    pickedDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+
+    this.finalDiagnosticstartDateTime = pickedDate;
+  }
+
+  onEndDateChange(event: any) {
+    const pickedDate = new Date(event.value);
+    const now = new Date();
+
+    // Combine picked date with current time
+    pickedDate.setHours(now.getHours(), now.getMinutes(), now.getSeconds());
+
+    this.finalDiagnosticEndDateTime = pickedDate;
+  }
 
   vendorId: string= '';
   ChargingRateUnit='';
@@ -96,7 +126,7 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
   setChargingRateUnit=null;
   Duration: number | null = null;
 
-dataTag='';
+dataTag: string| number='';
 messageId='';
 // 1. Add the fixed message IDs list:
 messageids: string[] = [
@@ -115,7 +145,16 @@ messageids: string[] = [
   'SET_SCHEDULE'
 ];
 
+// custom data transfer proprties
+customdataTag='';
+customtotalCost: number = 0;
+customCurrency='';
+customMethod= '';
 
+
+//cancel reservation
+current_cancel_reservation='';
+id_of_Cancel_reservation='';
 
 // 2. Add a method to call the Data Transfer API:
   rfidselect = '';
@@ -140,10 +179,12 @@ messageids: string[] = [
   private snackBar = inject(MatSnackBar);
 
   ngOnInit(): void {
+    this.getreservationId();
     this.chargerId = this.route.snapshot.paramMap.get('id') || '';
     this.loginId = localStorage.getItem('user_id') || '';
 
     const payload = { cpo_id: '', station_id: '' };
+
 
     // load chargers and initialize if found
     this.ocppService.getChargersDynamic(this.loginId, payload).subscribe({
@@ -453,6 +494,11 @@ messageids: string[] = [
       this.unselectconnector= false;
 
     } 
+     else if (menu.name === 'Cancel Reservation'){
+      this.selectedTask = menu.name;
+      this.unselectconnector= false;
+
+    } 
        //this.selectedTask = menu.name;
     else if (menu.name === 'Change Availability'){
       this.selectedTask = menu.name;
@@ -472,6 +518,11 @@ messageids: string[] = [
     } 
     // this.selectedTask = menu.name;
     else if(menu.name === 'Data Transfer') {
+      this.selectedTask = menu.name;
+      this.unselectconnector= true;
+
+    } 
+    else if(menu.name === 'Custom Data Transfer') {
       this.selectedTask = menu.name;
       this.unselectconnector= true;
 
@@ -531,6 +582,15 @@ messageids: string[] = [
   else if(task === 'Clear Charging Profile'){
     this.clearChargingProfile();
   }
+  else if(task === 'Get Diagnostics'){
+    this.getdiagnostic();
+  } else if(task === 'Reserve Now'){
+    this.getReserveNow();
+  }
+  else if(task === 'Cancel Reservation'){
+    this.cancelReservation();
+  }
+  
   }
 
   performCommand(command: string): void {
@@ -820,26 +880,77 @@ firmwareRetrieveDate: Date | null = null;
     });
   }
 
+  generateUniqueTransactionId(): string {
+  const now = new Date();
+
+  // Last 4 digits of timestamp (MMSS)
+  const timestamp = now.getMinutes().toString().padStart(2, '0') +
+                    now.getSeconds().toString().padStart(2, '0');
+
+  // 3-digit random number
+  const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+
+  // 3-digit hash substitute: just another random number
+  const numericHash = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+
+  // Combine all parts
+  const transactionId = `${timestamp}${random}${numericHash}`;
+
+  return transactionId; // e.g., "45230123456"
+}
+
+
   getReserveNow(connectorNo: number = 1) {
+    const reservationId= this.generateUniqueTransactionId();
     if (!this.charger) return;
 
     const payload = {
       command: 'RESERVE_NOW',
       charger_id: this.chargerId,
-      charger_sr_no: this.charger.serial_no,
+      charger_sr_no: this.charger.serial_no ,
       charger_connector: connectorNo,
       charger_idtag: this.selectedRfid,
       charger_parentIdTag: '0',
-      reservation_id: '1234',
+      reservation_id: reservationId,
       charger_expiry_date: this.expiryDate
     };
 
     console.log('Reserve Now Payload:', payload);
 
-    this.ocppService.changeAvailability(payload).subscribe({
+    this.ocppService.getReserveNow(payload).subscribe({
       next: (res: any) => this.showSnack(res?.message, !!res?.status),
       error: (err: any) => this.handleApiError(err, 'Error reserving now')
     });
+  }
+
+  cancelReservation(connectorNo: number = 1){
+    const payload= {
+      connector: connectorNo,
+      command: "CANCEL_RESERVATION",
+      charger_id: this.chargerId,
+      charger_sr_no: this.charger.serial_no ,
+       reservation_id: this.id_of_Cancel_reservation || this.current_cancel_reservation    
+    }
+
+    this.ocppService.getCancelReservation(payload).subscribe({
+      next: (res: any) => this.showSnack(res?.message, !!res?.status),
+      error: (err: any) => this.handleApiError(err, 'Error reserving now')
+    })
+  }
+
+
+  getreservationId(connectorNo: number=1){
+    const payload={
+      connector: connectorNo,
+    
+      charger_id: this.chargerId,
+    };
+    this.ocppService.getactiveReservationId(payload).subscribe({
+       next: (res: any) => {
+        this.current_cancel_reservation = res.transactionId;
+        this.showSnack(res?.message, !!res?.status)},
+      error: (err: any) => this.handleApiError(err, 'Error in getting reserve id now')
+    })
   }
   
   updateFirmware(connectorNo: number = 1) {
@@ -942,6 +1053,29 @@ clearChargingProfile(){
   })
 }
 
+
+
+getdiagnostic(){
+  const payload= { 
+   command: "GET_DIAGNOSTICS",
+    charger_id: this.charger.serial_no,
+    charger_sr_no: this.charger.serial_no,
+    connector: 1,
+    location: this.firmwareLocation,
+    retries: this.getDiagnosticRetries,
+    retryInterval: this.getDiagnosticRetriesInterval,
+    startTime: this.finalDiagnosticstartDateTime,
+    stopTime: this.finalDiagnosticEndDateTime
+  }
+  this.ocppService.getdiagnostics(payload).subscribe({
+    next: (res: any) => {
+      this.showSnack(res?.message || 'get Diagnostics executed', !!res?.status);
+    },
+    error: (err: any) => this.handleApiError(err, 'Error executing Get Diagnostic')
+  })
+
+
+}
 
 }
 
