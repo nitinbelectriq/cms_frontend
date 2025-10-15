@@ -118,6 +118,8 @@ export class ChargerDetailComponent implements OnInit, AfterViewInit {
   stackLevel= '';
   transactionId: number | null =null;
   startSchedule: Date | null= null;
+  validfromSchedule: Date | null = null;
+  validtoSchedule: Date | null = null;
 
   setChargingProfileId='';
   setRecurrencyKind='';
@@ -183,6 +185,8 @@ id_of_Cancel_reservation='';
     this.loginId = localStorage.getItem('user_id') || '';
 
     const payload = { cpo_id: '', station_id: '' };
+
+    //this.getAllChargingProfile()
 
 
     // load chargers and initialize if found
@@ -530,7 +534,7 @@ id_of_Cancel_reservation='';
     else if(menu.name === 'Get Composite Schedule')
       {
       this.selectedTask = menu.name;
-      this.unselectconnector= true;
+      this.unselectconnector= false;
 
     } 
       // this.selectedTask = menu.name;
@@ -544,6 +548,7 @@ id_of_Cancel_reservation='';
     else if(menu.name === 'Set Charging Profile'){
       this.selectedTask = menu.name;
       this.unselectconnector= true;
+      this.getAllChargingProfile();
 
     } 
       // this.selectedTask = menu.name;
@@ -1024,6 +1029,16 @@ callDataTransfer(connectorNo: number) {
       this.showSnack(res?.message || 'Data Transfer executed', !!res?.status);
     },
     error: (err: any) => this.handleApiError(err, 'Error executing Data Transfer')
+  });
+}
+
+// get all charging profile
+getAllChargingProfile(){
+  this.ocppService.getAllChargingProfile().subscribe({
+    next: (res: any) => {
+      this.showSnack(res?.message || 'profiles executed', !!res?.status);
+    },
+    error: (err: any) => this.handleApiError(err, 'Error in getting profile')
   });
 }
 
