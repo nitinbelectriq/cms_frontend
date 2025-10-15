@@ -258,7 +258,10 @@ getactiveReservationId(payload: any){
   })
 }
 
+getAllChargingProfile(){
+  return this.http.get(`${this.baseUrl}/charger/getAllChargingProfileList`, { headers: this.getAuthHeaders() });
 
 
+}
   
 }
