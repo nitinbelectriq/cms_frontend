@@ -179,7 +179,6 @@ id_of_Cancel_reservation='';
   private snackBar = inject(MatSnackBar);
 
   ngOnInit(): void {
-    this.getreservationId();
     this.chargerId = this.route.snapshot.paramMap.get('id') || '';
     this.loginId = localStorage.getItem('user_id') || '';
 
@@ -585,10 +584,10 @@ id_of_Cancel_reservation='';
   else if(task === 'Get Diagnostics'){
     this.getdiagnostic();
   } else if(task === 'Reserve Now'){
-    this.getReserveNow();
+    this.getReserveNow(connectorNo);
   }
   else if(task === 'Cancel Reservation'){
-    this.cancelReservation();
+    this.cancelReservation(connectorNo);
   }
   
   }
@@ -880,78 +879,104 @@ firmwareRetrieveDate: Date | null = null;
     });
   }
 
-  generateUniqueTransactionId(): string {
-  const now = new Date();
+getReserveNow(connectorNo: number = 1) {
+  if (!this.charger) return;
 
-  // Last 4 digits of timestamp (MMSS)
-  const timestamp = now.getMinutes().toString().padStart(2, '0') +
-                    now.getSeconds().toString().padStart(2, '0');
+  // Use manual ID if available, otherwise generate a 6-digit number
+  const reservationId = this.manualReservationId || Math.floor(Math.random() * 900000 + 100000);
 
-  // 3-digit random number
-  const random = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+  const payload = {
+    connector: connectorNo,
+    command: 'RESERVE_NOW',
+    charger_id: this.chargerId,
+    charger_sr_no: this.charger.serial_no,
+    id_tag: this.selectedRfid,
+    parentIdTag: '0',
+    reservation_id: reservationId, // ✅ number
+    expiry_date: this.expiryDate
+  };
 
-  // 3-digit hash substitute: just another random number
-  const numericHash = Math.floor(Math.random() * 1000).toString().padStart(3, '0');
+  console.log('Reserve Now Payload:', payload);
 
-  // Combine all parts
-  const transactionId = `${timestamp}${random}${numericHash}`;
-
-  return transactionId; // e.g., "45230123456"
+  this.ocppService.getReserveNow(payload).subscribe({
+    next: (res: any) => this.showSnack(res?.message, !!res?.status),
+    error: (err: any) => this.handleApiError(err, 'Error reserving now')
+  });
 }
 
 
-  getReserveNow(connectorNo: number = 1) {
-    const reservationId= this.generateUniqueTransactionId();
-    if (!this.charger) return;
 
-    const payload = {
-      command: 'RESERVE_NOW',
-      charger_id: this.chargerId,
-      charger_sr_no: this.charger.serial_no ,
-      charger_connector: connectorNo,
-      charger_idtag: this.selectedRfid,
-      charger_parentIdTag: '0',
-      reservation_id: reservationId,
-      charger_expiry_date: this.expiryDate
-    };
 
-    console.log('Reserve Now Payload:', payload);
+ // This will store the manually entered reservation ID (from the input box)
+manualReservationId: number | null = null;
 
-    this.ocppService.getReserveNow(payload).subscribe({
-      next: (res: any) => this.showSnack(res?.message, !!res?.status),
-      error: (err: any) => this.handleApiError(err, 'Error reserving now')
-    });
+cancelReservation(connectorNo: number = 1) {
+  if (!this.charger) {
+    console.warn('cancelReservation: charger not available yet');
+    return;
   }
 
-  cancelReservation(connectorNo: number = 1){
-    const payload= {
+  const serial = this.charger.serial_no || this.chargerId;
+
+  // Use either current_cancel_reservation or manual input first
+  let existingReservationId = Number(this.current_cancel_reservation || this.manualReservationId || 0);
+
+  if (existingReservationId > 0) {
+    // Cancel directly
+    const payload = {
       connector: connectorNo,
-      command: "CANCEL_RESERVATION",
+      command: 'CANCEL_RESERVATION',
       charger_id: this.chargerId,
-      charger_sr_no: this.charger.serial_no ,
-       reservation_id: this.id_of_Cancel_reservation || this.current_cancel_reservation    
-    }
+      charger_sr_no: serial,
+      reservation_id: existingReservationId,
+    };
 
     this.ocppService.getCancelReservation(payload).subscribe({
       next: (res: any) => this.showSnack(res?.message, !!res?.status),
-      error: (err: any) => this.handleApiError(err, 'Error reserving now')
-    })
-  }
-
-
-  getreservationId(connectorNo: number=1){
-    const payload={
+      error: (err: any) => this.handleApiError(err, 'Error cancelling reservation'),
+    });
+  } else {
+    // Fetch from API first
+    const payloadGet = {
       connector: connectorNo,
-    
-      charger_id: this.chargerId,
+      charger_id: serial,
     };
-    this.ocppService.getactiveReservationId(payload).subscribe({
-       next: (res: any) => {
-        this.current_cancel_reservation = res.transactionId;
-        this.showSnack(res?.message, !!res?.status)},
-      error: (err: any) => this.handleApiError(err, 'Error in getting reserve id now')
-    })
+
+    this.ocppService.getactiveReservationId(payloadGet).subscribe({
+      next: (res: any) => {
+        // ✅ Updated to match your API
+        const reservationId = Number(res?.data?.reservation_id || 0);
+        if (!reservationId) {
+          this.showSnack('No active reservation found. Please enter manually.', false);
+          return;
+        }
+
+        this.current_cancel_reservation = reservationId.toString();
+ // Update the readonly input
+
+        const payloadCancel = {
+          connector: connectorNo,
+          command: 'CANCEL_RESERVATION',
+          charger_id: this.chargerId,
+          charger_sr_no: serial,
+          reservation_id: Number(this.current_cancel_reservation),
+        };
+
+        this.ocppService.getCancelReservation(payloadCancel).subscribe({
+          next: (cancelRes: any) =>
+            this.showSnack(cancelRes?.message, !!cancelRes?.status),
+          error: (err: any) =>
+            this.handleApiError(err, 'Error cancelling reservation'),
+        });
+      },
+      error: (err: any) =>
+        this.handleApiError(err, 'Error fetching reservation ID'),
+    });
   }
+}
+
+
+
   
   updateFirmware(connectorNo: number = 1) {
   if (!this.charger) return;
